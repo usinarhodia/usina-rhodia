@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>USINA RHODIA ADMIN</title>
+
+<style>
+
+body{
+  background:#050505;
+  color:white;
+  font-family:Arial;
+  padding:40px;
+}
+
+h1{
+  font-size:48px;
+  margin-bottom:40px;
+}
+
+.pedido{
+  background:#111;
+  border:1px solid #222;
+  border-radius:16px;
+  padding:25px;
+  margin-bottom:20px;
+}
+
+.estado{
+  display:inline-block;
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:14px;
+  font-weight:bold;
+  margin-top:10px;
+}
+
+.paid{
+  background:#00c853;
+  color:white;
+}
+
+.pending{
+  background:#ff3b30;
+  color:white;
+}
+
+.preparado{
+  background:#ff9800;
+  color:white;
+}
+
+.enviado{
+  background:#2196f3;
+  color:white;
+}
+
+.entregado{
+  background:#00c853;
+  color:white;
+}
+
+.crear-producto{
+  background:#111;
+  padding:25px;
+  border-radius:20px;
+  margin-bottom:40px;
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+.crear-producto input{
+  background:#1a1a1a;
+  border:none;
+  padding:15px;
+  color:white;
+  border-radius:12px;
+  font-size:16px;
+}
+
+.crear-producto button{
+  background:#ff2a2a;
+  color:white;
+  border:none;
+  padding:16px;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.ready_pickup{
+  background:#9c27b0;
+  color:white;
+}
+
+</style>
+</head>
+
+<body>
+
+    <div id="loginAdmin">
+  <h1>Admin</h1>
+  <input type="password" id="passwordAdmin" placeholder="Contraseña">
+  <button onclick="entrarAdmin()">Entrar</button>
+</div>
+
+<div id="panelAdmin" style="display:none;">
+
+<h1>PANEL ADMIN</h1>
+
+<div class="crear-producto">
+
+  <h2>Crear producto</h2>
+
+  <input type="text" id="marca" placeholder="Marca">
+  <input type="text" id="nombre" placeholder="Nombre del producto">
+  <input type="number" id="precioAnterior" placeholder="Precio anterior">
+  <input type="number" id="precio" placeholder="Precio oferta">
+  <input type="number" id="descuento" placeholder="Descuento">
+  <input type="file" id="imagenArchivo" accept="image/*">
+  <h3>Stock por talle</h3>
+
+<input type="number" id="stockXS" placeholder="Stock XS" value="0">
+<input type="number" id="stockS" placeholder="Stock S" value="0">
+<input type="number" id="stockM" placeholder="Stock M" value="0">
+<input type="number" id="stockL" placeholder="Stock L" value="0">
+<input type="number" id="stockXL" placeholder="Stock XL" value="0">
+<input type="number" id="stockXXL" placeholder="Stock XXL" value="0">
+<input type="number" id="stockXXXL" placeholder="Stock XXXL" value="0">
+
+  <button onclick="crearProducto()">
+    Crear producto
+  </button>
+
+</div>
+
+<h2 style="margin-top:60px;">
+  Productos activos
+</h2>
+
+<div id="productos"></div>
+
+<h2 style="margin-top:60px;">
+  Pedidos
+</h2>
+
+<div id="pedidos"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+
+    function entrarAdmin(){
+  const pass = document.getElementById("passwordAdmin").value;
+
+  if(pass === "maxusina"){
+    document.getElementById("loginAdmin").style.display = "none";
+    document.getElementById("panelAdmin").style.display = "block";
+    localStorage.setItem("adminLogueado", "true");
+  }else{
+    alert("Contraseña incorrecta");
+  }
+}
+
+if(localStorage.getItem("adminLogueado") === "true"){
+  setTimeout(() => {
+    document.getElementById("loginAdmin").style.display = "none";
+    document.getElementById("panelAdmin").style.display = "block";
+  }, 100);
+}
+
+const supabaseUrl = "https://vegbamfkmcyvgvnjmxgs.supabase.co";
+const supabaseKey = "sb_publishable_BFRP4PzzRhvUw3OF0NZtpw_gXjejWn9";
+
+const supabaseClient = supabase.createClient(
+  supabaseUrl,
+  supabaseKey
+);
+
+async function cargarPedidos(){
+
+  const { data, error } = await supabaseClient
+    .from("orders")
+.select(`
+  *,
+  order_items (*)
+`)
+    .order("id", { ascending:false });
+
+  if(error){
+    console.log(error);
+    return;
+  }
+
+  const contenedor = document.getElementById("pedidos");
+
+  contenedor.innerHTML = "";
+
+  data.forEach(pedido => {
+
+    contenedor.innerHTML += `
+
+      <div class="pedido">
+
+        <h2>Pedido #${pedido.id}</h2>
+
+        <p><b>Cliente:</b> ${pedido.customer_name}</p>
+
+        <p><b>Email:</b> ${pedido.customer_email}</p>
+
+        <p><b>Teléfono:</b> ${pedido.customer_phone}</p>
+
+        <p><b>Total:</b> $${pedido.total}</p>
+        <p><b>Productos:</b></p>
+
+<ul>
+  ${pedido.order_items.map(item => `
+    <li>
+      ${item.product_name} — Talle ${item.size} — x${item.quantity} — $${item.unit_price}
+    </li>
+  `).join("")}
+</ul>
+
+        <p><b>Entrega:</b> ${pedido.delivery_method}</p>
+
+        <div class="estado ${pedido.status}">
+          ${pedido.status}
+        </div>
+<div style="margin-top:15px; display:flex; gap:10px; flex-wrap:wrap;">
+
+  <button onclick="cambiarEstadoPedido(${pedido.id}, 'preparado')">
+    Preparado
+  </button>
+
+  <button onclick="cambiarEstadoPedido(${pedido.id}, 'enviado')">
+    Enviado
+  </button>
+
+  <button onclick="cambiarEstadoPedido(${pedido.id}, 'entregado')">
+    Entregado
+  </button>
+
+  <button onclick="cambiarEstadoPedido(${pedido.id}, 'ready_pickup')">
+  Listo para retirar
+</button>
+
+<div style="margin-top:20px; width:100%;">
+
+  <input
+    type="text"
+    id="tracking-${pedido.id}"
+    placeholder="Código Andreani"
+    style="
+      width:100%;
+      margin-bottom:10px;
+      padding:12px;
+      border-radius:10px;
+      border:none;
+      background:#1a1a1a;
+      color:white;
+    "
+  >
+
+  <input
+    type="text"
+    id="trackingurl-${pedido.id}"
+    placeholder="Link seguimiento"
+    style="
+      width:100%;
+      margin-bottom:10px;
+      padding:12px;
+      border-radius:10px;
+      border:none;
+      background:#1a1a1a;
+      color:white;
+    "
+  >
+
+  <button onclick="guardarTracking(${pedido.id})">
+    Guardar tracking
+  </button>
+
+</div>
+
+</div>
+      </div>
+
+    `;
+
+  });
+
+}
+
+cargarPedidos();
+
+async function cargarProductos(){
+
+  const { data, error } = await supabaseClient
+    .from("products")
+    .select("*")
+    .order("id", { ascending:false });
+
+  if(error){
+    console.log(error);
+    alert("Error cargando productos");
+    return;
+  }
+
+  const contenedor = document.getElementById("productos");
+
+  contenedor.innerHTML = "";
+
+  data.forEach(producto => {
+
+    contenedor.innerHTML += `
+
+      <div class="pedido">
+
+        <h2>${producto.name}</h2>
+
+        <p><b>Marca:</b> ${producto.brand}</p>
+        <p><b>Precio:</b> $${producto.price}</p>
+        <p><b>Descuento:</b> -${producto.discount}%</p>
+        <p><b>Activo:</b> ${producto.active ? "Sí" : "No"}</p>
+
+        <button onclick="desactivarProducto(${producto.id})">
+          Desactivar
+        </button>
+
+        <button onclick="eliminarProducto(${producto.id})">
+  Eliminar
+</button>
+
+      </div>
+
+    `;
+
+  });
+
+}
+
+cargarProductos();
+
+async function desactivarProducto(id){
+
+  const { error } = await supabaseClient
+    .from("products")
+    .update({
+      active: false
+    })
+    .eq("id", id);
+
+  if(error){
+    console.log(error);
+    alert("Error desactivando producto");
+    return;
+  }
+
+  alert("Producto desactivado");
+  cargarProductos();
+}
+
+async function eliminarProducto(id){
+
+  const confirmar = confirm("¿Seguro que querés eliminar este producto definitivamente?");
+
+  if(!confirmar) return;
+
+  await supabaseClient
+    .from("product_stock")
+    .delete()
+    .eq("product_id", id);
+
+  await supabaseClient
+    .from("product_images")
+    .delete()
+    .eq("product_id", id);
+
+  const { error } = await supabaseClient
+    .from("products")
+    .delete()
+    .eq("id", id);
+
+  if(error){
+    console.log(error);
+    alert("Error eliminando producto. Puede estar asociado a pedidos existentes.");
+    return;
+  }
+
+  alert("Producto eliminado");
+  cargarProductos();
+}
+
+async function crearProducto(){
+
+  const marca = document.getElementById("marca").value.trim();
+  const nombre = document.getElementById("nombre").value.trim();
+  const precioAnterior = Number(document.getElementById("precioAnterior").value);
+  const precio = Number(document.getElementById("precio").value);
+  const descuento = Number(document.getElementById("descuento").value);
+  const imagenArchivo = document.getElementById("imagenArchivo").files[0];
+  const nombreArchivo =
+  Date.now() + "-" + imagenArchivo.name;
+
+  if(!marca || !nombre || !precioAnterior || !precio || !descuento || !imagenArchivo){
+    alert("Completá todos los campos");
+    return;
+  }
+
+  const { data: producto, error: errorProducto } = await supabaseClient
+    .from("products")
+    .insert({
+      brand: marca,
+      name: nombre,
+      old_price: precioAnterior,
+      price: precio,
+      discount: descuento,
+      active: true
+    })
+    .select()
+    .single();
+
+  if(errorProducto){
+    console.log(errorProducto);
+    alert("Error creando producto");
+    return;
+  }
+
+  const { error: errorUpload } = await supabaseClient
+  .storage
+  .from("productos")
+  .upload(nombreArchivo, imagenArchivo);
+
+if(errorUpload){
+  console.log(errorUpload);
+  alert("Error subiendo imagen");
+  return;
+}
+
+const { data: publicUrlData } = supabaseClient
+  .storage
+  .from("productos")
+  .getPublicUrl(nombreArchivo);
+
+const imageUrl = publicUrlData.publicUrl;
+
+const { error: errorImagen } = await supabaseClient
+  .from("product_images")
+  .insert({
+    product_id: producto.id,
+    image_url: imageUrl,
+    position: 1
+  });
+
+  if(errorImagen){
+    console.log(errorImagen);
+    alert("Producto creado, pero falló la imagen");
+    return;
+  }
+
+  const stocks = [
+  { size: "XS", stock: Number(document.getElementById("stockXS").value) || 0 },
+  { size: "S", stock: Number(document.getElementById("stockS").value) || 0 },
+  { size: "M", stock: Number(document.getElementById("stockM").value) || 0 },
+  { size: "L", stock: Number(document.getElementById("stockL").value) || 0 },
+  { size: "XL", stock: Number(document.getElementById("stockXL").value) || 0 },
+  { size: "XXL", stock: Number(document.getElementById("stockXXL").value) || 0 },
+  { size: "XXXL", stock: Number(document.getElementById("stockXXXL").value) || 0 }
+].map(item => ({
+  product_id: producto.id,
+  size: item.size,
+  stock: item.stock
+}));
+
+const { error: errorStock } = await supabaseClient
+  .from("product_stock")
+  .insert(stocks);
+
+if(errorStock){
+  console.log(errorStock);
+  alert("Producto creado, pero falló el stock");
+  return;
+}
+
+  alert("Producto creado correctamente");
+
+  document.getElementById("marca").value = "";
+  document.getElementById("nombre").value = "";
+  document.getElementById("precioAnterior").value = "";
+  document.getElementById("precio").value = "";
+  document.getElementById("descuento").value = "";
+  document.getElementById("imagenArchivo").value = "";
+}
+
+async function cambiarEstadoPedido(id, nuevoEstado){
+
+  const { error } = await supabaseClient
+    .from("orders")
+    .update({
+      status: nuevoEstado
+    })
+    .eq("id", id);
+
+  if(error){
+    console.log(error);
+    alert("Error cambiando estado");
+    return;
+  }
+
+  alert("Estado actualizado");
+
+  cargarPedidos();
+}
+
+async function guardarTracking(id){
+
+  const trackingCode =
+    document.getElementById(`tracking-${id}`).value;
+
+  const trackingUrl =
+    document.getElementById(`trackingurl-${id}`).value;
+
+  const { error } = await supabaseClient
+    .from("orders")
+    .update({
+      tracking_code: trackingCode,
+      tracking_url: trackingUrl
+    })
+    .eq("id", id);
+
+  if(error){
+    console.log(error);
+    alert("Error guardando tracking");
+    return;
+  }
+
+  alert("Tracking guardado");
+
+  cargarPedidos();
+
+}
+
+</script>
+
+</div>
+
+</body>
+</html>

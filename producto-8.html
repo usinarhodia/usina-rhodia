@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>USINA RHODIA | Producto</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    body {
+      background: #0f0f0f;
+      color: #ffffff;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+    }
+
+    .top-strip {
+      width: 100%;
+      background: #c91010;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .top-strip-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 10px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .top-strip-left {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: #ffffff;
+    }
+
+    .top-strip-right {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.92);
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15, 15, 15, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 18px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: #ffffff;
+      text-transform: uppercase;
+    }
+
+    .header-link {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: #ff2a2a;
+    }
+
+    .header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cart-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: #171717;
+  border: 1px solid rgba(255,255,255,0.10);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.cart-link:hover {
+  border-color: #ff2a2a;
+  transform: translateY(-1px);
+}
+
+.cart-count {
+  min-width: 24px;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: #ff2a2a;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+    .producto-page {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    .producto-layout {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 30px;
+      align-items: start;
+    }
+
+    .galeria {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 16px;
+      position: sticky;
+      top: 120px;
+    }
+
+    .miniaturas {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .miniatura {
+      width: 100%;
+      height: 120px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: #181818;
+      cursor: pointer;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .miniatura:hover,
+    .miniatura.activa {
+      border-color: #ff2a2a;
+      transform: translateY(-2px);
+    }
+
+    .miniatura img {
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .imagen-principal {
+      background: #171717;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 28px;
+      overflow: hidden;
+      min-height: 760px;
+    }
+
+    .imagen-principal img {
+      height: 100%;
+      min-height: 760px;
+      object-fit: cover;
+    }
+
+    .info-producto {
+      background: #171717;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 28px;
+      padding: 34px;
+    }
+
+    .marca {
+      display: inline-block;
+      margin-bottom: 12px;
+      color: #ff2a2a;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+    }
+
+    .titulo-producto {
+      font-size: 42px;
+      line-height: 0.98;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+      max-width: 520px;
+    }
+
+    .precio-box {
+      display: flex;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .precio-anterior {
+      font-size: 20px;
+      color: #8e8e8e;
+      text-decoration: line-through;
+      font-weight: 600;
+    }
+
+    .precio-actual {
+      font-size: 44px;
+      color: #ffffff;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+
+    .descuento {
+      background: #ff2a2a;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .bloque {
+      padding-top: 22px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .bloque-titulo {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: #ff2a2a;
+      margin-bottom: 14px;
+    }
+
+    .talles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .talle-btn {
+      min-width: 86px;
+      padding: 14px 18px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: #101010;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .talle-btn:hover {
+      border-color: #ff2a2a;
+      transform: translateY(-1px);
+    }
+
+    .talle-btn.activo {
+      background: #ff2a2a;
+      border-color: #ff2a2a;
+      color: #ffffff;
+    }
+
+    .talle-btn.agotado {
+      background: #1c1c1c;
+      color: #6f6f6f;
+      border-color: rgba(255,255,255,0.05);
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+
+    .talle-btn.agotado:hover {
+      transform: none;
+      border-color: rgba(255,255,255,0.05);
+    }
+
+    .stock-info {
+      font-size: 14px;
+      color: #d2d2d2;
+      line-height: 1.5;
+      min-height: 24px;
+    }
+
+    .stock-info strong {
+      color: #ffffff;
+    }
+
+    .stock-info .agotado-texto {
+      color: #ff4b4b;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+    }
+
+    .acciones {
+      margin-top: 24px;
+    }
+
+    .btn-principal {
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      padding: 16px 18px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1.1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      background: #ff2a2a;
+      color: #ffffff;
+      transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+    }
+
+    .btn-principal:hover {
+      background: #e01f1f;
+      transform: translateY(-1px);
+    }
+
+    .btn-principal:disabled {
+      background: #5a1c1c;
+      color: #d4a5a5;
+      cursor: not-allowed;
+      opacity: 0.7;
+      transform: none;
+    }
+
+    footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 22px 28px;
+      text-align: center;
+      color: #b8b8b8;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 1200px) {
+      .producto-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .galeria {
+        position: static;
+      }
+
+      .imagen-principal,
+      .imagen-principal img {
+        min-height: 620px;
+      }
+    }
+
+    @media (max-width: 780px) {
+      .top-strip-inner,
+      .header-inner,
+      .producto-page,
+      footer {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .header-actions {
+  width: 100%;
+  justify-content: flex-start;
+}
+
+      .top-strip-inner,
+      .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .producto-layout {
+        gap: 20px;
+      }
+
+      .galeria {
+        grid-template-columns: 1fr;
+      }
+
+      .miniaturas {
+        flex-direction: row;
+        overflow-x: auto;
+      }
+
+      .miniatura {
+        min-width: 88px;
+        height: 100px;
+      }
+
+      .imagen-principal,
+      .imagen-principal img {
+        min-height: 480px;
+      }
+
+      .info-producto {
+        padding: 24px;
+      }
+
+      .titulo-producto {
+        font-size: 30px;
+      }
+
+      .precio-actual {
+        font-size: 36px;
+      }
+    }
+
+.notificacion {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #171717;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 260px;
+  max-width: 320px;
+
+  opacity: 0;
+  transform: translateY(-20px);
+  pointer-events: none;
+
+  transition: all 0.3s ease;
+  z-index: 9999;
+}
+
+.notificacion.activa {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.notificacion img {
+  width: 50px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.notif-texto {
+  display: flex;
+  flex-direction: column;
+}
+
+.notif-texto strong {
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.notif-texto span {
+  font-size: 12px;
+  color: #cfcfcf;
+}
+
+.cantidad-box {
+  margin-top: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  background: #101010;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 16px;
+  padding: 8px;
+}
+
+.cantidad-box button {
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 12px;
+  background: #ff2a2a;
+  color: white;
+  font-size: 18px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.cantidad-box span {
+  min-width: 28px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+  </style>
+</head>
+<body>
+
+  <div class="top-strip">
+    <div class="top-strip-inner">
+      <div class="top-strip-left">USINA RHODIA</div>
+      <div class="top-strip-right">Ofertas por 24 horas · Stock limitado · Sin reposición</div>
+    </div>
+  </div>
+
+  <header>
+  <div class="header-inner">
+    <a href="index.html" class="logo">USINA RHODIA</a>
+
+    <div class="header-actions">
+      <a href="index.html" class="header-link">Volver a ofertas</a>
+
+      <a href="carrito.html" class="cart-link">
+        <span>Carrito</span>
+        <span class="cart-count" id="cartCount">0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+  <main class="producto-page">
+    <div class="producto-layout">
+
+      <section class="galeria">
+        <div class="miniaturas">
+          <button class="miniatura activa" onclick="cambiarImagen('img/producto-8.jpg', this)">
+            <img src="img/producto-8.jpg" alt="Vista 1">
+          </button>
+
+          <button class="miniatura" onclick="cambiarImagen('img/producto-8b.jpg', this)">
+            <img src="img/producto-8b.jpg" alt="Vista 2">
+          </button>
+
+          <button class="miniatura" onclick="cambiarImagen('img/producto-8c.jpg', this)">
+            <img src="img/producto-8c.jpg" alt="Vista 3">
+          </button>
+
+          <button class="miniatura" onclick="cambiarImagen('img/producto-8d.jpg', this)">
+            <img src="img/producto-8d.jpg" alt="Vista 4">
+          </button>
+        </div>
+
+        <div class="imagen-principal">
+          <img id="imagenPrincipal" src="img/producto-8.jpg" alt="Producto principal">
+        </div>
+      </section>
+
+      <section class="info-producto">
+        <span class="marca">Brooksfield</span>
+        <h1 class="titulo-producto">Camisa casual premium</h1>
+
+        <div class="precio-box">
+          <span class="precio-anterior">$49.900</span>
+          <span class="precio-actual">$34.310</span>
+          <span class="descuento">-35%</span>
+        </div>
+
+        <div class="bloque">
+          <div class="bloque-titulo">Elegí talle</div>
+
+          <div class="talles">
+  <button class="talle-btn activo" onclick="seleccionarTalle('XS', 1, this)">XS</button>
+  <button class="talle-btn" onclick="seleccionarTalle('S', 8, this)">S</button>
+  <button class="talle-btn" onclick="seleccionarTalle('M', 1, this)">M</button>
+  <button class="talle-btn" onclick="seleccionarTalle('L', 1, this)">L</button>
+  <button class="talle-btn" onclick="seleccionarTalle('XL', 1, this)">XL</button>
+  <button class="talle-btn" onclick="seleccionarTalle('XXL', 1, this)">XXL</button>
+  <button class="talle-btn" onclick="seleccionarTalle('XXXL', 1, this)">XXXL</button>
+</div>
+
+          <div class="stock-info" id="stockInfo">
+  Talle seleccionado: <strong>XS</strong>
+</div>
+
+          <div class="cantidad-box">
+  <button type="button" onclick="cambiarCantidad(-1)">-</button>
+  <span id="cantidadSeleccionada">1</span>
+  <button type="button" onclick="cambiarCantidad(1)">+</button>
+</div>
+
+          <div class="acciones">
+            <button class="btn-principal" id="btnComprar" onclick="agregarAlCarrito()">Agregar al carrito</button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer>
+    USINA RHODIA — Producto
+  </footer>
+
+  <script>
+ let talleSeleccionado = "XS";
+ let stockSeleccionado = 1;
+ let cantidadSeleccionada = 1;
+
+  function cambiarImagen(nuevaImagen, boton) {
+    document.getElementById("imagenPrincipal").src = nuevaImagen;
+
+    const miniaturas = document.querySelectorAll(".miniatura");
+    miniaturas.forEach(item => item.classList.remove("activa"));
+    boton.classList.add("activa");
+  }
+
+  function seleccionarTalle(talle, stock, boton) {
+    talleSeleccionado = talle;
+    stockSeleccionado = stock; cantidadSeleccionada = 1;
+document.getElementById("cantidadSeleccionada").textContent = cantidadSeleccionada;
+
+    const botones = document.querySelectorAll(".talle-btn");
+    botones.forEach(item => item.classList.remove("activo"));
+    boton.classList.add("activo");
+
+    const stockInfo = document.getElementById("stockInfo");
+    const btnComprar = document.getElementById("btnComprar");
+
+    if (stockSeleccionado <= 0) {
+      stockInfo.innerHTML = `Talle seleccionado: <strong>${talleSeleccionado}</strong> · <span class="agotado-texto">Agotado</span>`;
+      btnComprar.disabled = true;
+      btnComprar.textContent = "Talle agotado";
+    } else {
+     stockInfo.innerHTML = `Talle seleccionado: <strong>${talleSeleccionado}</strong>`;
+      btnComprar.disabled = false;
+      btnComprar.textContent = "Agregar al carrito";
+    }
+  }
+
+  function cambiarCantidad(cambio) {
+  const nuevaCantidad = cantidadSeleccionada + cambio;
+
+  if (nuevaCantidad < 1) return;
+
+  if (nuevaCantidad > stockSeleccionado) {
+    const productoAviso = {
+      imagen: "img/producto-8.jpg",
+      nombre: "Camisa casual premium",
+      talle: talleSeleccionado
+    };
+
+    mostrarNotificacion(productoAviso);
+    document.getElementById("notifDetalle").textContent =
+      "No hay más stock disponible en talle " + talleSeleccionado;
+    return;
+  }
+
+  cantidadSeleccionada = nuevaCantidad;
+  document.getElementById("cantidadSeleccionada").textContent = cantidadSeleccionada;
+}
+
+  function agregarAlCarrito() {
+  if (stockSeleccionado <= 0) return;
+
+  const producto = {
+    marca: "Brooksfield",
+    nombre: "Camisa casual premium",
+    precio: 34310,
+    talle: talleSeleccionado,
+    cantidad: cantidadSeleccionada,
+    imagen: "img/producto-8.jpg"
+  };
+
+  let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+  const existente = carrito.find(item =>
+    item.nombre === producto.nombre && item.talle === producto.talle
+  );
+
+  const cantidadActual = existente ? existente.cantidad : 0;
+
+  if (cantidadActual + cantidadSeleccionada > stockSeleccionado) {
+    mostrarNotificacion(producto);
+    document.getElementById("notifDetalle").textContent =
+      "No hay más stock disponible en talle " + producto.talle;
+    return;
+  }
+
+  if (existente) {
+    existente.cantidad += cantidadSeleccionada;
+  } else {
+    carrito.push(producto);
+  }
+
+  localStorage.setItem("carrito", JSON.stringify(carrito));
+
+  actualizarContadorCarrito();
+  mostrarNotificacion(producto);
+}
+function mostrarNotificacion(producto) {
+  const notif = document.getElementById("notificacion");
+  const img = document.getElementById("notifImg");
+  const nombre = document.getElementById("notifNombre");
+  const detalle = document.getElementById("notifDetalle");
+
+  img.src = producto.imagen;
+  nombre.textContent = producto.nombre;
+  detalle.textContent = "Talle " + producto.talle + " agregado al carrito";
+
+  notif.classList.add("activa");
+
+  setTimeout(() => {
+    notif.classList.remove("activa");
+  }, 2500);
+}
+
+function actualizarContadorCarrito() {
+  const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+  const contador = document.getElementById("cartCount");
+
+  if (!contador) return;
+
+  const totalProductos = carrito.reduce((acc, item) => acc + item.cantidad, 0);
+  contador.textContent = totalProductos;
+}
+
+actualizarContadorCarrito();
+</script>
+
+<div id="notificacion" class="notificacion">
+  <img id="notifImg" src="" alt="">
+  <div class="notif-texto">
+    <strong id="notifNombre"></strong>
+    <span id="notifDetalle"></span>
+  </div>
+</div>
+
+</body>
+</html>

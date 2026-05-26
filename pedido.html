@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi pedido | USINA RHODIA</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<style>
+body{
+  background:#050505;
+  color:white;
+  font-family:Arial;
+  padding:40px;
+}
+
+.card{
+  max-width:700px;
+  margin:auto;
+  background:#111;
+  border:1px solid #222;
+  border-radius:24px;
+  padding:35px;
+}
+
+h1{
+  font-size:42px;
+  margin-bottom:20px;
+}
+
+.estado{
+  display:inline-block;
+  padding:8px 14px;
+  border-radius:999px;
+  font-weight:bold;
+  margin:15px 0;
+}
+
+.pending{ background:#ff3b30; }
+.paid{ background:#00c853; }
+.preparado{ background:#ff9800; }
+.enviado{ background:#2196f3; }
+.entregado{ background:#00c853; }
+
+.item{
+  border-top:1px solid #222;
+  padding:15px 0;
+}
+
+.btn{
+  display:inline-block;
+  margin-top:25px;
+  background:#ff2a2a;
+  color:white;
+  padding:14px 22px;
+  border-radius:14px;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+.ready_pickup{ background:#9c27b0; }
+.picked_up{ background:#00c853; }
+
+</style>
+</head>
+
+<body>
+
+<div class="card" id="pedido">
+  Cargando pedido...
+</div>
+
+<script>
+const supabaseUrl = "https://vegbamfkmcyvgvnjmxgs.supabase.co";
+const supabaseKey = "sb_publishable_BFRP4PzzRhvUw3OF0NZtpw_gXjejWn9";
+
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+const params = new URLSearchParams(window.location.search);
+const pedidoId = params.get("id");
+
+async function cargarPedido(){
+
+  const contenedor = document.getElementById("pedido");
+
+  if(!pedidoId){
+    contenedor.innerHTML = "<h1>Pedido no encontrado</h1>";
+    return;
+  }
+
+  const { data: pedido, error } = await supabaseClient
+    .from("orders")
+    .select(`
+      *,
+      order_items (*)
+    `)
+    .eq("id", pedidoId)
+    .single();
+
+  if(error || !pedido){
+    contenedor.innerHTML = "<h1>Pedido no encontrado</h1>";
+    return;
+  }
+
+  let estadoTexto = pedido.status;
+
+if(pedido.status === "pending"){
+  estadoTexto = "Pendiente de pago";
+}
+
+if(pedido.status === "paid"){
+  estadoTexto = "Pago aprobado";
+}
+
+if(pedido.status === "preparing"){
+  estadoTexto = "Preparando pedido";
+}
+
+if(pedido.status === "shipped"){
+  estadoTexto = "Pedido enviado";
+}
+
+if(pedido.status === "delivered"){
+  estadoTexto = "Pedido entregado";
+}
+
+if(pedido.status === "ready_pickup"){
+  estadoTexto = "Listo para retirar";
+}
+
+if(pedido.status === "picked_up"){
+  estadoTexto = "Pedido retirado";
+}
+
+  contenedor.innerHTML = `
+    <h1>Pedido #${pedido.id}</h1>
+
+    <p><b>Cliente:</b> ${pedido.customer_name}</p>
+    <p><b>Email:</b> ${pedido.customer_email}</p>
+    <p><b>Teléfono:</b> ${pedido.customer_phone}</p>
+    <p><b>Entrega:</b> ${pedido.delivery_method}</p>
+    <p><b>Dirección:</b> ${pedido.address || "-"}</p>
+    ${pedido.tracking_code ? `
+  <p><b>Código Andreani:</b> ${pedido.tracking_code}</p>
+` : ""}
+
+${pedido.tracking_url ? `
+  <a href="${pedido.tracking_url}" target="_blank" class="btn">
+    Ver seguimiento Andreani
+  </a>
+` : ""}
+
+
+
+    <div class="estado ${pedido.status}">
+      ${estadoTexto}
+    </div>
+
+    <h2>Productos</h2>
+
+    ${pedido.order_items.map(item => `
+      <div class="item">
+        <b>${item.product_name}</b><br>
+        Talle: ${item.size}<br>
+        Cantidad: ${item.quantity}<br>
+        Precio unitario: $${item.unit_price}
+      </div>
+    `).join("")}
+
+    <h2>Total: $${pedido.total}</h2>
+
+    <a href="index.html" class="btn">Volver a la tienda</a>
+  `;
+}
+
+cargarPedido();
+</script>
+
+</body>
+</html>

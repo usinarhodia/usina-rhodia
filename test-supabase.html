@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>USINA RHODIA | Supabase Test</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+  <style>
+    body {
+      background: #0f0f0f;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 40px;
+    }
+
+    .card {
+      max-width: 400px;
+      background: #171717;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .card img {
+      width: 100%;
+      height: 500px;
+      object-fit: cover;
+    }
+
+    .content {
+      padding: 20px;
+    }
+
+    .brand {
+      color: #ff2a2a;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .price {
+      font-size: 32px;
+      font-weight: 900;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="producto"></div>
+
+  <script>
+    const SUPABASE_URL = 'https://vegbamfkmcyvgvnjmxgs.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_BFRP4PzzRhvUw3OF0NZtpw_gXjejWn9';
+
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function cargarProducto() {
+
+      const { data: producto } = await client
+        .from('products')
+        .select('*')
+        .eq('id', 1)
+        .single();
+
+      const { data: imagen } = await client
+        .from('product_images')
+        .select('*')
+        .eq('product_id', 1)
+        .eq('position', 1)
+        .single();
+
+      const contenedor = document.getElementById('producto');
+
+      contenedor.innerHTML = `
+        <div class="card">
+          <img src="${imagen.image_url}" alt="">
+          
+          <div class="content">
+            <div class="brand">${producto.brand}</div>
+            <h1>${producto.name}</h1>
+            <div class="price">$${producto.price}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    cargarProducto();
+  </script>
+
+</body>
+</html>

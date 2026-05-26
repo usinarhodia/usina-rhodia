@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>USINA RHODIA</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    body {
+      background: #0f0f0f;
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top-strip {
+      width: 100%;
+      background: #c91010;
+      text-align: center;
+      padding: 10px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    header {
+      padding: 20px 30px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 3px;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .contenido {
+      max-width: 600px;
+    }
+
+    h1 {
+      font-size: 42px;
+      font-weight: 900;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+    }
+
+    p {
+      color: #cfcfcf;
+      margin-bottom: 30px;
+      font-size: 15px;
+    }
+
+    .contador {
+      font-size: 46px;
+      font-weight: 900;
+      color: #ff2a2a;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+
+    .sub {
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #9e9e9e;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 11px;
+      color: #777;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cart-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: #171717;
+  border: 1px solid rgba(255,255,255,0.10);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.cart-count {
+  min-width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: #ff2a2a;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+  </style>
+</head>
+<body>
+
+  <div class="top-strip">
+    Actualizando ofertas · Volvemos mañana
+  </div>
+
+  <header>
+    <div class="logo">USINA RHODIA</div>
+  </header>
+
+  <div class="main">
+    <div class="contenido">
+      <h1>Estamos cargando las próximas ofertas</h1>
+      <p>Las nuevas ofertas arrancan a las 08:00</p>
+
+      <div class="contador" id="contador">00:00:00</div>
+      <div class="sub">Tiempo restante</div>
+    </div>
+  </div>
+
+  <footer>
+    USINA RHODIA
+  </footer>
+
+  <script>
+    function actualizarContador() {
+      const ahora = new Date();
+      const contador = document.getElementById("contador");
+
+      const proximaApertura = new Date();
+
+      if (ahora.getHours() < 8) {
+        proximaApertura.setHours(8, 0, 0, 0);
+      } else {
+        proximaApertura.setDate(proximaApertura.getDate() + 1);
+        proximaApertura.setHours(8, 0, 0, 0);
+      }
+
+      const diferencia = proximaApertura - ahora;
+
+      if (diferencia <= 0) {
+        contador.textContent = "Abierto";
+        return;
+      }
+
+      const horas = Math.floor(diferencia / (1000 * 60 * 60));
+      const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+      const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
+
+      contador.textContent =
+        String(horas).padStart(2, "0") + ":" +
+        String(minutos).padStart(2, "0") + ":" +
+        String(segundos).padStart(2, "0");
+    }
+
+    actualizarContador();
+    setInterval(actualizarContador, 1000);
+  </script>
+  
+  <script>
+  function redirigirSegunHorarioMantenimiento() {
+    const ahora = new Date();
+    const hora = ahora.getHours();
+
+    if (hora >= 8 && hora < 23) {
+      window.location.href = "index.html";
+    }
+  }
+
+  redirigirSegunHorarioMantenimiento();
+  setInterval(redirigirSegunHorarioMantenimiento, 30000);
+</script>
+
+</body>
+</html>

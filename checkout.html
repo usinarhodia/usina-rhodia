@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>USINA RHODIA | Checkout</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    body {
+      background: #0f0f0f;
+      color: white;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .top-strip {
+      width: 100%;
+      background: #c91010;
+      padding: 10px 28px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    header {
+      background: rgba(15, 15, 15, 0.95);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 18px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 3px;
+    }
+
+    .header-link {
+      color: #ff2a2a;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .checkout-page {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 28px 70px;
+    }
+
+    .titulo {
+      font-size: 42px;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 26px;
+    }
+
+    .checkout-layout {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .form-card,
+    .resumen-card {
+      background: #171717;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 26px;
+    }
+
+    .bloque-titulo {
+      color: #ff2a2a;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .campo {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .campo.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 12px;
+      color: #cfcfcf;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      background: #101010;
+      border: 1px solid rgba(255,255,255,0.10);
+      color: white;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #ff2a2a;
+    }
+
+    textarea {
+      resize: none;
+      min-height: 90px;
+    }
+
+    .entrega-opciones {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .opcion {
+      border: 1px solid rgba(255,255,255,0.10);
+      background: #101010;
+      border-radius: 18px;
+      padding: 18px;
+      cursor: pointer;
+    }
+
+    .opcion input {
+      width: auto;
+      margin-right: 8px;
+    }
+
+    .opcion strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+
+    .opcion span {
+      font-size: 13px;
+      color: #bdbdbd;
+      line-height: 1.5;
+    }
+
+    .resumen-card {
+      position: sticky;
+      top: 110px;
+    }
+
+    .item-resumen {
+      display: grid;
+      grid-template-columns: 64px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .item-resumen img {
+      width: 64px;
+      height: 78px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    .item-resumen h3 {
+      font-size: 13px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .item-resumen p {
+      font-size: 12px;
+      color: #cfcfcf;
+      line-height: 1.4;
+    }
+
+    .item-precio {
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .linea-total {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      font-size: 14px;
+      color: #d0d0d0;
+    }
+
+    .linea-total.final {
+      font-size: 22px;
+      color: white;
+      font-weight: 900;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      margin-top: 8px;
+      padding-top: 18px;
+    }
+
+    .btn-pago {
+      width: 100%;
+      border: none;
+      background: #ff2a2a;
+      color: white;
+      border-radius: 16px;
+      padding: 16px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 1.1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: 18px;
+    }
+
+    .btn-pago:hover {
+      background: #e01f1f;
+    }
+
+    .mensaje {
+      display: none;
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 14px;
+      background: #101010;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #cfcfcf;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 1000px) {
+      .checkout-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .resumen-card {
+        position: static;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .header-inner,
+      .checkout-page {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .titulo {
+        font-size: 32px;
+      }
+
+      .form-grid,
+      .entrega-opciones {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+</head>
+
+<body>
+
+  <div class="top-strip">
+    Ofertas por 24 horas · Stock limitado · Sin reposición
+  </div>
+
+  <header>
+    <div class="header-inner">
+      <a href="index.html" class="logo">USINA RHODIA</a>
+      <a href="carrito.html" class="header-link">Volver al carrito</a>
+    </div>
+  </header>
+
+  <main class="checkout-page">
+    <h1 class="titulo">Finalizar compra</h1>
+
+    <div class="checkout-layout">
+      <section class="form-card">
+        <div class="bloque-titulo">Datos del comprador</div>
+
+        <div class="form-grid">
+          <div class="campo">
+            <label>Nombre</label>
+            <input type="text" id="nombre" placeholder="Ej: Juan">
+          </div>
+
+          <div class="campo">
+            <label>Apellido</label>
+            <input type="text" id="apellido" placeholder="Ej: Pérez">
+          </div>
+
+          <div class="campo">
+            <label>Teléfono</label>
+            <input type="tel" id="telefono" placeholder="Ej: 11 1234 5678">
+          </div>
+
+          <div class="campo">
+            <label>Email</label>
+            <input type="email" id="email" placeholder="Ej: mail@ejemplo.com">
+          </div>
+        </div>
+
+        <div class="bloque-titulo">Entrega</div>
+
+        <div class="entrega-opciones">
+          <label class="opcion">
+            <input type="radio" name="entrega" value="Retiro en Quilmes" checked onchange="toggleEnvio()">
+            <strong>Retiro</strong>
+            <span>Retiro en nuestra sucursal:<br>Primera Junta 525, Quilmes.</span>
+          </label>
+
+          <label class="opcion">
+            <input type="radio" name="entrega" value="Envío a domicilio" onchange="toggleEnvio()">
+            <strong>Envío</strong>
+            <span>Envío con los datos cargados.</span>
+          </label>
+        </div>
+
+        <div class="form-grid" id="bloqueEnvio">
+
+  <div class="campo full">
+    <label>Dirección</label>
+    <input type="text" id="direccion" placeholder="Calle y número">
+  </div>
+
+  <div class="campo">
+  <label>Piso / Departamento</label>
+  <input type="text" id="depto" placeholder="Ej: 4B, PB, Depto 2">
+</div>
+
+  <div class="campo">
+    <label>Ciudad</label>
+    <input type="text" id="ciudad" placeholder="Ej: Quilmes">
+  </div>
+
+  <div class="campo">
+    <label>Código postal</label>
+    <input type="text" id="cp" placeholder="Ej: 1878">
+  </div>
+
+
+</div>
+      </section>
+
+      <aside class="resumen-card">
+        <div class="bloque-titulo">Resumen del pedido</div>
+
+        <div id="resumenPedido"></div>
+
+        <div class="linea-total">
+          <span>Subtotal</span>
+          <span id="subtotal">$0</span>
+        </div>
+
+        <div class="linea-total">
+          <span>Envío</span>
+          <span id="envio">$0</span>
+        </div>
+
+        <div class="linea-total final">
+          <span>Total</span>
+          <span id="total">$0</span>
+        </div>
+
+        <button class="btn-pago" onclick="continuarPago()">Continuar al pago</button>
+
+        <div class="mensaje" id="mensajeCheckout"></div>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+
+    const SUPABASE_URL = "https://vegbamfkmcyvgvnjmxgs.supabase.co";
+const SUPABASE_KEY = "sb_publishable_BFRP4PzzRhvUw3OF0NZtpw_gXjejWn9";
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    function obtenerCarrito() {
+      return JSON.parse(localStorage.getItem("carrito")) || [];
+    }
+
+    function formatearPrecio(valor) {
+      return "$" + valor.toLocaleString("es-AR");
+    }
+
+    function renderizarResumen() {
+      const carrito = obtenerCarrito();
+      const contenedor = document.getElementById("resumenPedido");
+      const subtotalEl = document.getElementById("subtotal");
+      const envioEl = document.getElementById("envio");
+      const totalEl = document.getElementById("total");
+
+      if (carrito.length === 0) {
+        contenedor.innerHTML = "<p>Tu carrito está vacío.</p>";
+        subtotalEl.textContent = "$0";
+        envioEl.textContent = "$0";
+        totalEl.textContent = "$0";
+        return;
+      }
+
+      let subtotal = 0;
+      let html = "";
+
+      carrito.forEach(item => {
+        const totalItem = item.precio * item.cantidad;
+        subtotal += totalItem;
+
+        html += `
+          <div class="item-resumen">
+            <img src="${item.imagen}" alt="${item.nombre}">
+            <div>
+              <h3>${item.nombre}</h3>
+              <p>Talle: ${item.talle}<br>Cantidad: ${item.cantidad}</p>
+            </div>
+            <div class="item-precio">${formatearPrecio(totalItem)}</div>
+          </div>
+        `;
+      });
+
+      const envio = 0;
+      const total = subtotal + envio;
+
+      contenedor.innerHTML = html;
+      subtotalEl.textContent = formatearPrecio(subtotal);
+      envioEl.textContent = envio === 0 ? "A coordinar" : formatearPrecio(envio);
+      totalEl.textContent = formatearPrecio(total);
+    }
+
+    async function continuarPago() {
+  const carrito = obtenerCarrito();
+  const mensaje = document.getElementById("mensajeCheckout");
+
+  const nombre = document.getElementById("nombre").value.trim();
+  const apellido = document.getElementById("apellido").value.trim();
+  const telefono = document.getElementById("telefono").value.trim();
+  const email = document.getElementById("email").value.trim();
+
+  const entrega = document.querySelector('input[name="entrega"]:checked').value;
+  const direccion = document.getElementById("direccion") ? document.getElementById("direccion").value.trim() : "";
+  const ciudad = document.getElementById("ciudad") ? document.getElementById("ciudad").value.trim() : "";
+  const cp = document.getElementById("cp") ? document.getElementById("cp").value.trim() : "";
+  const depto = document.getElementById("depto") ? document.getElementById("depto").value.trim() : "";
+
+  if (carrito.length === 0) {
+    mensaje.style.display = "block";
+    mensaje.textContent = "Tu carrito está vacío.";
+    return;
+  }
+
+  if (!nombre || !apellido || !telefono || !email) {
+    mensaje.style.display = "block";
+    mensaje.textContent = "Completá nombre, apellido, teléfono y email para continuar.";
+    return;
+  }
+
+  if (entrega === "Envío a domicilio" && (!direccion || !ciudad || !cp)) {
+    mensaje.style.display = "block";
+    mensaje.textContent = "Completá dirección, ciudad y código postal para el envío.";
+    return;
+  }
+
+  const subtotal = carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+  const envio = 0;
+  const total = subtotal + envio;
+
+  mensaje.style.display = "block";
+  mensaje.textContent = "Creando pedido...";
+
+  const direccionCompleta =
+    entrega === "Envío a domicilio"
+      ? `${direccion}${depto ? ", " + depto : ""}, ${ciudad}, CP ${cp}`
+      : "Retiro en sucursal: Primera Junta 525, Quilmes";
+
+  const { data: pedido, error: errorPedido } = await supabaseClient
+    .from("orders")
+    .insert({
+      customer_name: nombre + " " + apellido,
+      customer_email: email,
+      customer_phone: telefono,
+      delivery_method: entrega,
+      address: direccionCompleta,
+      total: total,
+      status: "pending"
+    })
+    .select()
+    .single();
+
+  if (errorPedido) {
+    console.error(errorPedido);
+    mensaje.textContent = "Hubo un error creando el pedido. Probá de nuevo.";
+    return;
+  }
+
+  const items = carrito.map(item => ({
+    order_id: pedido.id,
+    product_id: item.product_id || null,
+    product_name: item.nombre,
+    size: item.talle,
+    quantity: item.cantidad,
+    unit_price: item.precio
+  }));
+
+  const { error: errorItems } = await supabaseClient
+    .from("order_items")
+    .insert(items);
+
+  if (errorItems) {
+    console.error(errorItems);
+    mensaje.textContent = "El pedido se creó, pero hubo un error guardando los productos.";
+    return;
+  }
+
+  localStorage.setItem("ultimoPedidoId", pedido.id);
+
+  mensaje.textContent = "Redirigiendo a Mercado Pago...";
+
+try {
+
+  const response = await fetch("http://localhost:3000/crear-preferencia", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+
+    body: JSON.stringify({
+  items: carrito,
+  order_id: pedido.id
+})
+  });
+
+  const data = await response.json();
+
+  console.log("Respuesta Mercado Pago:", data);
+
+
+if (data.init_point) {
+
+  window.location.href = data.init_point;
+
+} else if (data.id) {
+
+  window.location.href =
+    `https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=${data.id}`;
+
+} else {
+
+  mensaje.textContent = "Error iniciando Mercado Pago.";
+
+}
+
+} catch (error) {
+
+  console.log(error);
+
+  mensaje.textContent =
+    "No se pudo conectar con Mercado Pago.";
+
+}
+}
+    function toggleEnvio() {
+  const metodo = document.querySelector('input[name="entrega"]:checked').value;
+  const bloque = document.getElementById("bloqueEnvio");
+
+  if (metodo === "Retiro en Quilmes") {
+    bloque.style.display = "none";
+  } else {
+    bloque.style.display = "grid";
+  }
+}
+
+    renderizarResumen();
+
+    toggleEnvio();
+  </script>
+
+</body>
+</html>

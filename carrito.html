@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>USINA RHODIA | Carrito</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    body {
+      background: #0f0f0f;
+      color: #ffffff;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .top-strip {
+      width: 100%;
+      background: #c91010;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .top-strip-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 10px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .top-strip-left {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: #ffffff;
+    }
+
+    .top-strip-right {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.92);
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15, 15, 15, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 18px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: #ffffff;
+      text-transform: uppercase;
+    }
+
+    .header-links {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .header-link {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: #ff2a2a;
+    }
+
+    .carrito-page {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    .carrito-titulo {
+      font-size: 42px;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .carrito-layout {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .carrito-lista {
+      display: grid;
+      gap: 18px;
+    }
+
+    .item-carrito {
+      display: grid;
+      grid-template-columns: 140px 1fr auto;
+      gap: 18px;
+      align-items: center;
+      background: #171717;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 18px;
+    }
+
+    .item-imagen {
+      width: 140px;
+      height: 170px;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #101010;
+    }
+
+    .item-imagen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .item-marca {
+      color: #ff2a2a;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .item-nombre {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.05;
+      text-transform: uppercase;
+    }
+
+    .item-detalles {
+      color: #cfcfcf;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .item-acciones {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: flex-end;
+      min-width: 150px;
+    }
+
+    .item-precio {
+      font-size: 28px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .btn-eliminar {
+      border: 1px solid rgba(255,255,255,0.10);
+      background: transparent;
+      color: #ffffff;
+      border-radius: 14px;
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .btn-eliminar:hover {
+      border-color: #ff2a2a;
+      color: #ff2a2a;
+    }
+
+    .resumen {
+      background: #171717;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 24px;
+      position: sticky;
+      top: 120px;
+    }
+
+    .resumen-titulo {
+      font-size: 26px;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .resumen-linea {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+      color: #d0d0d0;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .resumen-linea.total {
+      font-size: 20px;
+      font-weight: 900;
+      color: #ffffff;
+      border-bottom: none;
+      padding-top: 18px;
+    }
+
+    .btn-checkout,
+.btn-seguir {
+  display: block;
+  width: 100%;
+  text-align: center;
+  border: none;
+  border-radius: 16px;
+  padding: 16px 18px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: 14px;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+    .btn-checkout {
+      background: #ff2a2a;
+      color: #ffffff;
+    }
+
+    .btn-checkout:hover {
+      background: #e01f1f;
+      transform: translateY(-1px);
+    }
+
+    .btn-seguir {
+      background: transparent;
+      color: #ffffff;
+      border: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .btn-seguir:hover {
+      border-color: #ff2a2a;
+      color: #ff2a2a;
+    }
+
+    .carrito-vacio {
+      background: #171717;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 50px 24px;
+      text-align: center;
+      color: #d0d0d0;
+    }
+
+    .carrito-vacio h2 {
+      font-size: 30px;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: #ffffff;
+      margin-bottom: 12px;
+    }
+
+    .carrito-vacio p {
+      font-size: 15px;
+      margin-bottom: 22px;
+      line-height: 1.6;
+    }
+
+    .mensaje-checkout {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 14px;
+      background: #101010;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #d0d0d0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 22px 28px;
+      text-align: center;
+      color: #b8b8b8;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 1100px) {
+      .carrito-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .resumen {
+        position: static;
+      }
+    }
+
+    @media (max-width: 780px) {
+      .top-strip-inner,
+      .header-inner,
+      .carrito-page,
+      footer {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .top-strip-inner,
+      .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .carrito-titulo {
+        font-size: 32px;
+      }
+
+      .item-carrito {
+        grid-template-columns: 1fr;
+        align-items: start;
+      }
+
+      .item-imagen {
+        width: 100%;
+        height: 280px;
+      }
+
+      .item-acciones {
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-strip">
+    <div class="top-strip-inner">
+      <a href="index.html" class="top-strip-left">USINA RHODIA</a>
+      <div class="top-strip-right">Ofertas por 24 horas · Stock limitado · Sin reposición</div>
+    </div>
+  </div>
+
+  <header>
+    <div class="header-inner">
+      <a href="index.html" class="logo">USINA RHODIA</a>
+
+      <div class="header-links">
+        <a href="index.html" class="header-link">Volver a ofertas</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="carrito-page">
+    <h1 class="carrito-titulo">Carrito</h1>
+
+    <div class="carrito-layout">
+      <section id="carritoContenido"></section>
+
+      <aside class="resumen">
+        <h2 class="resumen-titulo">Resumen</h2>
+
+        <div class="resumen-linea">
+          <span>Productos</span>
+          <span id="resumenCantidad">0</span>
+        </div>
+
+        <div class="resumen-linea">
+          <span>Subtotal</span>
+          <span id="resumenSubtotal">$0</span>
+        </div>
+
+        <div class="resumen-linea total">
+          <span>Total</span>
+          <span id="resumenTotal">$0</span>
+        </div>
+
+        <a href="checkout.html" class="btn-checkout">Finalizar compra</a>
+        <a href="index.html" class="btn-seguir">Seguir comprando</a>
+
+        <div class="mensaje-checkout" id="mensajeCheckout" style="display: none;">
+          Más adelante acá vamos a conectar el checkout real, pagos y envío.
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer>
+    USINA RHODIA — Carrito
+  </footer>
+
+  <script>
+    function obtenerCarrito() {
+      return JSON.parse(localStorage.getItem("carrito")) || [];
+    }
+
+    function guardarCarrito(carrito) {
+      localStorage.setItem("carrito", JSON.stringify(carrito));
+    }
+
+    function formatearPrecio(valor) {
+      return "$" + valor.toLocaleString("es-AR");
+    }
+
+    function eliminarDelCarrito(index) {
+      const carrito = obtenerCarrito();
+      carrito.splice(index, 1);
+      guardarCarrito(carrito);
+      renderizarCarrito();
+    }
+
+    function finalizarCompra() {
+      const carrito = obtenerCarrito();
+      const mensaje = document.getElementById("mensajeCheckout");
+
+      if (carrito.length === 0) {
+        mensaje.style.display = "block";
+        mensaje.textContent = "Tu carrito está vacío.";
+        return;
+      }
+
+      mensaje.style.display = "block";
+      mensaje.textContent = "Después conectamos acá el checkout real, envíos y pagos.";
+    }
+
+    function renderizarCarrito() {
+      const carrito = obtenerCarrito();
+      const contenedor = document.getElementById("carritoContenido");
+      const cantidad = document.getElementById("resumenCantidad");
+      const subtotal = document.getElementById("resumenSubtotal");
+      const total = document.getElementById("resumenTotal");
+
+      if (carrito.length === 0) {
+        contenedor.innerHTML = `
+          <div class="carrito-vacio">
+            <h2>Tu carrito está vacío</h2>
+            <p>Agregá productos desde las ofertas del día para verlos acá.</p>
+            <a href="index.html" class="btn-checkout" style="display:inline-block; width:auto; margin-top:0;">Ver ofertas</a>
+          </div>
+        `;
+        cantidad.textContent = "0";
+        subtotal.textContent = "$0";
+        total.textContent = "$0";
+        return;
+      }
+
+      let html = `<div class="carrito-lista">`;
+      let totalGeneral = 0;
+      let cantidadGeneral = 0;
+
+      carrito.forEach((item, index) => {
+        const precioItem = item.precio * item.cantidad;
+        totalGeneral += precioItem;
+        cantidadGeneral += item.cantidad;
+
+        html += `
+          <article class="item-carrito">
+            <div class="item-imagen">
+              <img src="${item.imagen}" alt="${item.nombre}">
+            </div>
+
+            <div class="item-info">
+              <div class="item-marca">${item.marca}</div>
+              <h2 class="item-nombre">${item.nombre}</h2>
+              <div class="item-detalles">
+                Talle: <strong>${item.talle}</strong><br>
+                Cantidad: <strong>${item.cantidad}</strong>
+              </div>
+            </div>
+
+            <div class="item-acciones">
+              <div class="item-precio">${formatearPrecio(precioItem)}</div>
+              <button class="btn-eliminar" onclick="eliminarDelCarrito(${index})">Eliminar</button>
+            </div>
+          </article>
+        `;
+      });
+
+      html += `</div>`;
+      contenedor.innerHTML = html;
+
+      cantidad.textContent = cantidadGeneral;
+      subtotal.textContent = formatearPrecio(totalGeneral);
+      total.textContent = formatearPrecio(totalGeneral);
+    }
+
+    renderizarCarrito();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>USINA RHODIA</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    body {
+      background: #0f0f0f;
+      color: #ffffff;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+    }
+
+    .top-strip {
+      width: 100%;
+      background: #c91010;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .top-strip-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 10px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .top-strip-left {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: #ffffff;
+    }
+
+    .top-strip-right {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.92);
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15, 15, 15, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 18px 28px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .logo {
+      justify-self: start;
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: #ffffff;
+    }
+
+    .header-right {
+      justify-self: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-cart {
+  justify-self: end;
+}
+
+    .header-info {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #ff2a2a;
+      text-align: center;
+    }
+
+    .countdown-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #171717;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      padding: 10px 14px;
+      border-radius: 14px;
+      transition: all 0.25s ease;
+    }
+
+    .countdown-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #bdbdbd;
+      transition: color 0.25s ease;
+    }
+
+    #countdown {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #ff2a2a;
+      transition: color 0.25s ease, transform 0.25s ease;
+    }
+
+    .countdown-box.warning {
+      background: #221111;
+      border-color: rgba(255, 42, 42, 0.45);
+      box-shadow: 0 0 0 1px rgba(255, 42, 42, 0.08);
+    }
+
+    .countdown-box.warning .countdown-label {
+      color: #ffd0d0;
+    }
+
+    .countdown-box.warning #countdown {
+      color: #ff3b3b;
+    }
+
+    .countdown-box.danger {
+      background: #2a0d0d;
+      border-color: rgba(255, 42, 42, 0.75);
+      box-shadow: 0 0 18px rgba(255, 42, 42, 0.18);
+    }
+
+    .countdown-box.danger .countdown-label {
+      color: #ffffff;
+    }
+
+    .countdown-box.danger #countdown {
+      color: #ff1f1f;
+      transform: scale(1.04);
+    }
+
+    .hero {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 18px 28px 0;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+      min-height: 78vh;
+    }
+
+    .hero-main {
+      position: relative;
+      border-radius: 28px;
+      overflow: hidden;
+      min-height: 620px;
+      background: #1c1c1c;
+    }
+
+    .hero-main img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.78) 0%,
+        rgba(0, 0, 0, 0.38) 45%,
+        rgba(0, 0, 0, 0.12) 100%
+      );
+      display: flex;
+      align-items: end;
+      padding: 38px;
+    }
+
+    .hero-copy {
+      max-width: 600px;
+      color: white;
+    }
+
+    .hero-kicker {
+      display: inline-block;
+      margin-bottom: 14px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: #ff2a2a;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .hero-copy h1 {
+      font-size: 62px;
+      line-height: 0.95;
+      margin-bottom: 0;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .hero-side {
+      display: grid;
+      grid-template-rows: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .side-card {
+      background: #171717;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 28px;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 301px;
+    }
+
+    .side-card img {
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .side-content {
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .side-content span {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
+      color: #ff2a2a;
+    }
+
+    .side-content h3 {
+      font-size: 26px;
+      line-height: 1.06;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: #ffffff;
+      max-width: 260px;
+    }
+
+    .side-content p {
+      font-size: 14px;
+      line-height: 1.5;
+      color: #d2d2d2;
+    }
+
+    .productos-section {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 28px 70px;
+    }
+
+    .productos-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .productos-header h2 {
+      font-size: 42px;
+      line-height: 0.98;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: #ffffff;
+    }
+
+    .productos-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .producto {
+      background: #171717;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 22px;
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .producto:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 14px 30px rgba(0,0,0,0.35);
+      border-color: rgba(255, 42, 42, 0.5);
+    }
+
+    .producto-img {
+      position: relative;
+      height: 370px;
+      background: #1f1f1f;
+    }
+
+    .producto-img img {
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .descuento {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: #ff2a2a;
+      color: white;
+      border-radius: 999px;
+      padding: 8px 11px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .producto-info {
+      padding: 18px;
+    }
+
+    .marca {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: #ff2a2a;
+      margin-bottom: 8px;
+    }
+
+    .producto-info h3 {
+      font-size: 17px;
+      line-height: 1.25;
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .descripcion {
+      font-size: 13px;
+      line-height: 1.5;
+      color: #c9c9c9;
+      margin-bottom: 14px;
+      min-height: 38px;
+    }
+
+    .precios {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 16px;
+    }
+
+    .precio-anterior {
+      font-size: 14px;
+      color: #9b9b9b;
+      text-decoration: line-through;
+    }
+
+    .precio-actual {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+    }
+
+  .btn {
+  display: block; /* 🔥 CLAVE */
+  width: 100%;
+  text-align: center; /* centra el texto */
+  border: none;
+  background: #ff2a2a;
+  color: white;
+  border-radius: 14px;
+  padding: 14px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+    .btn:hover {
+      background: #e01f1f;
+      transform: translateY(-1px);
+    }
+   
+
+
+
+
+    footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 22px 28px;
+      text-align: center;
+      color: #b8b8b8;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 1200px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-main {
+        min-height: 520px;
+      }
+
+      .productos-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 780px) {
+      .top-strip-inner,
+      .header-inner,
+      .hero,
+      .productos-section,
+      footer {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .top-strip-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .header-inner {
+        grid-template-columns: 1fr;
+        justify-items: start;
+        gap: 12px;
+      }
+
+      .logo {
+        justify-self: start;
+      }
+
+      .header-right {
+        justify-self: stretch;
+        width: 100%;
+        align-items: flex-start;
+      }
+
+      .header-info {
+        text-align: left;
+      }
+
+      .countdown-box {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .hero-copy h1 {
+        font-size: 38px;
+      }
+
+      .side-card {
+        grid-template-columns: 1fr;
+      }
+
+      .productos-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .productos-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .producto-img {
+        height: 420px;
+      }
+    }
+
+    .header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cart-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: #171717;
+  border: 1px solid rgba(255,255,255,0.10);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.cart-count {
+  min-width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: #ff2a2a;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+</head>
+<body>
+
+  <div class="top-strip">
+    <div class="top-strip-inner">
+      <div class="top-strip-left">USINA RHODIA</div>
+      <div class="top-strip-right">Ofertas por 24 horas · Stock limitado · Sin reposición</div>
+    </div>
+  </div>
+
+  <header>
+  <div class="header-inner">
+    <a href="index.html" class="logo">USINA RHODIA</a>
+
+    <div class="header-right">
+      <div class="header-info">Ofertas activas de 08:00 a 23:00</div>
+
+      <div class="countdown-box" id="countdown-box">
+        <span class="countdown-label">Cierran en</span>
+        <span id="countdown">00:00:00</span>
+      </div>
+    </div>
+
+    <div class="header-cart">
+      <a href="carrito.html" class="cart-link">
+        <span>Carrito</span>
+        <span class="cart-count" id="cartCount">0</span>
+      </a>
+    </div>
+  </div>
+</header>
+  <section class="hero">
+    <div class="hero-grid">
+      <div class="hero-main">
+        <img src="img/hero-principal.jpg" alt="Modelo principal USINA RHODIA">
+        <div class="hero-overlay">
+          <div class="hero-copy">
+            <span class="hero-kicker">Ofertas del día</span>
+            <h1>8 productos. 24 horas. Ofertas limitadas.</h1>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-side">
+        <div class="side-card">
+          <img src="img/modelo-1.jpg" alt="Modelo con prendas de marca">
+          <div class="side-content">
+            <span>Marcas seleccionadas</span>
+            <h3>Wrangler, Lee, Brooksfield, Mistral, Canterbury</h3>
+            <p>Las mejores marcas, los mejores precios.</p>
+          </div>
+        </div>
+
+        <div class="side-card">
+          <img src="img/modelo-2.jpg" alt="Modelo editorial USINA RHODIA">
+          <div class="side-content">
+            <span>Drop diario</span>
+            <h3>Lo que ves hoy<br>mañana no está</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="productos-section">
+    <div class="productos-header">
+      <h2>8 ofertas de hoy</h2>
+    </div>
+
+   <div class="productos-grid" id="productosGrid"></div>
+
+  </section>
+
+  <footer>
+    USINA RHODIA — Ofertas diarias por 24 horas
+  </footer>
+
+  <script>
+    function actualizarContador() {
+      const ahora = new Date();
+
+      const apertura = new Date();
+      apertura.setHours(8, 0, 0, 0);
+
+      const cierre = new Date();
+      cierre.setHours(23, 0, 0, 0);
+
+      const contador = document.getElementById("countdown");
+      const contadorBox = document.getElementById("countdown-box");
+
+      if (!contador || !contadorBox) return;
+
+      contadorBox.classList.remove("warning", "danger");
+
+      if (ahora < apertura) {
+        contador.textContent = "Arranca 08:00";
+        return;
+      }
+
+      if (ahora >= cierre) {
+        contador.textContent = "Finalizadas";
+        contadorBox.classList.add("danger");
+        return;
+      }
+
+      const diferencia = cierre - ahora;
+
+      if (diferencia <= 0) {
+        contador.textContent = "Finalizadas";
+        contadorBox.classList.add("danger");
+        return;
+      }
+
+      const horas = Math.floor(diferencia / (1000 * 60 * 60));
+      const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+      const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
+
+      const hh = String(horas).padStart(2, "0");
+      const mm = String(minutos).padStart(2, "0");
+      const ss = String(segundos).padStart(2, "0");
+
+      contador.textContent = `${hh}:${mm}:${ss}`;
+
+      if (diferencia <= 2 * 60 * 60 * 1000) {
+        contadorBox.classList.add("warning");
+      }
+
+      if (diferencia <= 1 * 60 * 60 * 1000) {
+        contadorBox.classList.remove("warning");
+        contadorBox.classList.add("danger");
+      }
+    }
+
+    actualizarContador();
+    setInterval(actualizarContador, 1000);
+
+    function actualizarContadorCarrito() {
+  const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+  const contador = document.getElementById("cartCount");
+
+  if (!contador) return;
+
+  const totalProductos = carrito.reduce((acc, item) => acc + item.cantidad, 0);
+  contador.textContent = totalProductos;
+}
+
+actualizarContadorCarrito();
+  </script>
+<script>
+  function redirigirSegunHorarioIndex() {
+    const ahora = new Date();
+    const hora = ahora.getHours();
+
+    if (hora < 8 || hora >= 23) {
+      window.location.href = "mantenimiento.html";
+    }
+  }
+
+  redirigirSegunHorarioIndex();
+  setInterval(redirigirSegunHorarioIndex, 30000);
+
+  const SUPABASE_URL = "https://vegbamfkmcyvgvnjmxgs.supabase.co";
+const SUPABASE_KEY = "sb_publishable_BFRP4PzzRhvUw3OF0NZtpw_gXjejWn9";
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+function formatearPrecio(valor) {
+  return "$" + valor.toLocaleString("es-AR");
+}
+
+async function cargarProductosHome() {
+  const { data: productos, error } = await supabaseClient
+    .from("products")
+.select("*")
+.eq("active", true)
+    .eq("active", true)
+    .order("id", { ascending: true })
+    .limit(8);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  const ids = productos.map(producto => producto.id);
+
+  const { data: imagenes } = await supabaseClient
+    .from("product_images")
+    .select("*")
+    .in("product_id", ids)
+    .eq("position", 1);
+
+  const contenedor = document.getElementById("productosGrid");
+
+  contenedor.innerHTML = productos.map(producto => {
+    const imagen = imagenes.find(img => img.product_id === producto.id);
+
+    return `
+      <div class="producto">
+        <div class="producto-img">
+          <img src="${imagen ? imagen.image_url : "img/producto-1.jpg"}" alt="${producto.name}">
+          <span class="descuento">-${producto.discount}%</span>
+        </div>
+
+        <div class="producto-info">
+          <div class="marca">${producto.brand}</div>
+          <h3>${producto.name}</h3>
+
+          <div class="precios">
+            <span class="precio-anterior">${formatearPrecio(producto.old_price)}</span>
+            <span class="precio-actual">${formatearPrecio(producto.price)}</span>
+          </div>
+
+          <a href="producto.html?id=${producto.id}" class="btn">Ver producto</a>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+cargarProductosHome();
+</script>
+
+</body>
+</html>
