@@ -104,7 +104,11 @@
 
 const params = new URLSearchParams(window.location.search);
 
-const orderId = params.get("order_id");
+let orderId = params.get("order_id");
+
+if(!orderId){
+  orderId = localStorage.getItem("ultimoPedidoId");
+}
 
 const btnPedido = document.getElementById("btnPedido");
 
@@ -118,7 +122,7 @@ if(orderId){
   btnPedido.href = "index.html";
 
   btnPedido.textContent =
-    "VOLVER A LA TIENDA";
+"VER EL ESTADO DE MI PEDIDO";
 
 }
 

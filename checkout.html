@@ -529,7 +529,12 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
       customer_email: email,
       customer_phone: telefono,
       delivery_method: entrega,
-      address: direccionCompleta,
+
+      address: direccion,
+floor_apartment: depto,
+city: ciudad,
+postal_code: cp,
+
       total: total,
       status: "pending"
     })
@@ -546,6 +551,7 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     order_id: pedido.id,
     product_id: item.product_id || null,
     product_name: item.nombre,
+    color: item.color,
     size: item.talle,
     quantity: item.cantidad,
     unit_price: item.precio

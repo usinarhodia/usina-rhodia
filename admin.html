@@ -97,6 +97,28 @@ h1{
   color:white;
 }
 
+.colores-admin{
+  display:flex;
+  gap:12px;
+  margin:15px 0;
+}
+
+.color-opcion input{
+  display:none;
+}
+
+.color-opcion span{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  display:block;
+  cursor:pointer;
+}
+
+.color-opcion input:checked + span{
+  outline:3px solid black;
+}
+
 </style>
 </head>
 
@@ -121,7 +143,45 @@ h1{
   <input type="number" id="precioAnterior" placeholder="Precio anterior">
   <input type="number" id="precio" placeholder="Precio oferta">
   <input type="number" id="descuento" placeholder="Descuento">
-  <input type="file" id="imagenArchivo" accept="image/*">
+  <input type="file" id="imagenArchivo" accept="image/*" multiple>
+  <label>Color</label>
+
+<h3>Colores disponibles</h3>
+
+<div class="colores-admin">
+
+  <label class="color-opcion">
+    <input type="checkbox" class="colorProducto" value="Negro">
+    <span style="background:black;"></span>
+  </label>
+
+  <label class="color-opcion">
+    <input type="checkbox" class="colorProducto" value="Blanco">
+    <span style="background:white; border:1px solid #ccc;"></span>
+  </label>
+
+  <label class="color-opcion">
+    <input type="checkbox" class="colorProducto" value="Azul">
+    <span style="background:blue;"></span>
+  </label>
+
+  <label class="color-opcion">
+    <input type="checkbox" class="colorProducto" value="Rojo">
+    <span style="background:red;"></span>
+  </label>
+
+  <label class="color-opcion">
+    <input type="checkbox" class="colorProducto" value="Verde">
+    <span style="background:green;"></span>
+  </label>
+
+  <label class="color-opcion">
+    <input type="checkbox" class="colorProducto" value="Beige">
+    <span style="background:beige;"></span>
+  </label>
+
+</div>
+
   <h3>Stock por talle</h3>
 
 <input type="number" id="stockXS" placeholder="Stock XS" value="0">
@@ -220,12 +280,16 @@ async function cargarPedidos(){
 <ul>
   ${pedido.order_items.map(item => `
     <li>
-      ${item.product_name} — Talle ${item.size} — x${item.quantity} — $${item.unit_price}
+      ${item.product_name} — Color ${item.color || "-"} — Talle ${item.size} — x${item.quantity} — $${item.unit_price}
     </li>
   `).join("")}
 </ul>
 
         <p><b>Entrega:</b> ${pedido.delivery_method}</p>
+        <p><b>Dirección:</b> ${pedido.address || "-"}</p>
+<p><b>Piso / Departamento:</b> ${pedido.floor_apartment || "-"}</p>
+<p><b>Ciudad:</b> ${pedido.city || "-"}</p>
+<p><b>Código postal:</b> ${pedido.postal_code || "-"}</p>
 
         <div class="estado ${pedido.status}">
           ${pedido.status}
@@ -402,9 +466,15 @@ async function crearProducto(){
   const precioAnterior = Number(document.getElementById("precioAnterior").value);
   const precio = Number(document.getElementById("precio").value);
   const descuento = Number(document.getElementById("descuento").value);
-  const imagenArchivo = document.getElementById("imagenArchivo").files[0];
-  const nombreArchivo =
-  Date.now() + "-" + imagenArchivo.name;
+  const imagenes = document.getElementById("imagenArchivo").files;
+  const coloresSeleccionados = [
+  ...document.querySelectorAll(".colorProducto:checked")
+].map(color => color.value);
+
+if(imagenes.length === 0){
+  alert("Seleccioná al menos una imagen");
+  return;
+}
 
   if(!marca || !nombre || !precioAnterior || !precio || !descuento || !imagenArchivo){
     alert("Completá todos los campos");
@@ -418,6 +488,7 @@ async function crearProducto(){
       name: nombre,
       old_price: precioAnterior,
       price: precio,
+      colors: coloresSeleccionados,
       discount: descuento,
       active: true
     })
@@ -430,37 +501,50 @@ async function crearProducto(){
     return;
   }
 
-  const { error: errorUpload } = await supabaseClient
-  .storage
-  .from("productos")
-  .upload(nombreArchivo, imagenArchivo);
 
-if(errorUpload){
-  console.log(errorUpload);
-  alert("Error subiendo imagen");
-  return;
+const imageUrls = [];
+
+for(let i = 0; i < imagenes.length; i++){
+
+  const archivo = imagenes[i];
+
+  const nombreArchivoPrincipal =
+    Date.now() + "-" + i + "-" + archivo.name;
+
+  const { error: errorUpload } = await supabaseClient
+    .storage
+    .from("productos")
+    .upload(nombreArchivoPrincipal, archivo);
+
+  if(errorUpload){
+    console.log(errorUpload);
+    alert("Error subiendo imagen");
+    return;
+  }
+
+  const { data: publicUrlData } = supabaseClient
+    .storage
+    .from("productos")
+    .getPublicUrl(nombreArchivoPrincipal);
+
+  imageUrls.push(publicUrlData.publicUrl);
 }
 
-const { data: publicUrlData } = supabaseClient
-  .storage
-  .from("productos")
-  .getPublicUrl(nombreArchivo);
+for(let i = 0; i < imageUrls.length; i++){
 
-const imageUrl = publicUrlData.publicUrl;
-
-const { error: errorImagen } = await supabaseClient
-  .from("product_images")
-  .insert({
-    product_id: producto.id,
-    image_url: imageUrl,
-    position: 1
-  });
+  const { error: errorImagen } = await supabaseClient
+    .from("product_images")
+    .insert({
+      product_id: producto.id,
+      image_url: imageUrls[i],
+      position: i + 1
+    });
 
   if(errorImagen){
     console.log(errorImagen);
-    alert("Producto creado, pero falló la imagen");
-    return;
   }
+}
+
 
   const stocks = [
   { size: "XS", stock: Number(document.getElementById("stockXS").value) || 0 },

@@ -96,6 +96,34 @@
       .titulo-producto { font-size: 30px; }
       .precio-actual { font-size: 36px; }
     }
+
+    #colores{
+  display:flex;
+  gap:10px;
+  margin:10px 0 20px;
+}
+
+.color-btn{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  border:2px solid #333;
+  background:transparent;
+  padding:3px;
+  cursor:pointer;
+}
+
+.color-btn span{
+  display:block;
+  width:100%;
+  height:100%;
+  border-radius:50%;
+}
+
+.color-btn.activo{
+  border-color:#ff2a2a;
+}
+
   </style>
 </head>
 
@@ -146,6 +174,9 @@
         <div class="bloque">
           <div class="bloque-titulo">Elegí talle</div>
 
+          <h3>Color</h3>
+<div id="colores"></div>
+
           <div class="talles" id="talles"></div>
 
           <div class="stock-info" id="stockInfo"></div>
@@ -190,6 +221,7 @@
     let talleSeleccionado = null;
     let stockSeleccionado = 0;
     let cantidadSeleccionada = 1;
+    let colorSeleccionado = "";
 
     function formatearPrecio(valor) {
       return "$" + valor.toLocaleString("es-AR");
@@ -244,6 +276,21 @@
       `).join("");
     }
 
+    function colorCSS(color){
+  const colores = {
+    "Negro": "#000000",
+    "Blanco": "#ffffff",
+    "Azul": "#003cff",
+    "Rojo": "#ff0000",
+    "Verde": "#008000",
+    "Beige": "#d6c3a3",
+    "Gris": "#808080",
+    "Celeste": "#7ec8e3"
+  };
+
+  return colores[color] || "#111";
+}
+
     async function cargarStock() {
       const { data: stock } = await supabaseClient
         .from("product_stock")
@@ -251,6 +298,27 @@
         .eq("product_id", productoId);
 
       const talles = document.getElementById("talles");
+
+      const coloresDiv = document.getElementById("colores");
+
+const { data: producto } = await supabaseClient
+  .from("products")
+  .select("colors")
+  .eq("id", productoId)
+  .single();
+
+if(producto?.colors?.length){
+  coloresDiv.innerHTML = producto.colors.map((color, index) => `
+  <button
+    class="color-btn ${index === 0 ? "activo" : ""}"
+    onclick="seleccionarColor('${color}', this)"
+  >
+    <span style="background:${colorCSS(color)};"></span>
+  </button>
+`).join("");
+
+colorSeleccionado = producto.colors[0];
+}
 
       if (!stock || stock.length === 0) {
         talles.innerHTML = "<p>No hay stock disponible.</p>";
@@ -337,6 +405,7 @@
         nombre: productoActual.name,
         precio: productoActual.price,
         talle: talleSeleccionado,
+        color: colorSeleccionado,
         cantidad: cantidadSeleccionada,
         imagen: document.getElementById("imagenPrincipal").src
       };
@@ -377,6 +446,16 @@
       const totalProductos = carrito.reduce((acc, item) => acc + item.cantidad, 0);
       contador.textContent = totalProductos;
     }
+
+    function seleccionarColor(color, boton){
+  colorSeleccionado = color;
+
+  document.querySelectorAll(".color-btn").forEach(btn => {
+    btn.classList.remove("activo");
+  });
+
+  boton.classList.add("activo");
+}
 
     cargarProducto();
   </script>

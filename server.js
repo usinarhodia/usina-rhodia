@@ -40,10 +40,12 @@ app.post("/crear-preferencia", async (req, res) => {
       })),
 
       back_urls: {
-  success: `http://127.0.0.1:5500/success.html?order_id=${req.body.order_id}`,
-  failure: "http://127.0.0.1:5500/failure.html",
-  pending: "http://127.0.0.1:5500/pending.html"
-}
+  success: `https://usina-rhodia-production.up.railway.app/success.html?order_id=${req.body.order_id}`,
+  failure: "https://usina-rhodia-production.up.railway.app/failure.html",
+  pending: "https://usina-rhodia-production.up.railway.app/pending.html"
+},
+
+auto_return: "approved",
 
     };
 
