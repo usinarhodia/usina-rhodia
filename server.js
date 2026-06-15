@@ -28,43 +28,185 @@ app.use(express.static(__dirname));
 
 app.post("/crear-preferencia", async (req, res) => {
   try {
+    const { cliente, items } = req.body;
 
-    const items = req.body.items;
+    if (!cliente || !items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({
+        error: "Datos inválidos"
+      });
+    }
+
+    const {
+      nombre,
+      apellido,
+      email,
+      telefono,
+      dni,
+      entrega,
+      direccion,
+      depto,
+      ciudad,
+      cp
+    } = cliente;
+
+    if (!nombre || !apellido || !email || !telefono || !dni || !entrega) {
+      return res.status(400).json({
+        error: "Faltan datos del cliente"
+      });
+    }
+
+    if (entrega === "Envío a domicilio" && (!direccion || !ciudad || !cp)) {
+      return res.status(400).json({
+        error: "Faltan datos de envío"
+      });
+    }
+
+    let total = 0;
+    const itemsValidados = [];
+
+    for (const item of items) {
+      const productId = item.product_id;
+      const talle = item.talle;
+      const color = item.color || "";
+      const cantidad = Number(item.cantidad);
+
+      if (!productId || !talle || !cantidad || cantidad <= 0) {
+        return res.status(400).json({
+          error: "Producto inválido"
+        });
+      }
+
+      const { data: producto, error: errorProducto } = await supabase
+        .from("products")
+        .select("*")
+        .eq("id", productId)
+        .eq("active", true)
+        .single();
+
+      if (errorProducto || !producto) {
+        return res.status(400).json({
+          error: "Producto no encontrado o inactivo"
+        });
+      }
+
+      const { data: stock, error: errorStock } = await supabase
+        .from("product_stock")
+        .select("*")
+        .eq("product_id", productId)
+        .eq("size", talle)
+        .single();
+
+      if (errorStock || !stock) {
+        return res.status(400).json({
+          error: `No hay stock para ${producto.name} talle ${talle}`
+        });
+      }
+
+      if (stock.stock < cantidad) {
+        return res.status(400).json({
+          error: `Stock insuficiente para ${producto.name} talle ${talle}`
+        });
+      }
+
+      const precioReal = Number(producto.price);
+      const subtotal = precioReal * cantidad;
+
+      total += subtotal;
+
+      itemsValidados.push({
+        product_id: producto.id,
+        product_name: producto.name,
+        color: color,
+        size: talle,
+        quantity: cantidad,
+        unit_price: precioReal,
+        subtotal: subtotal
+      });
+    }
+
+    const { data: pedido, error: errorPedido } = await supabase
+      .from("orders")
+      .insert({
+        customer_name: nombre + " " + apellido,
+        customer_email: email,
+        customer_phone: telefono,
+        customer_dni: dni,
+        delivery_method: entrega,
+        address: direccion || "",
+        floor_apartment: depto || "",
+        city: ciudad || "",
+        postal_code: cp || "",
+        total: total,
+        status: "pending"
+      })
+      .select()
+      .single();
+
+    if (errorPedido) {
+      console.log("Error creando pedido:", errorPedido);
+
+      return res.status(500).json({
+        error: "Error creando pedido"
+      });
+    }
+
+    const itemsParaInsertar = itemsValidados.map(item => ({
+      order_id: pedido.id,
+      product_id: item.product_id,
+      product_name: item.product_name,
+      color: item.color,
+      size: item.size,
+      quantity: item.quantity,
+      unit_price: item.unit_price
+    }));
+
+    const { error: errorItems } = await supabase
+      .from("order_items")
+      .insert(itemsParaInsertar);
+
+    if (errorItems) {
+      console.log("Error guardando items:", errorItems);
+
+      return res.status(500).json({
+        error: "Error guardando productos del pedido"
+      });
+    }
 
     const preference = {
-        external_reference: req.body.order_id.toString(),
-      items: items.map(item => ({
-        title: item.nombre,
-        quantity: item.cantidad,
+      external_reference: pedido.id.toString(),
+
+      items: itemsValidados.map(item => ({
+        title: item.product_name,
+        quantity: item.quantity,
         currency_id: "ARS",
-        unit_price: Number(item.precio)
+        unit_price: item.unit_price
       })),
 
       back_urls: {
-  success: `https://usina-rhodia-production.up.railway.app/success.html?order_id=${req.body.order_id}`,
-  failure: "https://usina-rhodia-production.up.railway.app/failure.html",
-  pending: "https://usina-rhodia-production.up.railway.app/pending.html"
-},
+        success: `https://usina-rhodia-production.up.railway.app/success.html?order_id=${pedido.id}`,
+        failure: "https://usina-rhodia-production.up.railway.app/failure.html",
+        pending: "https://usina-rhodia-production.up.railway.app/pending.html"
+      },
 
-auto_return: "approved",
-
+      auto_return: "approved"
     };
 
     const response = await preferenceClient.create({ body: preference });
 
     res.json({
-  id: response.id,
-  init_point: response.init_point
-});
+      id: response.id,
+      init_point: response.init_point,
+      order_id: pedido.id
+    });
 
   } catch (error) {
-  console.log("ERROR MERCADO PAGO:", error);
+    console.log("ERROR CREAR PREFERENCIA SEGURA:", error);
 
-  res.status(500).json({
-    error: "Error creando preferencia",
-    detalle: error.message || error
-  });
-}
+    res.status(500).json({
+      error: "Error creando preferencia segura",
+      detalle: error.message || error
+    });
+  }
 });
 
 app.post("/webhook", async (req, res) => {
@@ -88,6 +230,17 @@ app.post("/webhook", async (req, res) => {
         const orderId = payment.external_reference;
 
         console.log("Pedido aprobado:", orderId);
+
+        const { data: pedidoActual } = await supabase
+  .from("orders")
+  .select("status")
+  .eq("id", orderId)
+  .single();
+
+if (pedidoActual?.status === "paid") {
+  console.log("Pedido ya procesado, no se descuenta stock otra vez");
+  return res.sendStatus(200);
+}
 
         await supabase
           .from("orders")
@@ -123,7 +276,7 @@ if(pedidoMail){
         </p>
 
         <a
-          href="http://127.0.0.1:5500/pedido.html?id=${orderId}"
+          href="https://usina-rhodia-production.up.railway.app/pedido.html?id=${orderId}"
           style="
             display:inline-block;
             background:#ff2a2a;

@@ -348,6 +348,12 @@
             <label>Email</label>
             <input type="email" id="email" placeholder="Ej: mail@ejemplo.com">
           </div>
+
+<div class="campo">
+  <label>DNI</label>
+  <input type="text" id="dni" placeholder="Ej: 12345678">
+</div>
+
         </div>
 
         <div class="bloque-titulo">Entrega</div>
@@ -485,6 +491,7 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   const apellido = document.getElementById("apellido").value.trim();
   const telefono = document.getElementById("telefono").value.trim();
   const email = document.getElementById("email").value.trim();
+  const dni = document.getElementById("dni").value.trim();
 
   const entrega = document.querySelector('input[name="entrega"]:checked').value;
   const direccion = document.getElementById("direccion") ? document.getElementById("direccion").value.trim() : "";
@@ -498,11 +505,11 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     return;
   }
 
-  if (!nombre || !apellido || !telefono || !email) {
-    mensaje.style.display = "block";
-    mensaje.textContent = "Completá nombre, apellido, teléfono y email para continuar.";
-    return;
-  }
+  if (!nombre || !apellido || !telefono || !email || !dni) {
+  mensaje.style.display = "block";
+  mensaje.textContent = "Completá nombre, apellido, teléfono, email y DNI para continuar.";
+  return;
+}
 
   if (entrega === "Envío a domicilio" && (!direccion || !ciudad || !cp)) {
     mensaje.style.display = "block";
@@ -522,70 +529,43 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
       ? `${direccion}${depto ? ", " + depto : ""}, ${ciudad}, CP ${cp}`
       : "Retiro en sucursal: Primera Junta 525, Quilmes";
 
-  const { data: pedido, error: errorPedido } = await supabaseClient
-    .from("orders")
-    .insert({
-      customer_name: nombre + " " + apellido,
-      customer_email: email,
-      customer_phone: telefono,
-      delivery_method: entrega,
-
-      address: direccion,
-floor_apartment: depto,
-city: ciudad,
-postal_code: cp,
-
-      total: total,
-      status: "pending"
-    })
-    .select()
-    .single();
-
-  if (errorPedido) {
-    console.error(errorPedido);
-    mensaje.textContent = "Hubo un error creando el pedido. Probá de nuevo.";
-    return;
-  }
-
-  const items = carrito.map(item => ({
-    order_id: pedido.id,
-    product_id: item.product_id || null,
-    product_name: item.nombre,
-    color: item.color,
-    size: item.talle,
-    quantity: item.cantidad,
-    unit_price: item.precio
-  }));
-
-  const { error: errorItems } = await supabaseClient
-    .from("order_items")
-    .insert(items);
-
-  if (errorItems) {
-    console.error(errorItems);
-    mensaje.textContent = "El pedido se creó, pero hubo un error guardando los productos.";
-    return;
-  }
-
-  localStorage.setItem("ultimoPedidoId", pedido.id);
-
-  mensaje.textContent = "Redirigiendo a Mercado Pago...";
+  mensaje.textContent = "Creando pedido seguro...";
 
 try {
+  const productosSeguros = carrito.map(item => ({
+    product_id: item.product_id,
+    talle: item.talle,
+    color: item.color,
+    cantidad: item.cantidad
+  }));
 
   const response = await fetch("https://usina-rhodia-production.up.railway.app/crear-preferencia", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
-
     body: JSON.stringify({
-  items: carrito,
-  order_id: pedido.id
-})
+      cliente: {
+        nombre: nombre,
+        apellido: apellido,
+        email: email,
+        telefono: telefono,
+        dni: dni,
+        entrega: entrega,
+        direccion: direccion,
+        depto: depto,
+        ciudad: ciudad,
+        cp: cp
+      },
+      items: productosSeguros
+    })
   });
 
   const data = await response.json();
+
+  if (data.order_id) {
+  localStorage.setItem("ultimoPedidoId", data.order_id);
+}
 
   console.log("Respuesta Mercado Pago:", data);
 
