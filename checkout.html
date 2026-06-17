@@ -514,7 +514,7 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
  if (!direccion || !ciudad || !cp) {
   mensaje.style.display = "block";
-  mensaje.textContent = "Completá dirección, ciudad y código postal para continuar.";
+  mensaje.textContent = "Completá dirección, ciudad y código postal. Estos datos son necesarios para realizar la factura.";
   return;
 }
 
