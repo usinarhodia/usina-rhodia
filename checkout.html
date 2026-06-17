@@ -372,7 +372,8 @@
           </label>
         </div>
 
-        <div class="form-grid" id="bloqueEnvio" style="display:grid;">
+        <div class="bloque-titulo">Datos para facturación</div>
+<div class="form-grid">
 
   <div class="campo full">
     <label>Dirección</label>
@@ -595,10 +596,6 @@ if (data.init_point) {
 }
 }
     function toggleEnvio() {
-  const bloque = document.getElementById("bloqueEnvio");
-  if (bloque) {
-    bloque.style.display = "grid";
-  }
 }
 
     renderizarResumen();
