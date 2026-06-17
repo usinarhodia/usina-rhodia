@@ -192,9 +192,24 @@ h1{
 <input type="number" id="stockXXL" placeholder="Stock XXL" value="0">
 <input type="number" id="stockXXXL" placeholder="Stock XXXL" value="0">
 
-  <button onclick="crearProducto()">
-    Crear producto
-  </button>
+  <button onclick="crearProducto('arriba')">
+  Crear producto prenda superior
+</button>
+
+<h3>Stock pantalón / jean</h3>
+
+<input type="number" id="stock28" placeholder="Stock 28" value="0">
+<input type="number" id="stock30" placeholder="Stock 30" value="0">
+<input type="number" id="stock32" placeholder="Stock 32" value="0">
+<input type="number" id="stock34" placeholder="Stock 34" value="0">
+<input type="number" id="stock36" placeholder="Stock 36" value="0">
+<input type="number" id="stock38" placeholder="Stock 38" value="0">
+<input type="number" id="stock40" placeholder="Stock 40" value="0">
+<input type="number" id="stock42" placeholder="Stock 42" value="0">
+
+<button onclick="crearProducto('pantalon')">
+  Crear producto pantalón / jean
+</button>
 
 </div>
 
@@ -273,6 +288,8 @@ async function cargarPedidos(){
         <p><b>Email:</b> ${pedido.customer_email}</p>
 
         <p><b>Teléfono:</b> ${pedido.customer_phone}</p>
+
+        <p><b>DNI:</b> ${pedido.customer_dni || "-"}</p>
 
         <p><b>Total:</b> $${pedido.total}</p>
         <p><b>Productos:</b></p>
@@ -459,7 +476,7 @@ async function eliminarProducto(id){
   cargarProductos();
 }
 
-async function crearProducto(){
+async function crearProducto(tipo){
 
   const marca = document.getElementById("marca").value.trim();
   const nombre = document.getElementById("nombre").value.trim();
@@ -546,7 +563,7 @@ for(let i = 0; i < imageUrls.length; i++){
 }
 
 
-  const stocks = [
+ const tallesArriba = [
   { size: "XS", stock: Number(document.getElementById("stockXS").value) || 0 },
   { size: "S", stock: Number(document.getElementById("stockS").value) || 0 },
   { size: "M", stock: Number(document.getElementById("stockM").value) || 0 },
@@ -554,7 +571,20 @@ for(let i = 0; i < imageUrls.length; i++){
   { size: "XL", stock: Number(document.getElementById("stockXL").value) || 0 },
   { size: "XXL", stock: Number(document.getElementById("stockXXL").value) || 0 },
   { size: "XXXL", stock: Number(document.getElementById("stockXXXL").value) || 0 }
-].map(item => ({
+];
+
+const tallesPantalon = [
+  { size: "28", stock: Number(document.getElementById("stock28").value) || 0 },
+  { size: "30", stock: Number(document.getElementById("stock30").value) || 0 },
+  { size: "32", stock: Number(document.getElementById("stock32").value) || 0 },
+  { size: "34", stock: Number(document.getElementById("stock34").value) || 0 },
+  { size: "36", stock: Number(document.getElementById("stock36").value) || 0 },
+  { size: "38", stock: Number(document.getElementById("stock38").value) || 0 },
+  { size: "40", stock: Number(document.getElementById("stock40").value) || 0 },
+  { size: "42", stock: Number(document.getElementById("stock42").value) || 0 }
+];
+
+const stocks = (tipo === "pantalon" ? tallesPantalon : tallesArriba).map(item => ({
   product_id: producto.id,
   size: item.size,
   stock: item.stock

@@ -372,7 +372,7 @@
           </label>
         </div>
 
-        <div class="form-grid" id="bloqueEnvio">
+        <div class="form-grid" id="bloqueEnvio" style="display:grid;">
 
   <div class="campo full">
     <label>Dirección</label>
@@ -511,11 +511,11 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   return;
 }
 
-  if (entrega === "Envío a domicilio" && (!direccion || !ciudad || !cp)) {
-    mensaje.style.display = "block";
-    mensaje.textContent = "Completá dirección, ciudad y código postal para el envío.";
-    return;
-  }
+ if (!direccion || !ciudad || !cp) {
+  mensaje.style.display = "block";
+  mensaje.textContent = "Completá dirección, ciudad y código postal para continuar.";
+  return;
+}
 
   const subtotal = carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
   const envio = 0;
@@ -595,12 +595,8 @@ if (data.init_point) {
 }
 }
     function toggleEnvio() {
-  const metodo = document.querySelector('input[name="entrega"]:checked').value;
   const bloque = document.getElementById("bloqueEnvio");
-
-  if (metodo === "Retiro en Quilmes") {
-    bloque.style.display = "none";
-  } else {
+  if (bloque) {
     bloque.style.display = "grid";
   }
 }
