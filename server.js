@@ -31,34 +31,13 @@ app.post("/crear-preferencia", async (req, res) => {
     const { cliente, items } = req.body;
 
     if (!cliente || !items || !Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({
-        error: "Datos inválidos"
-      });
+      return res.status(400).json({ error: "Datos inválidos" });
     }
 
-    const {
-      nombre,
-      apellido,
-      email,
-      telefono,
-      dni,
-      entrega,
-      direccion,
-      depto,
-      ciudad,
-      cp
-    } = cliente;
+    const { nombre, apellido, email, telefono, dni, entrega, direccion, depto, ciudad, cp } = cliente;
 
-    if (!nombre || !apellido || !email || !telefono || !dni || !entrega) {
-      return res.status(400).json({
-        error: "Faltan datos del cliente"
-      });
-    }
-
-    if (entrega === "Envío a domicilio" && (!direccion || !ciudad || !cp)) {
-      return res.status(400).json({
-        error: "Faltan datos de envío"
-      });
+    if (!nombre || !apellido || !email || !telefono || !dni || !entrega || !direccion || !ciudad || !cp) {
+      return res.status(400).json({ error: "Faltan datos del cliente o facturación" });
     }
 
     let total = 0;
@@ -71,9 +50,7 @@ app.post("/crear-preferencia", async (req, res) => {
       const cantidad = Number(item.cantidad);
 
       if (!productId || !talle || !cantidad || cantidad <= 0) {
-        return res.status(400).json({
-          error: "Producto inválido"
-        });
+        return res.status(400).json({ error: "Producto inválido" });
       }
 
       const { data: producto, error: errorProducto } = await supabase
@@ -84,9 +61,7 @@ app.post("/crear-preferencia", async (req, res) => {
         .single();
 
       if (errorProducto || !producto) {
-        return res.status(400).json({
-          error: "Producto no encontrado o inactivo"
-        });
+        return res.status(400).json({ error: "Producto no encontrado o inactivo" });
       }
 
       const { data: stock, error: errorStock } = await supabase
@@ -110,44 +85,137 @@ app.post("/crear-preferencia", async (req, res) => {
 
       const precioReal = Number(producto.price);
       const subtotal = precioReal * cantidad;
-
       total += subtotal;
 
       itemsValidados.push({
         product_id: producto.id,
         product_name: producto.name,
-        color: color,
+        color,
         size: talle,
         quantity: cantidad,
         unit_price: precioReal,
-        subtotal: subtotal
+        subtotal
       });
     }
 
-    const { data: pedido, error: errorPedido } = await supabase
-      .from("orders")
+    const { data: intento, error: errorIntento } = await supabase
+      .from("checkout_attempts")
       .insert({
-        customer_name: nombre + " " + apellido,
-        customer_email: email,
-        customer_phone: telefono,
-        customer_dni: dni,
-        delivery_method: entrega,
-        address: direccion || "",
-        floor_apartment: depto || "",
-        city: ciudad || "",
-        postal_code: cp || "",
-        total: total,
+        cliente,
+        items: itemsValidados,
+        total,
         status: "pending"
       })
       .select()
       .single();
 
-    if (errorPedido) {
-      console.log("Error creando pedido:", errorPedido);
+    if (errorIntento) {
+      console.log("Error creando intento:", errorIntento);
+      return res.status(500).json({ error: "Error creando intento de pago" });
+    }
 
-      return res.status(500).json({
-        error: "Error creando pedido"
-      });
+    const preference = {
+      external_reference: intento.id.toString(),
+
+      items: itemsValidados.map(item => ({
+        title: item.product_name,
+        quantity: item.quantity,
+        currency_id: "ARS",
+        unit_price: item.unit_price
+      })),
+
+      back_urls: {
+        success: `https://usina-rhodia-production.up.railway.app/success.html?attempt_id=${intento.id}`,
+        failure: "https://usina-rhodia-production.up.railway.app/failure.html",
+        pending: "https://usina-rhodia-production.up.railway.app/pending.html"
+      },
+
+      auto_return: "approved"
+    };
+
+    const response = await preferenceClient.create({ body: preference });
+
+    res.json({
+      id: response.id,
+      init_point: response.init_point,
+      attempt_id: intento.id
+    });
+
+  } catch (error) {
+    console.log("ERROR CREAR PREFERENCIA SEGURA:", error);
+
+    res.status(500).json({
+      error: "Error creando preferencia segura",
+      detalle: error.message || error
+    });
+  }
+});
+
+app.post("/webhook", async (req, res) => {
+  try {
+    console.log("Webhook recibido:", req.body);
+
+    if (req.body.type !== "payment") {
+      return res.sendStatus(200);
+    }
+
+    const paymentId = req.body.data.id;
+
+    const payment = await paymentClient.get({
+      id: paymentId
+    });
+
+    console.log("Pago completo:", payment);
+
+    if (payment.status !== "approved") {
+      return res.sendStatus(200);
+    }
+
+    const attemptId = payment.external_reference;
+
+    console.log("Intento aprobado:", attemptId);
+
+    const { data: intento, error: errorIntento } = await supabase
+      .from("checkout_attempts")
+      .select("*")
+      .eq("id", attemptId)
+      .single();
+
+    if (errorIntento || !intento) {
+      console.log("No se encontró checkout_attempt:", errorIntento);
+      return res.sendStatus(200);
+    }
+
+    if (intento.status === "paid") {
+      console.log("Intento ya procesado, no se duplica pedido");
+      return res.sendStatus(200);
+    }
+
+    const cliente = intento.cliente;
+    const itemsValidados = intento.items;
+    const total = intento.total;
+
+    const { data: pedido, error: errorPedido } = await supabase
+      .from("orders")
+      .insert({
+        customer_name: cliente.nombre + " " + cliente.apellido,
+        customer_email: cliente.email,
+        customer_phone: cliente.telefono,
+        customer_dni: cliente.dni,
+        delivery_method: cliente.entrega,
+        address: cliente.direccion || "",
+        floor_apartment: cliente.depto || "",
+        city: cliente.ciudad || "",
+        postal_code: cliente.cp || "",
+        total: total,
+        status: "paid"
+      })
+      .select()
+      .single();
+
+    if (errorPedido) {
+      console.log("Error creando pedido final:", errorPedido);
+      return res.sendStatus(500);
     }
 
     const itemsParaInsertar = itemsValidados.map(item => ({
@@ -165,193 +233,90 @@ app.post("/crear-preferencia", async (req, res) => {
       .insert(itemsParaInsertar);
 
     if (errorItems) {
-      console.log("Error guardando items:", errorItems);
-
-      return res.status(500).json({
-        error: "Error guardando productos del pedido"
-      });
+      console.log("Error creando items finales:", errorItems);
+      return res.sendStatus(500);
     }
 
-    const preference = {
-      external_reference: pedido.id.toString(),
+    await supabase
+      .from("checkout_attempts")
+      .update({
+        status: "paid"
+      })
+      .eq("id", attemptId);
 
-      items: itemsValidados.map(item => ({
-        title: item.product_name,
-        quantity: item.quantity,
-        currency_id: "ARS",
-        unit_price: item.unit_price
-      })),
+    console.log("Pedido final creado:", pedido.id);
 
-      back_urls: {
-        success: `https://usina-rhodia-production.up.railway.app/success.html?order_id=${pedido.id}`,
-        failure: "https://usina-rhodia-production.up.railway.app/failure.html",
-        pending: "https://usina-rhodia-production.up.railway.app/pending.html"
-      },
+    for (const item of itemsValidados) {
+      const { data: stockActual, error: errorStock } = await supabase
+        .from("product_stock")
+        .select("*")
+        .eq("product_id", item.product_id)
+        .eq("size", item.size)
+        .single();
 
-      auto_return: "approved"
-    };
-
-    const response = await preferenceClient.create({ body: preference });
-
-    res.json({
-      id: response.id,
-      init_point: response.init_point,
-      order_id: pedido.id
-    });
-
-  } catch (error) {
-    console.log("ERROR CREAR PREFERENCIA SEGURA:", error);
-
-    res.status(500).json({
-      error: "Error creando preferencia segura",
-      detalle: error.message || error
-    });
-  }
-});
-
-app.post("/webhook", async (req, res) => {
-
-  try {
-
-    console.log("Webhook recibido:", req.body);
-
-    if (req.body.type === "payment") {
-
-      const paymentId = req.body.data.id;
-
-      const payment = await paymentClient.get({
-        id: paymentId
-      });
-
-      console.log("Pago completo:", payment);
-
-      if (payment.status === "approved") {
-
-        const orderId = payment.external_reference;
-
-        console.log("Pedido aprobado:", orderId);
-
-        const { data: pedidoActual } = await supabase
-  .from("orders")
-  .select("status")
-  .eq("id", orderId)
-  .single();
-
-if (pedidoActual?.status === "paid") {
-  console.log("Pedido ya procesado, no se descuenta stock otra vez");
-  return res.sendStatus(200);
-}
-
-        await supabase
-          .from("orders")
-          .update({
-  status: "paid"
-})
-          .eq("id", orderId);
-
-        console.log("Pedido actualizado a paid");
-
-        const { data: pedidoMail } = await supabase
-  .from("orders")
-  .select("*")
-  .eq("id", orderId)
-  .single();
-
-if(pedidoMail){
-
-  await resend.emails.send({
-    from: "USINA RHODIA <onboarding@resend.dev>",
-    to: pedidoMail.customer_email,
-    subject: `Tu compra fue aprobada #${orderId}`,
-    html: `
-      <div style="font-family:Arial;padding:20px;">
-        <h1>Pago aprobado ✅</h1>
-
-        <p>Hola ${pedidoMail.customer_name},</p>
-
-        <p>Tu compra fue aprobada correctamente.</p>
-
-        <p>
-          Podés seguir tu pedido acá:
-        </p>
-
-        <a
-          href="https://usina-rhodia-production.up.railway.app/pedido.html?id=${orderId}"
-          style="
-            display:inline-block;
-            background:#ff2a2a;
-            color:white;
-            padding:14px 20px;
-            border-radius:10px;
-            text-decoration:none;
-            font-weight:bold;
-          "
-        >
-          Ver mi pedido
-        </a>
-
-      </div>
-    `
-  });
-
-  console.log("Mail enviado");
-}
-
-        const { data: itemsPedido, error: errorItems } = await supabase
-  .from("order_items")
-  .select("*")
-  .eq("order_id", orderId);
-
-if (errorItems) {
-  console.log("Error buscando items del pedido:", errorItems);
-  return;
-}
-
-for (const item of itemsPedido) {
-  const { data: stockActual, error: errorStock } = await supabase
-    .from("product_stock")
-    .select("*")
-    .eq("product_id", item.product_id)
-    .eq("size", item.size)
-    .single();
-
-  if (errorStock || !stockActual) {
-    console.log("No se encontró stock para:", item);
-    continue;
-  }
-
-  const nuevoStock = stockActual.stock - item.quantity;
-
-  const { error: errorUpdateStock } = await supabase
-    .from("product_stock")
-    .update({
-      stock: nuevoStock < 0 ? 0 : nuevoStock
-    })
-    .eq("id", stockActual.id);
-
-  if (errorUpdateStock) {
-    console.log("Error actualizando stock:", errorUpdateStock);
-  } else {
-    console.log(
-      `Stock actualizado: producto ${item.product_id}, talle ${item.size}, nuevo stock ${nuevoStock}`
-    );
-  }
-}
-
+      if (errorStock || !stockActual) {
+        console.log("No se encontró stock para:", item);
+        continue;
       }
 
+      const nuevoStock = stockActual.stock - item.quantity;
+
+      const { error: errorUpdateStock } = await supabase
+        .from("product_stock")
+        .update({
+          stock: nuevoStock < 0 ? 0 : nuevoStock
+        })
+        .eq("id", stockActual.id);
+
+      if (errorUpdateStock) {
+        console.log("Error actualizando stock:", errorUpdateStock);
+      } else {
+        console.log(
+          `Stock actualizado: producto ${item.product_id}, talle ${item.size}, nuevo stock ${nuevoStock}`
+        );
+      }
     }
 
-    res.sendStatus(200);
+    await resend.emails.send({
+      from: "USINA RHODIA <onboarding@resend.dev>",
+      to: cliente.email,
+      subject: `Tu compra fue aprobada #${pedido.id}`,
+      html: `
+        <div style="font-family:Arial;padding:20px;">
+          <h1>Pago aprobado ✅</h1>
+
+          <p>Hola ${cliente.nombre} ${cliente.apellido},</p>
+
+          <p>Tu compra fue aprobada correctamente.</p>
+
+          <p>Podés seguir tu pedido acá:</p>
+
+          <a
+            href="https://usina-rhodia-production.up.railway.app/pedido.html?id=${pedido.id}"
+            style="
+              display:inline-block;
+              background:#ff2a2a;
+              color:white;
+              padding:14px 20px;
+              border-radius:10px;
+              text-decoration:none;
+              font-weight:bold;
+            "
+          >
+            Ver mi pedido
+          </a>
+        </div>
+      `
+    });
+
+    console.log("Mail enviado");
+
+    return res.sendStatus(200);
 
   } catch (error) {
-
     console.log("Error webhook:", error);
-
-    res.sendStatus(500);
-
+    return res.sendStatus(500);
   }
-
 });
 
 app.listen(3000, () => {
