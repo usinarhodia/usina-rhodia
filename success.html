@@ -101,32 +101,18 @@
   </div>
 
 <script>
-
 const params = new URLSearchParams(window.location.search);
-
-let orderId = params.get("order_id");
-
-if(!orderId){
-  orderId = localStorage.getItem("ultimoPedidoId");
-}
+const attemptId = params.get("attempt_id");
 
 const btnPedido = document.getElementById("btnPedido");
 
-if(orderId){
-
-  btnPedido.href =
-    "pedido.html?id=" + orderId;
-
-}else{
-
+if (attemptId) {
   btnPedido.href = "index.html";
-
-  btnPedido.textContent =
-"VER EL ESTADO DE MI PEDIDO";
-
+  btnPedido.textContent = "TU PEDIDO SE ESTÁ PROCESANDO";
+} else {
+  btnPedido.href = "index.html";
+  btnPedido.textContent = "VOLVER A LA TIENDA";
 }
-
 </script>
-
 </body>
 </html>
