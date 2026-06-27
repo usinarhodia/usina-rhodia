@@ -626,43 +626,16 @@ if(imagenes.length === 0){
     return;
   }
 
-  const { data: producto, error: errorProducto } = await supabaseClient
-    .from("products")
-    .insert({
-      brand: marca,
-      name: nombre,
-      old_price: precioAnterior,
-      price: precio,
-      colors: coloresSeleccionados,
-      discount: descuento,
-      coditm: coditm,
-bas_color: basColor,
-bas_color_name: basColorName,
-active: true
-    })
-    .select()
-    .single();
-
-  if(errorProducto){
-    console.log(errorProducto);
-    alert("Error creando producto");
-    return;
-  }
-
-
-const imageUrls = [];
+  const imageUrls = [];
 
 for(let i = 0; i < imagenes.length; i++){
-
   const archivo = imagenes[i];
-
-  const nombreArchivoPrincipal =
-    Date.now() + "-" + i + "-" + archivo.name;
+  const nombreArchivo = Date.now() + "-" + i + "-" + archivo.name;
 
   const { error: errorUpload } = await supabaseClient
     .storage
     .from("productos")
-    .upload(nombreArchivoPrincipal, archivo);
+    .upload(nombreArchivo, archivo);
 
   if(errorUpload){
     console.log(errorUpload);
@@ -673,28 +646,12 @@ for(let i = 0; i < imagenes.length; i++){
   const { data: publicUrlData } = supabaseClient
     .storage
     .from("productos")
-    .getPublicUrl(nombreArchivoPrincipal);
+    .getPublicUrl(nombreArchivo);
 
   imageUrls.push(publicUrlData.publicUrl);
 }
 
-for(let i = 0; i < imageUrls.length; i++){
-
-  const { error: errorImagen } = await supabaseClient
-    .from("product_images")
-    .insert({
-      product_id: producto.id,
-      image_url: imageUrls[i],
-      position: i + 1
-    });
-
-  if(errorImagen){
-    console.log(errorImagen);
-  }
-}
-
-
- const tallesArriba = [
+const tallesArriba = [
   { size: "XS", stock: Number(document.getElementById("stockXS").value) || 0 },
   { size: "S", stock: Number(document.getElementById("stockS").value) || 0 },
   { size: "M", stock: Number(document.getElementById("stockM").value) || 0 },
@@ -715,19 +672,32 @@ const tallesPantalon = [
   { size: "42", stock: Number(document.getElementById("stock42").value) || 0 }
 ];
 
-const stocks = (tipo === "pantalon" ? tallesPantalon : tallesArriba).map(item => ({
-  product_id: producto.id,
-  size: item.size,
-  stock: item.stock
-}));
+const stocks = tipo === "pantalon" ? tallesPantalon : tallesArriba;
 
-const { error: errorStock } = await supabaseClient
-  .from("product_stock")
-  .insert(stocks);
+const response = await fetch("https://usina-rhodia-production.up.railway.app/admin/crear-producto", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    brand: marca,
+    name: nombre,
+    old_price: precioAnterior,
+    price: precio,
+    discount: descuento,
+    coditm,
+    bas_color: basColor,
+    bas_color_name: basColorName,
+    imageUrls,
+    stocks
+  })
+});
 
-if(errorStock){
-  console.log(errorStock);
-  alert("Producto creado, pero falló el stock");
+const resultado = await response.json();
+
+if(!response.ok){
+  console.log(resultado);
+  alert("Error creando producto");
   return;
 }
 

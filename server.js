@@ -167,6 +167,83 @@ app.post("/crear-preferencia", async (req, res) => {
   }
 });
 
+app.post("/admin/crear-producto", async (req, res) => {
+  try {
+    const {
+      brand,
+      name,
+      old_price,
+      price,
+      discount,
+      coditm,
+      bas_color,
+      bas_color_name,
+      imageUrls,
+      stocks
+    } = req.body;
+
+    const { data: producto, error: errorProducto } = await supabase
+      .from("products")
+      .insert({
+        brand,
+        name,
+        old_price,
+        price,
+        discount,
+        coditm,
+        bas_color,
+        bas_color_name,
+        active: true
+      })
+      .select()
+      .single();
+
+    if (errorProducto) {
+      console.log("Error creando producto:", errorProducto);
+      return res.status(400).json({ error: "Error creando producto" });
+    }
+
+    const imagenesParaInsertar = imageUrls.map((url, index) => ({
+      product_id: producto.id,
+      image_url: url,
+      position: index + 1
+    }));
+
+    const { error: errorImagenes } = await supabase
+      .from("product_images")
+      .insert(imagenesParaInsertar);
+
+    if (errorImagenes) {
+      console.log("Error creando imágenes:", errorImagenes);
+      return res.status(400).json({ error: "Error creando imágenes" });
+    }
+
+    const stockParaInsertar = stocks.map(item => ({
+      product_id: producto.id,
+      size: item.size,
+      stock: item.stock
+    }));
+
+    const { error: errorStock } = await supabase
+      .from("product_stock")
+      .insert(stockParaInsertar);
+
+    if (errorStock) {
+      console.log("Error creando stock:", errorStock);
+      return res.status(400).json({ error: "Error creando stock" });
+    }
+
+    res.json({
+      success: true,
+      product_id: producto.id
+    });
+
+  } catch (error) {
+    console.log("Error admin crear producto:", error);
+    res.status(500).json({ error: "Error interno creando producto" });
+  }
+});
+
 app.post("/webhook", async (req, res) => {
   try {
     console.log("Webhook recibido:", req.body);
