@@ -103,25 +103,80 @@
   margin:10px 0 20px;
 }
 
-.color-btn{
-  width:34px;
-  height:34px;
-  border-radius:50%;
-  border:2px solid #333;
-  background:transparent;
-  padding:3px;
-  cursor:pointer;
-}
-
-.color-btn span{
-  display:block;
-  width:100%;
-  height:100%;
-  border-radius:50%;
-}
 
 .color-btn.activo{
   border-color:#ff2a2a;
+}
+
+#talles{
+  margin-top: 16px;
+}
+
+.colores-producto{
+  display:flex;
+  gap:12px;
+  margin-top:14px;
+  margin-bottom:22px;
+}
+
+
+.color-btn.activo{
+  background:#ff2a2a;
+  border-color:#ff2a2a;
+}
+
+.colores-producto{
+  display:flex;
+  gap:18px;
+  margin-top:14px;
+  margin-bottom:28px;
+}
+
+
+.color-btn.activo{
+  border-color:#ff2a2a;
+  box-shadow:0 0 0 3px rgba(255,42,42,.25);
+}
+
+.color-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:7px;
+  color:white;
+  font-size:11px;
+  font-weight:bold;
+  max-width:80px;
+  text-align:center;
+}
+
+#talles{
+  margin-top:16px;
+}
+
+#colores{
+  display:flex;
+  gap:12px;
+  margin-top:14px;
+  margin-bottom:26px;
+}
+
+.color-circulo{
+  width:46px;
+  height:46px;
+  min-width:46px;
+  border-radius:50%;
+  border:2px solid #333;
+  cursor:pointer;
+}
+
+.color-circulo.activo{
+  border-color:#ff2a2a;
+  box-shadow:0 0 0 4px rgba(255,42,42,.25);
+}
+
+#talles{
+  margin-top:16px;
 }
 
   </style>
@@ -171,13 +226,16 @@
           <span class="descuento" id="descuentoProducto"></span>
         </div>
 
-        <div class="bloque">
-          <div class="bloque-titulo">Elegí talle</div>
+        <div class="bloque-titulo">Elegí producto</div>
 
-          <h3>Color</h3>
-<div id="colores"></div>
+<div id="bloqueColor">
+  <h3>Color</h3>
+  <div id="colores" class="colores-producto"></div>
+</div>
 
-          <div class="talles" id="talles"></div>
+<h3 style="margin-top:24px;">Talle</h3>
+<div class="talles" id="talles"></div>
+
 
           <div class="stock-info" id="stockInfo"></div>
 
@@ -222,6 +280,7 @@
     let stockSeleccionado = 0;
     let cantidadSeleccionada = 1;
     let colorSeleccionado = "";
+    let colorNombreSeleccionado = "";
 
     function formatearPrecio(valor) {
       return "$" + valor.toLocaleString("es-AR");
@@ -240,6 +299,79 @@
       }
 
       productoActual = producto;
+
+const bloqueColor = document.getElementById("bloqueColor");
+const coloresDiv = document.getElementById("colores");
+
+function obtenerColorVisual(nombreColor, codigoColor) {
+  const nombre = (nombreColor || "").toUpperCase();
+
+  if (nombre.includes("NEGRO")) return "#000000";
+  if (nombre.includes("BLANCO")) return "#ffffff";
+  if (nombre.includes("GRIS")) return "#777777";
+  if (nombre.includes("AZUL")) return "#1f4fff";
+  if (nombre.includes("ROJO")) return "#d60000";
+  if (nombre.includes("VERDE")) return "#008000";
+  if (nombre.includes("AMARILLO")) return "#ffd400";
+  if (nombre.includes("CAMEL")) return "#c19a6b";
+  if (nombre.includes("TOSTADO")) return "#8b5a2b";
+  if (nombre.includes("MARINO")) return "#001f3f";
+  if (nombre.includes("CELESTE")) return "#73c9ff";
+
+  return "#222222";
+}
+
+if (productoActual.bas_color_name && productoActual.bas_color) {
+  bloqueColor.style.display = "block";
+
+  function convertirAArray(valor) {
+  if (!valor) return [];
+
+  if (Array.isArray(valor)) return valor;
+
+  if (typeof valor === "string") {
+    try {
+      const parseado = JSON.parse(valor);
+      if (Array.isArray(parseado)) return parseado;
+    } catch (e) {}
+
+    return valor
+      .replace("{", "")
+      .replace("}", "")
+      .replace("[", "")
+      .replace("]", "")
+      .replaceAll('"', "")
+      .split(",")
+      .map(item => item.trim())
+      .filter(Boolean);
+  }
+
+  return [valor];
+}
+
+const nombres = convertirAArray(productoActual.bas_color_name);
+const codigos = convertirAArray(productoActual.bas_color);
+
+  colorSeleccionado = codigos[0];
+colorNombreSeleccionado = nombres[0];
+
+  coloresDiv.innerHTML = nombres.map((nombre, index) => {
+    const colorVisual = obtenerColorVisual(nombre, codigos[index]);
+
+    return `
+      <button
+        class="color-circulo ${index === 0 ? "activo" : ""}"
+        title="${nombre}"
+        style="background:${colorVisual};"
+        onclick="seleccionarColor('${codigos[index]}', '${nombres[index]}', this)"
+      ></button>
+    `;
+  }).join("");
+
+} else {
+  bloqueColor.style.display = "none";
+  coloresDiv.innerHTML = "";
+}
 
       document.getElementById("marcaProducto").textContent = producto.brand;
       document.getElementById("nombreProducto").textContent = producto.name;
@@ -299,26 +431,6 @@
 
       const talles = document.getElementById("talles");
 
-      const coloresDiv = document.getElementById("colores");
-
-const { data: producto } = await supabaseClient
-  .from("products")
-  .select("colors")
-  .eq("id", productoId)
-  .single();
-
-if(producto?.colors?.length){
-  coloresDiv.innerHTML = producto.colors.map((color, index) => `
-  <button
-    class="color-btn ${index === 0 ? "activo" : ""}"
-    onclick="seleccionarColor('${color}', this)"
-  >
-    <span style="background:${colorCSS(color)};"></span>
-  </button>
-`).join("");
-
-colorSeleccionado = producto.colors[0];
-}
 
       if (!stock || stock.length === 0) {
         talles.innerHTML = "<p>No hay stock disponible.</p>";
@@ -405,10 +517,11 @@ colorSeleccionado = producto.colors[0];
         nombre: productoActual.name,
         precio: productoActual.price,
         talle: talleSeleccionado,
-        color: colorSeleccionado,
+        color: colorNombreSeleccionado + " (" + colorSeleccionado + ")",
         cantidad: cantidadSeleccionada,
         imagen: document.getElementById("imagenPrincipal").src
       };
+      
 
       if (existente) {
         existente.cantidad += cantidadSeleccionada;
@@ -447,10 +560,11 @@ colorSeleccionado = producto.colors[0];
       contador.textContent = totalProductos;
     }
 
-    function seleccionarColor(color, boton){
+    function seleccionarColor(color, nombre, boton){
   colorSeleccionado = color;
+  colorNombreSeleccionado = nombre;
 
-  document.querySelectorAll(".color-btn").forEach(btn => {
+  document.querySelectorAll(".color-circulo").forEach(btn => {
     btn.classList.remove("activo");
   });
 

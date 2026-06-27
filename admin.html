@@ -119,6 +119,29 @@ h1{
   outline:3px solid black;
 }
 
+#coloresBasContainer{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:12px;
+}
+
+.bas-color-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:#1a1a1a;
+  border:1px solid #333;
+  padding:10px 14px;
+  border-radius:10px;
+  font-size:14px;
+  cursor:pointer;
+}
+
+.bas-color-item input{
+  width:auto;
+}
+
 </style>
 </head>
 
@@ -143,12 +166,19 @@ h1{
   <input type="number" id="precioAnterior" placeholder="Precio anterior">
   <input type="number" id="precio" placeholder="Precio oferta">
   <input type="number" id="descuento" placeholder="Descuento">
+  <input type="text" id="buscarBas" placeholder="Buscar artículo BAS por código o descripción" oninput="buscarArticulosBas()">
+
+<select id="coditm" onchange="cargarCombinacionesBas()">
+  <option value="">Seleccioná un artículo BAS</option>
+</select>
   <input type="file" id="imagenArchivo" accept="image/*" multiple>
   <label>Color</label>
 
+  <h3>Colores BAS del artículo seleccionado</h3>
+
 <h3>Colores disponibles</h3>
 
-<div class="colores-admin">
+<div class="colores-admin" id="coloresBasContainer">
 
   <label class="color-opcion">
     <input type="checkbox" class="colorProducto" value="Negro">
@@ -476,6 +506,97 @@ async function eliminarProducto(id){
   cargarProductos();
 }
 
+async function buscarArticulosBas(){
+  const texto = document.getElementById("buscarBas").value.trim().toUpperCase();
+  const select = document.getElementById("coditm");
+
+  select.innerHTML = '<option value="">Buscando...</option>';
+
+  if(texto.length < 2){
+    select.innerHTML = '<option value="">Seleccioná un artículo BAS</option>';
+    return;
+  }
+
+  const { data, error } = await supabaseClient
+    .from("bas_articulos")
+    .select('*')
+    .ilike('"CODIGO"', `%${texto}%`)
+    .limit(30);
+
+  if(error){
+    console.log("Error BAS:", error);
+    select.innerHTML = '<option value="">Error buscando artículos</option>';
+    return;
+  }
+
+  console.log("Resultados BAS:", data);
+
+  select.innerHTML = '<option value="">Seleccioná un artículo BAS</option>';
+
+  data.forEach(item => {
+    select.innerHTML += `
+      <option value="${item.CODIGO}">
+        ${item.CODIGO} - ${item.DESCRIPCION}
+      </option>
+    `;
+  });
+}
+
+async function cargarCombinacionesBas(){
+  const codigo = document.getElementById("coditm").value;
+
+  if(!codigo) return;
+
+  const { data, error } = await supabaseClient
+    .from("bas_articulos_talles_colores")
+    .select("*")
+    .eq("CODIGO", codigo);
+
+  if(error){
+    console.log(error);
+    return;
+  }
+
+  const tallesUnicos = [...new Set(data.map(x => x.TALLE))];
+  const coloresUnicos = [...new Set(data.map(x => x.COLOR))];
+
+  console.log("Talles BAS:", tallesUnicos);
+  console.log("Colores BAS:", coloresUnicos);
+
+  const contenedorColores = document.getElementById("coloresBasContainer");
+contenedorColores.innerHTML = "";
+
+const coloresSinRepetir = [];
+
+data.forEach(item => {
+  const yaExiste = coloresSinRepetir.some(color => color.COLOR === item.COLOR);
+
+  if (!yaExiste) {
+    coloresSinRepetir.push({
+      COLOR: item.COLOR,
+      NOMBRE_COLOR: item.NOMBRE_COLOR
+    });
+  }
+});
+
+coloresSinRepetir.forEach(color => {
+  contenedorColores.innerHTML += `
+    <label class="color-opcion">
+     <label class="bas-color-item">
+  <input 
+    type="checkbox" 
+    class="colorProducto" 
+    value="${color.COLOR}"
+    data-nombre="${color.NOMBRE_COLOR}"
+  >
+  <span>${color.NOMBRE_COLOR} (${color.COLOR})</span>
+</label>
+    </label>
+  `;
+});
+
+}
+
 async function crearProducto(tipo){
 
   const marca = document.getElementById("marca").value.trim();
@@ -483,17 +604,24 @@ async function crearProducto(tipo){
   const precioAnterior = Number(document.getElementById("precioAnterior").value);
   const precio = Number(document.getElementById("precio").value);
   const descuento = Number(document.getElementById("descuento").value);
+  const coditm = document.getElementById("coditm").value;
   const imagenes = document.getElementById("imagenArchivo").files;
   const coloresSeleccionados = [
   ...document.querySelectorAll(".colorProducto:checked")
 ].map(color => color.value);
+const coloresBasSeleccionados = [
+  ...document.querySelectorAll("#coloresBasContainer .colorProducto:checked")
+];
+
+const basColor = coloresBasSeleccionados.map(color => color.value);
+const basColorName = coloresBasSeleccionados.map(color => color.dataset.nombre);
 
 if(imagenes.length === 0){
   alert("Seleccioná al menos una imagen");
   return;
 }
 
-  if(!marca || !nombre || !precioAnterior || !precio || !descuento || !imagenArchivo){
+  if(!marca || !nombre || !precioAnterior || !precio || !descuento || !coditm || basColor.length === 0 || imagenes.length === 0){
     alert("Completá todos los campos");
     return;
   }
@@ -507,7 +635,10 @@ if(imagenes.length === 0){
       price: precio,
       colors: coloresSeleccionados,
       discount: descuento,
-      active: true
+      coditm: coditm,
+bas_color: basColor,
+bas_color_name: basColorName,
+active: true
     })
     .select()
     .single();

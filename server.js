@@ -23,6 +23,22 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use((req, res, next) => {
+  const bloqueados = [
+    "/server.js",
+    "/package.json",
+    "/package-lock.json",
+    "/.env",
+    "/.gitignore"
+  ];
+
+  if (bloqueados.includes(req.path)) {
+    return res.sendStatus(404);
+  }
+
+  next();
+});
+
 app.use(express.static(__dirname));
 
 
