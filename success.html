@@ -94,8 +94,8 @@
       En breve vamos a preparar tu pedido.
     </p>
 
-    <a id="btnPedido" href="index.html" class="btn">
-  VER MI PEDIDO
+    <a id="btnPedido" href="#" class="btn">
+  SEGUÍ EL ESTADO DE TU PEDIDO
 </a>
 
   </div>
@@ -106,13 +106,36 @@ const attemptId = params.get("attempt_id");
 
 const btnPedido = document.getElementById("btnPedido");
 
-if (attemptId) {
-  btnPedido.href = "index.html";
-  btnPedido.textContent = "TU PEDIDO SE ESTÁ PROCESANDO";
-} else {
-  btnPedido.href = "index.html";
-  btnPedido.textContent = "VOLVER A LA TIENDA";
+async function buscarPedido() {
+  if (!attemptId) {
+    btnPedido.href = "index.html";
+    return;
+  }
+
+  try {
+    const res = await fetch(
+      `https://usina-rhodia-production.up.railway.app/order-by-attempt/${attemptId}`
+    );
+
+    const data = await res.json();
+
+    if (data.success && data.order) {
+      localStorage.setItem(
+        "ultimoPedidoToken",
+        data.order.tracking_token
+      );
+
+      btnPedido.href = `pedido.html?token=${data.order.tracking_token}`;
+    } else {
+      setTimeout(buscarPedido, 2000);
+    }
+
+  } catch {
+    setTimeout(buscarPedido, 2000);
+  }
 }
+
+buscarPedido();
 </script>
 </body>
 </html>
