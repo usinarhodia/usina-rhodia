@@ -1,5 +1,6 @@
 require("dotenv").config();
 
+const crypto = require("crypto");
 const { createClient } = require("@supabase/supabase-js");
 const express = require("express");
 const cors = require("cors");
@@ -287,7 +288,7 @@ app.post("/webhook", async (req, res) => {
     const cliente = intento.cliente;
     const itemsValidados = intento.items;
     const total = intento.total;
-
+const trackingToken = crypto.randomUUID();
     const { data: pedido, error: errorPedido } = await supabase
       .from("orders")
       .insert({
@@ -301,7 +302,8 @@ app.post("/webhook", async (req, res) => {
         city: cliente.ciudad || "",
         postal_code: cliente.cp || "",
         total: total,
-        status: "paid"
+        status: "paid",
+tracking_token: trackingToken
       })
       .select()
       .single();
@@ -385,7 +387,7 @@ app.post("/webhook", async (req, res) => {
           <p>Podés seguir tu pedido acá:</p>
 
           <a
-            href="https://usina-rhodia-production.up.railway.app/pedido.html?id=${pedido.id}"
+            href="https://usina-rhodia-production.up.railway.app/pedido.html?token=${trackingToken}"
             style="
               display:inline-block;
               background:#ff2a2a;
