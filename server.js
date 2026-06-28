@@ -245,6 +245,34 @@ app.post("/admin/crear-producto", async (req, res) => {
   }
 });
 
+app.post("/admin/eliminar-producto", async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    if (!id) {
+      return res.status(400).json({ error: "Falta ID" });
+    }
+
+    await supabase.from("product_stock").delete().eq("product_id", id);
+    await supabase.from("product_images").delete().eq("product_id", id);
+
+    const { error } = await supabase
+      .from("products")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.log("Error eliminando producto:", error);
+      return res.status(400).json({ error: "Error eliminando producto" });
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    console.log("Error admin eliminar producto:", error);
+    res.status(500).json({ error: "Error interno eliminando producto" });
+  }
+});
+
 app.post("/webhook", async (req, res) => {
   try {
     console.log("Webhook recibido:", req.body);
