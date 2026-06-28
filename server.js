@@ -168,6 +168,21 @@ app.post("/crear-preferencia", async (req, res) => {
   }
 });
 
+app.post("/admin/login", (req, res) => {
+  const { password } = req.body;
+
+  if (!password || password !== process.env.ADMIN_PASSWORD) {
+    return res.status(401).json({
+      success: false,
+      error: "Contraseña incorrecta"
+    });
+  }
+
+  res.json({
+    success: true
+  });
+});
+
 app.post("/admin/crear-producto", async (req, res) => {
   try {
     const {
