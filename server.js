@@ -273,6 +273,37 @@ app.post("/admin/eliminar-producto", async (req, res) => {
   }
 });
 
+app.get("/order-by-attempt/:attemptId", async (req, res) => {
+  try {
+    const { attemptId } = req.params;
+
+    const { data: order, error } = await supabase
+      .from("orders")
+      .select("id, tracking_token, status")
+      .eq("checkout_attempt_id", attemptId)
+      .single();
+
+    if (error || !order) {
+      return res.status(404).json({
+        success: false,
+        error: "Pedido no encontrado"
+      });
+    }
+
+    res.json({
+      success: true,
+      order
+    });
+
+  } catch (error) {
+    console.log("Error buscando pedido por attempt:", error);
+    res.status(500).json({
+      success: false,
+      error: "Error interno"
+    });
+  }
+});
+
 app.post("/webhook", async (req, res) => {
   try {
     console.log("Webhook recibido:", req.body);
@@ -331,7 +362,8 @@ const trackingToken = crypto.randomUUID();
         postal_code: cliente.cp || "",
         total: total,
         status: "paid",
-tracking_token: trackingToken
+tracking_token: trackingToken,
+checkout_attempt_id: intento.id
       })
       .select()
       .single();
