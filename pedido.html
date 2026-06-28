@@ -78,20 +78,14 @@ const supabaseKey = "sb_publishable_BFRP4PzzRhvUw3OF0NZtpw_gXjejWn9";
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 const params = new URLSearchParams(window.location.search);
-const pedidoId = Number(params.get("id"));
-const ultimoPedidoId = Number(localStorage.getItem("ultimoPedidoId"));
+const token = params.get("token");
 
 async function cargarPedido(){
 
   const contenedor = document.getElementById("pedido");
 
-  if(!pedidoId){
+  if(!token){
   contenedor.innerHTML = "<h1>Pedido no encontrado</h1>";
-  return;
-}
-
-if(!ultimoPedidoId || ultimoPedidoId !== pedidoId){
-  contenedor.innerHTML = "<h1>Pedido no autorizado</h1>";
   return;
 }
 
@@ -101,7 +95,7 @@ if(!ultimoPedidoId || ultimoPedidoId !== pedidoId){
       *,
       order_items (*)
     `)
-    .eq("id", pedidoId)
+    .eq("tracking_token", token)
     .single();
 
   if(error || !pedido){
