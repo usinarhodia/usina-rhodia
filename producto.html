@@ -500,9 +500,13 @@ colorNombreSeleccionado = nombres[0];
 
       let carrito = obtenerCarrito();
 
-      const existente = carrito.find(item =>
-        item.product_id === productoActual.id && item.talle === talleSeleccionado
-      );
+      const colorCarrito = colorNombreSeleccionado + " (" + colorSeleccionado + ")";
+
+const existente = carrito.find(item =>
+  item.product_id === productoActual.id &&
+  item.talle === talleSeleccionado &&
+  item.color === colorCarrito
+);
 
       const cantidadActual = existente ? existente.cantidad : 0;
 
@@ -517,7 +521,7 @@ colorNombreSeleccionado = nombres[0];
         nombre: productoActual.name,
         precio: productoActual.price,
         talle: talleSeleccionado,
-        color: colorNombreSeleccionado + " (" + colorSeleccionado + ")",
+        color: colorCarrito,
         cantidad: cantidadSeleccionada,
         imagen: document.getElementById("imagenPrincipal").src
       };
