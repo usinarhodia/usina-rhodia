@@ -719,21 +719,26 @@ if(!response.ok){
 
 async function cambiarEstadoPedido(id, nuevoEstado){
 
-  const { error } = await supabaseClient
-    .from("orders")
-    .update({
+  const response = await fetch("https://usina-rhodia-production.up.railway.app/admin/cambiar-estado-pedido", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      id,
       status: nuevoEstado
     })
-    .eq("id", id);
+  });
 
-  if(error){
-    console.log(error);
+  const resultado = await response.json();
+
+  if(!response.ok){
+    console.log(resultado);
     alert("Error cambiando estado");
     return;
   }
 
   alert("Estado actualizado");
-
   cargarPedidos();
 }
 

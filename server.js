@@ -288,6 +288,41 @@ app.post("/admin/eliminar-producto", async (req, res) => {
   }
 });
 
+app.post("/admin/cambiar-estado-pedido", async (req, res) => {
+  try {
+    const { id, status } = req.body;
+
+    const estadosPermitidos = [
+      "paid",
+      "preparado",
+      "enviado",
+      "entregado",
+      "ready_pickup",
+      "picked_up"
+    ];
+
+    if (!id || !status || !estadosPermitidos.includes(status)) {
+      return res.status(400).json({ error: "Datos inválidos" });
+    }
+
+    const { error } = await supabase
+      .from("orders")
+      .update({ status })
+      .eq("id", id);
+
+    if (error) {
+      console.log("Error cambiando estado:", error);
+      return res.status(400).json({ error: "Error cambiando estado" });
+    }
+
+    res.json({ success: true });
+
+  } catch (error) {
+    console.log("Error admin cambiar estado:", error);
+    res.status(500).json({ error: "Error interno cambiando estado" });
+  }
+});
+
 app.get("/order-by-attempt/:attemptId", async (req, res) => {
   try {
     const { attemptId } = req.params;
