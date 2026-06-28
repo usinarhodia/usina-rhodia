@@ -288,6 +288,32 @@ app.post("/admin/eliminar-producto", async (req, res) => {
   }
 });
 
+app.post("/admin/desactivar-producto", async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    if (!id) {
+      return res.status(400).json({ error: "Falta ID" });
+    }
+
+    const { error } = await supabase
+      .from("products")
+      .update({ active: false })
+      .eq("id", id);
+
+    if (error) {
+      console.log("Error desactivando producto:", error);
+      return res.status(400).json({ error: "Error desactivando producto" });
+    }
+
+    res.json({ success: true });
+
+  } catch (error) {
+    console.log("Error admin desactivar producto:", error);
+    res.status(500).json({ error: "Error interno" });
+  }
+});
+
 app.post("/admin/cambiar-estado-pedido", async (req, res) => {
   try {
     const { id, status } = req.body;
