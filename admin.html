@@ -266,14 +266,15 @@ function adminHeaders(){
     "Authorization": `Bearer ${adminToken}`
   };
 }
-    async function entrarAdmin(){
+   
+async function entrarAdmin(){
   const pass = document.getElementById("passwordAdmin").value;
 
   const response = await fetch("https://usina-rhodia-production.up.railway.app/admin/login", {
     method: "POST",
     headers: {
-  "Content-Type": "application/json"
-},
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify({
       password: pass
     })
@@ -282,11 +283,13 @@ function adminHeaders(){
   const data = await response.json();
 
   if(data.success){
+    adminToken = data.token;
+
     document.getElementById("loginAdmin").style.display = "none";
     document.getElementById("panelAdmin").style.display = "block";
+
     cargarPedidos();
-cargarProductos();
-    adminToken = data.token;
+    cargarProductos();
   }else{
     alert("Contraseña incorrecta");
   }
@@ -447,22 +450,21 @@ const data = resultado.pedidos;
 
 async function cargarProductos(){
 
-  const { data, error } = await supabaseClient
-    const response = await fetch("https://usina-rhodia-production.up.railway.app/admin/productos", {
-  headers: {
-    "Authorization": `Bearer ${adminToken}`
+  const response = await fetch("https://usina-rhodia-production.up.railway.app/admin/productos", {
+    headers: {
+      "Authorization": `Bearer ${adminToken}`
+    }
+  });
+
+  const resultado = await response.json();
+
+  if(!response.ok){
+    console.log(resultado);
+    alert("Error cargando productos");
+    return;
   }
-});
 
-const resultado = await response.json();
-
-if(!response.ok){
-  console.log(resultado);
-  alert("Error cargando productos");
-  return;
-}
-
-const data = resultado.productos;
+  const data = resultado.productos;
 
   const contenedor = document.getElementById("productos");
 
@@ -486,8 +488,8 @@ const data = resultado.productos;
         </button>
 
         <button onclick="eliminarProducto(${producto.id})">
-  Eliminar
-</button>
+          Eliminar
+        </button>
 
       </div>
 
