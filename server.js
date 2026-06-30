@@ -168,6 +168,50 @@ app.post("/crear-preferencia", async (req, res) => {
   }
 });
 
+function crearAdminToken(){
+  const payload = {
+    role: "admin",
+    exp: Date.now() + 1000 * 60 * 60 * 4
+  };
+
+  const payloadBase64 = Buffer.from(JSON.stringify(payload)).toString("base64url");
+
+  const firma = crypto
+    .createHmac("sha256", process.env.ADMIN_SESSION_SECRET)
+    .update(payloadBase64)
+    .digest("base64url");
+
+  return `${payloadBase64}.${firma}`;
+}
+
+function verificarAdmin(req, res, next){
+  const auth = req.headers.authorization || "";
+  const token = auth.replace("Bearer ", "");
+
+  if(!token){
+    return res.status(401).json({ error: "No autorizado" });
+  }
+
+  const [payloadBase64, firma] = token.split(".");
+
+  const firmaCorrecta = crypto
+    .createHmac("sha256", process.env.ADMIN_SESSION_SECRET)
+    .update(payloadBase64)
+    .digest("base64url");
+
+  if(firma !== firmaCorrecta){
+    return res.status(401).json({ error: "Token inválido" });
+  }
+
+  const payload = JSON.parse(Buffer.from(payloadBase64, "base64url").toString());
+
+  if(Date.now() > payload.exp){
+    return res.status(401).json({ error: "Sesión vencida" });
+  }
+
+  next();
+}
+
 app.post("/admin/login", (req, res) => {
   const { password } = req.body;
 
@@ -179,11 +223,12 @@ app.post("/admin/login", (req, res) => {
   }
 
   res.json({
-    success: true
+    success: true,
+    token: crearAdminToken()
   });
 });
 
-app.post("/admin/crear-producto", async (req, res) => {
+app.post("/admin/crear-producto", verificarAdmin, async (req, res) => {
   try {
     const {
       brand,
@@ -260,7 +305,7 @@ app.post("/admin/crear-producto", async (req, res) => {
   }
 });
 
-app.post("/admin/eliminar-producto", async (req, res) => {
+app.post("/admin/eliminar-producto", verificarAdmin, async (req, res) => {
   try {
     const { id } = req.body;
 
@@ -288,7 +333,7 @@ app.post("/admin/eliminar-producto", async (req, res) => {
   }
 });
 
-app.post("/admin/desactivar-producto", async (req, res) => {
+app.post("/admin/desactivar-producto", verificarAdmin, async (req, res) => {
   try {
     const { id } = req.body;
 
@@ -314,7 +359,7 @@ app.post("/admin/desactivar-producto", async (req, res) => {
   }
 });
 
-app.post("/admin/cambiar-estado-pedido", async (req, res) => {
+app.post("/admin/cambiar-estado-pedido", verificarAdmin, async (req, res) => {
   try {
     const { id, status } = req.body;
 
@@ -349,7 +394,7 @@ app.post("/admin/cambiar-estado-pedido", async (req, res) => {
   }
 });
 
-app.post("/admin/guardar-tracking", async (req, res) => {
+app.post("/admin/guardar-tracking", verificarAdmin, async (req, res) => {
   try {
     const { id, tracking_code, tracking_url } = req.body;
 

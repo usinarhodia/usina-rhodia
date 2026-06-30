@@ -255,6 +255,15 @@ h1{
 
 <div id="pedidos"></div>
 
+let adminToken = null;
+
+function adminHeaders(){
+  return {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${adminToken}`
+  };
+}
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
@@ -264,9 +273,7 @@ h1{
 
   const response = await fetch("https://usina-rhodia-production.up.railway.app/admin/login", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: adminHeaders(),
     body: JSON.stringify({
       password: pass
     })
@@ -277,18 +284,12 @@ h1{
   if(data.success){
     document.getElementById("loginAdmin").style.display = "none";
     document.getElementById("panelAdmin").style.display = "block";
-    sessionStorage.setItem("adminLogueado", "true");
+    adminToken = data.token;
   }else{
     alert("Contraseña incorrecta");
   }
 }
 
-if(sessionStorage.getItem("adminLogueado") === "true"){
-  setTimeout(() => {
-    document.getElementById("loginAdmin").style.display = "none";
-    document.getElementById("panelAdmin").style.display = "block";
-  }, 100);
-}
 
 const supabaseUrl = "https://vegbamfkmcyvgvnjmxgs.supabase.co";
 const supabaseKey = "sb_publishable_BFRP4PzzRhvUw3OF0NZtpw_gXjejWn9";
@@ -492,9 +493,7 @@ async function desactivarProducto(id){
 
   const response = await fetch("https://usina-rhodia-production.up.railway.app/admin/desactivar-producto", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: adminHeaders(),
     body: JSON.stringify({ id })
   });
 
@@ -517,9 +516,7 @@ async function eliminarProducto(id){
 
   const response = await fetch("https://usina-rhodia-production.up.railway.app/admin/eliminar-producto", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: adminHeaders(),
     body: JSON.stringify({ id })
   });
 
@@ -705,9 +702,7 @@ const stocks = tipo === "pantalon" ? tallesPantalon : tallesArriba;
 
 const response = await fetch("https://usina-rhodia-production.up.railway.app/admin/crear-producto", {
   method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
+  headers: adminHeaders(),
   body: JSON.stringify({
     brand: marca,
     name: nombre,
@@ -744,9 +739,7 @@ async function cambiarEstadoPedido(id, nuevoEstado){
 
   const response = await fetch("https://usina-rhodia-production.up.railway.app/admin/cambiar-estado-pedido", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: adminHeaders(),
     body: JSON.stringify({
       id,
       status: nuevoEstado
@@ -775,9 +768,7 @@ async function guardarTracking(id){
 
   const response = await fetch("https://usina-rhodia-production.up.railway.app/admin/guardar-tracking", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: adminHeaders(),
     body: JSON.stringify({
       id,
       tracking_code: trackingCode,
