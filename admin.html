@@ -284,6 +284,8 @@ function adminHeaders(){
   if(data.success){
     document.getElementById("loginAdmin").style.display = "none";
     document.getElementById("panelAdmin").style.display = "block";
+    cargarPedidos();
+cargarProductos();
     adminToken = data.token;
   }else{
     alert("Contraseña incorrecta");
@@ -301,18 +303,21 @@ const supabaseClient = supabase.createClient(
 
 async function cargarPedidos(){
 
-  const { data, error } = await supabaseClient
-    .from("orders")
-.select(`
-  *,
-  order_items (*)
-`)
-    .order("id", { ascending:false });
-
-  if(error){
-    console.log(error);
-    return;
+  const response = await fetch("https://usina-rhodia-production.up.railway.app/admin/pedidos", {
+  headers: {
+    "Authorization": `Bearer ${adminToken}`
   }
+});
+
+const resultado = await response.json();
+
+if(!response.ok){
+  console.log(resultado);
+  alert("Error cargando pedidos");
+  return;
+}
+
+const data = resultado.pedidos;
 
   const contenedor = document.getElementById("pedidos");
 
@@ -439,20 +444,25 @@ async function cargarPedidos(){
 
 }
 
-cargarPedidos();
 
 async function cargarProductos(){
 
   const { data, error } = await supabaseClient
-    .from("products")
-    .select("*")
-    .order("id", { ascending:false });
-
-  if(error){
-    console.log(error);
-    alert("Error cargando productos");
-    return;
+    const response = await fetch("https://usina-rhodia-production.up.railway.app/admin/productos", {
+  headers: {
+    "Authorization": `Bearer ${adminToken}`
   }
+});
+
+const resultado = await response.json();
+
+if(!response.ok){
+  console.log(resultado);
+  alert("Error cargando productos");
+  return;
+}
+
+const data = resultado.productos;
 
   const contenedor = document.getElementById("productos");
 
@@ -487,7 +497,6 @@ async function cargarProductos(){
 
 }
 
-cargarProductos();
 
 async function desactivarProducto(id){
 

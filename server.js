@@ -228,6 +228,31 @@ app.post("/admin/login", (req, res) => {
   });
 });
 
+app.get("/admin/productos", verificarAdmin, async (req, res) => {
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .order("id", { ascending: false });
+
+  if (error) return res.status(400).json({ error });
+
+  res.json({ success: true, productos: data });
+});
+
+app.get("/admin/pedidos", verificarAdmin, async (req, res) => {
+  const { data, error } = await supabase
+    .from("orders")
+    .select(`
+      *,
+      order_items (*)
+    `)
+    .order("id", { ascending: false });
+
+  if (error) return res.status(400).json({ error });
+
+  res.json({ success: true, pedidos: data });
+});
+
 app.post("/admin/crear-producto", verificarAdmin, async (req, res) => {
   try {
     const {
