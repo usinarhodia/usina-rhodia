@@ -751,6 +751,34 @@ app.get("/admin/bas-test", verificarAdmin, async (req, res) => {
   }
 });
 
+async function obtenerPagoMercadoPago(paymentId){
+  for(let intento = 1; intento <= 3; intento++){
+    try{
+      const response = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
+        headers: {
+          Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}`
+        }
+      });
+
+      if(!response.ok){
+        const text = await response.text();
+        throw new Error(`MercadoPago status ${response.status}: ${text}`);
+      }
+
+      return await response.json();
+
+    }catch(error){
+      console.log(`Error consultando pago MP intento ${intento}:`, error.message);
+
+      if(intento === 3){
+        throw error;
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 1500));
+    }
+  }
+}
+
 app.post("/webhook", async (req, res) => {
   try {
     console.log("Webhook recibido:", req.body);
@@ -761,9 +789,7 @@ app.post("/webhook", async (req, res) => {
 
     const paymentId = req.body.data.id;
 
-    const payment = await paymentClient.get({
-      id: paymentId
-    });
+    const payment = await obtenerPagoMercadoPago(paymentId);
 
     console.log("Pago completo:", payment);
 
