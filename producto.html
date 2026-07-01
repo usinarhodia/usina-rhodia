@@ -430,7 +430,7 @@ colorNombreSeleccionado = nombres[0];
     .eq("product_id", productoId);
 
   if (colorSeleccionado) {
-    query = query.eq("color", colorSeleccionado);
+    query = query.eq("color", String(colorSeleccionado).trim());
   }
 
   const { data: stock } = await query;
@@ -572,7 +572,7 @@ const existente = carrito.find(item =>
     }
 
     function seleccionarColor(color, nombre, boton){
-  colorSeleccionado = color;
+  colorSeleccionado = String(color).trim();
   colorNombreSeleccionado = nombre;
 
   document.querySelectorAll(".color-circulo").forEach(btn => {

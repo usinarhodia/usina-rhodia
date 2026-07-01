@@ -223,7 +223,7 @@ h1{
 <input type="number" id="stockXXL" placeholder="Stock XXL" value="0">
 <input type="number" id="stockXXXL" placeholder="Stock XXXL" value="0">
 
-  <button onclick="generarStockVariantes('arriba'); crearProducto('arriba')">
+  <button onclick="crearProducto('arriba')">
   Crear producto prenda superior
 </button>
 
@@ -238,7 +238,11 @@ h1{
 <input type="number" id="stock40" placeholder="Stock 40" value="0">
 <input type="number" id="stock42" placeholder="Stock 42" value="0">
 
-<button onclick="generarStockVariantes('pantalon'); crearProducto('pantalon')">
+<button type="button" onclick="generarStockVariantes('pantalon')">
+  Cargar stock pantalón / jean por color
+</button>
+
+<button onclick="crearProducto('pantalon')">
   Crear producto pantalón / jean
 </button>
 
