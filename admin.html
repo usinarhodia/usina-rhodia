@@ -215,13 +215,6 @@ h1{
   <h3>Stock por color y talle</h3>
 <div id="stockVariantes"></div>
 
-<input type="number" id="stockXS" placeholder="Stock XS" value="0">
-<input type="number" id="stockS" placeholder="Stock S" value="0">
-<input type="number" id="stockM" placeholder="Stock M" value="0">
-<input type="number" id="stockL" placeholder="Stock L" value="0">
-<input type="number" id="stockXL" placeholder="Stock XL" value="0">
-<input type="number" id="stockXXL" placeholder="Stock XXL" value="0">
-<input type="number" id="stockXXXL" placeholder="Stock XXXL" value="0">
 
   <button onclick="crearProducto('arriba')">
   Crear producto prenda superior
@@ -650,8 +643,6 @@ function generarStockVariantes(tipo){
     ...document.querySelectorAll("#coloresBasContainer .colorProducto:checked")
   ];
 
-  const tallesArriba = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
-  const tallesPantalon = ["28", "30", "32", "34", "36", "38", "40", "42"];
 
   const talles = tipo === "pantalon"
     ? tallesPantalon
