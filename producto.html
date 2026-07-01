@@ -424,37 +424,44 @@ colorNombreSeleccionado = nombres[0];
 }
 
     async function cargarStock() {
-      const { data: stock } = await supabaseClient
-        .from("product_stock")
-        .select("*")
-        .eq("product_id", productoId);
+  let query = supabaseClient
+    .from("product_stock")
+    .select("*")
+    .eq("product_id", productoId);
 
-      const talles = document.getElementById("talles");
+  if (colorSeleccionado) {
+    query = query.eq("color", colorSeleccionado);
+  }
 
+  const { data: stock } = await query;
 
-      if (!stock || stock.length === 0) {
-        talles.innerHTML = "<p>No hay stock disponible.</p>";
-        return;
-      }
+  const talles = document.getElementById("talles");
 
-      talles.innerHTML = stock.map((item, index) => `
-        <button 
-          class="talle-btn ${item.stock <= 0 ? "agotado" : ""} ${index === 0 && item.stock > 0 ? "activo" : ""}"
-          ${item.stock <= 0 ? "disabled" : ""}
-          onclick="seleccionarTalle('${item.size}', ${item.stock}, this)"
-        >
-          ${item.size}
-        </button>
-      `).join("");
+  if (!stock || stock.length === 0) {
+    talles.innerHTML = "<p>No hay stock disponible.</p>";
+    return;
+  }
 
-      const primerDisponible = stock.find(item => item.stock > 0);
+  talles.innerHTML = stock.map((item, index) => `
+    <button 
+      class="talle-btn ${item.stock <= 0 ? "agotado" : ""} ${index === 0 && item.stock > 0 ? "activo" : ""}"
+      ${item.stock <= 0 ? "disabled" : ""}
+      onclick="seleccionarTalle('${item.size}', ${item.stock}, this)"
+    >
+      ${item.size}
+    </button>
+  `).join("");
 
-      if (primerDisponible) {
-        talleSeleccionado = primerDisponible.size;
-        stockSeleccionado = primerDisponible.stock;
-        document.getElementById("stockInfo").innerHTML = `Talle seleccionado: <strong>${talleSeleccionado}</strong>`;
-      }
-    }
+  const primerDisponible = stock.find(item => item.stock > 0);
+
+  if (primerDisponible) {
+    talleSeleccionado = primerDisponible.size;
+    stockSeleccionado = primerDisponible.stock;
+
+    document.getElementById("stockInfo").innerHTML =
+      `Color: <strong>${colorNombreSeleccionado}</strong> · Talle: <strong>${talleSeleccionado}</strong>`;
+  }
+}
 
     function cambiarImagen(nuevaImagen, boton) {
       document.getElementById("imagenPrincipal").src = nuevaImagen;
@@ -573,6 +580,8 @@ const existente = carrito.find(item =>
   });
 
   boton.classList.add("activo");
+
+  cargarStock();
 }
 
     cargarProducto();
