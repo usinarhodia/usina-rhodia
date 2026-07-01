@@ -238,7 +238,7 @@ h1{
 <input type="number" id="stock40" placeholder="Stock 40" value="0">
 <input type="number" id="stock42" placeholder="Stock 42" value="0">
 
-<button type="button" onclick="generarStockVariantes('pantalon')">
+<button type="button" onclick="prepararStockPantalon()">
   Cargar stock pantalón / jean por color
 </button>
 
@@ -688,6 +688,18 @@ function generarStockVariantes(tipo){
       </div>
     `;
   });
+}
+
+function prepararStockPantalon(){
+  console.log("Generando stock pantalón");
+
+  generarStockVariantes("pantalon");
+
+  const contenedor = document.getElementById("stockVariantes");
+
+  if(!contenedor.innerHTML.trim()){
+    alert("Primero seleccioná al menos un color BAS");
+  }
 }
 
 async function crearProducto(tipo){
