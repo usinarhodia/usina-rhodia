@@ -1,0 +1,47 @@
+{
+  "Fecha": "2026-06-30",
+  "Comprobante": "FB",
+  "Prefijo": "00105",
+  "Cliente": "99111222",
+  "TotalGravado": 1000,
+  "TotalIva": 210,
+  "Total": 1210,
+  "MetodoPago": "D",
+  "ImputacionContable": "640000000",
+  "Caja": "1",
+  "Deposito": 112,
+  "Empresa": 1,
+  "Sucursal": 1,
+  "FechaCreacion": "2026-06-30T02:10:00.000Z",
+  "TratImpositivo": "C08",
+  "TratImpositivoProv": "C08",
+  "CondicionVentaCompra": "001",
+  "ObservacionEntrega": "",
+  "ObservacionComprobante": "Prueba ecommerce Usina Rhodia",
+  "EntregaEn": "",
+  "Usuario": "AP",
+  "Items": [
+    {
+      "CodigoItem": "10200M",
+      "Color": "V04",
+      "Talle": "00S",
+      "PendienteRemitirFacturar": "N",
+      "NumeroUnidadMedida": "1",
+      "CantidadPrimeraUnidad": 1,
+      "PrecioUnitario": 1210,
+      "PorcentajeBonificacion": 0,
+      "PorcentajeSegundaBonificacion": 0,
+      "ImporteTotal": 1210,
+      "ImporteGravado": 1000,
+      "ImporteIva": 210,
+      "TasaIva": 21,
+      "Deposito": 112
+    }
+  ],
+  "Efectivos": [
+    {
+      "MedioPago": "NPS",
+      "Importe": 1210
+    }
+  ]
+}

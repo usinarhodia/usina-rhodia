@@ -111,7 +111,8 @@ app.post("/crear-preferencia", async (req, res) => {
         size: talle,
         quantity: cantidad,
         unit_price: precioReal,
-        subtotal
+        subtotal,
+coditm: producto.coditm
       });
     }
 
@@ -210,6 +211,250 @@ function verificarAdmin(req, res, next){
   }
 
   next();
+}
+
+async function getBasToken(){
+  const form = new FormData();
+
+  form.append("grant_type", "password");
+  form.append("client_id", process.env.BAS_CLIENT_ID);
+  form.append("client_secret", process.env.BAS_CLIENT_SECRET);
+  form.append("refresh_token", "");
+  form.append("username", process.env.BAS_USERNAME);
+  form.append("password", process.env.BAS_PASSWORD);
+
+  const response = await fetch(`${process.env.BAS_URL}/auth/token`, {
+    method: "POST",
+    headers: {
+      "accept": "text/plain"
+    },
+    body: form
+  });
+
+  if(!response.ok){
+    const text = await response.text();
+    throw new Error(`Error BAS token: ${text}`);
+  }
+
+  const data = await response.json();
+  return data.access_token;
+}
+
+function hoyBas(){
+  return new Date().toISOString().slice(0, 10);
+}
+
+function talleBas(talle){
+  const mapa = {
+    XS: "0XS",
+    S: "00S",
+    M: "00M",
+    L: "00L",
+    XL: "0XL",
+    XXL: "XXL",
+    XXXL: "3XL"
+  };
+
+  return mapa[talle] || talle;
+}
+
+function extraerColorBas(color){
+  const match = String(color || "").match(/\(([^)]+)\)/);
+  return match ? match[1] : color;
+}
+
+function calcularImportes(precioFinal, cantidad){
+  const total = Number(precioFinal) * Number(cantidad);
+  const gravado = Math.round(total / 1.21);
+  const iva = total - gravado;
+
+  return { total, gravado, iva };
+}
+
+async function buscarClienteBasPorDni(dni){
+  const token = await getBasToken();
+
+  const response = await fetch(`${process.env.BAS_URL}/api/CONSULTAGRAL/Cliente`, {
+    method: "POST",
+    headers: {
+      "accept": "text/plain",
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      HEADER: {
+        ETIQUETA: "CONSULTAGRAL",
+        CODEMP: 1,
+        CODSUC: 1,
+        FECHA: "30-06-2026"
+      },
+      ConsultaGral: {
+        FiltrosAdicionales: [
+          {
+            TagEntidad: "Cliente",
+            NombreCampo: "NumeroImpositivo1",
+            Comparacion: "0",
+            Valor: dni
+          }
+        ]
+      }
+    })
+  });
+
+  const data = await response.json();
+  return data?.Cuerpo?.CLIENTES?.[0] || null;
+}
+
+async function crearClienteBas(cliente){
+  const token = await getBasToken();
+  const dni = String(cliente.dni).replace(/\D/g, "");
+  const nombreCompleto = `${cliente.nombre} ${cliente.apellido}`;
+
+  const response = await fetch(`${process.env.BAS_URL}/api/Clientes`, {
+    method: "POST",
+    headers: {
+      "accept": "text/plain",
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      Codigo: dni,
+      RazonSocial: nombreCompleto,
+      Email: cliente.email,
+      TratImpositivo: "C08",
+      NumeroImpositivoTipo: "95",
+      NumeroImpositivo1: dni,
+      TodosSuspendidos: false,
+      FechaAlta: hoyBas(),
+      EmpresaAlta: 1,
+      TratImpositivoProv: "C08",
+      Fechareg: new Date().toISOString(),
+      Contactos: [
+        {
+          Nombre: nombreCompleto,
+          Email: cliente.email,
+          Telefono: cliente.telefono,
+          Observaciones: "",
+          Cheques: false,
+          Cobranzas: false,
+          Ventas: false,
+          EnvioCmp: true
+        }
+      ],
+      CondicionesVenta: [
+        {
+          Codigo: "001",
+          PorDefecto: true,
+          ListaEstandar: "5"
+        }
+      ],
+      Domicilios: [
+        {
+          Descripcion: "Principal",
+          Domicilio1: cliente.direccion || "",
+          Domicilio2: cliente.depto || "",
+          CodigoPostal: cliente.cp || "",
+          Localidad: cliente.ciudad || "",
+          Provincia: "902",
+          Pais: "ARG",
+          Telefono: cliente.telefono,
+          Observaciones: "",
+          NroOrden: 1,
+          Principal: true,
+          Habilitado: true
+        }
+      ],
+      Empresas: [
+        {
+          Codigo: 1
+        }
+      ]
+    })
+  });
+
+  const data = await response.json();
+
+  if(!response.ok){
+    throw new Error("Error creando cliente BAS: " + JSON.stringify(data));
+  }
+
+  return data;
+}
+
+async function crearFacturaBas(cliente, itemsValidados, total){
+  const token = await getBasToken();
+  const dni = String(cliente.dni).replace(/\D/g, "");
+
+  const itemsBas = itemsValidados.map(item => {
+    const importes = calcularImportes(item.unit_price, item.quantity);
+
+    return {
+      CodigoItem: item.coditm,
+      Color: extraerColorBas(item.color),
+      Talle: talleBas(item.size),
+      PendienteRemitirFacturar: "N",
+      NumeroUnidadMedida: "1",
+      CantidadPrimeraUnidad: item.quantity,
+      PrecioUnitario: item.unit_price,
+      PorcentajeBonificacion: 0,
+      PorcentajeSegundaBonificacion: 0,
+      ImporteTotal: importes.total,
+      ImporteGravado: importes.gravado,
+      ImporteIva: importes.iva,
+      TasaIva: 21,
+      Deposito: 112
+    };
+  });
+
+  const totalGravado = itemsBas.reduce((acc, item) => acc + item.ImporteGravado, 0);
+  const totalIva = itemsBas.reduce((acc, item) => acc + item.ImporteIva, 0);
+
+  const response = await fetch(`${process.env.BAS_URL}/api/ComprobantesVenta?IgnoraAdvertencias=false`, {
+    method: "POST",
+    headers: {
+      "accept": "text/plain",
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      Fecha: hoyBas(),
+      Comprobante: "FB",
+      Prefijo: "00105",
+      Cliente: dni,
+      TotalGravado: totalGravado,
+      TotalIva: totalIva,
+      Total: total,
+      MetodoPago: "D",
+      ImputacionContable: "640000000",
+      Caja: "1",
+      Deposito: 112,
+      Empresa: 1,
+      Sucursal: 1,
+      FechaCreacion: new Date().toISOString(),
+      TratImpositivo: "C08",
+      TratImpositivoProv: "C08",
+      CondicionVentaCompra: "001",
+      ObservacionEntrega: "",
+      ObservacionComprobante: "Venta ecommerce Usina Rhodia",
+      EntregaEn: "",
+      Usuario: "AP",
+      Items: itemsBas,
+      Efectivos: [
+        {
+          MedioPago: "NPS",
+          Importe: total
+        }
+      ]
+    })
+  });
+
+  const data = await response.json();
+
+  if(!response.ok){
+    throw new Error("Error creando factura BAS: " + JSON.stringify(data));
+  }
+
+  return data;
 }
 
 app.post("/admin/login", (req, res) => {
@@ -487,6 +732,25 @@ app.get("/order-by-attempt/:attemptId", async (req, res) => {
   }
 });
 
+app.get("/admin/bas-test", verificarAdmin, async (req, res) => {
+  try {
+    const token = await getBasToken();
+
+    res.json({
+      success: true,
+      message: "BAS conectado correctamente",
+      token_inicio: token.slice(0, 20)
+    });
+
+  } catch (error) {
+    console.log("Error BAS test:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 app.post("/webhook", async (req, res) => {
   try {
     console.log("Webhook recibido:", req.body);
@@ -574,6 +838,44 @@ checkout_attempt_id: intento.id
       console.log("Error creando items finales:", errorItems);
       return res.sendStatus(500);
     }
+
+    try {
+  const dniCliente = String(cliente.dni).replace(/\D/g, "");
+
+  let clienteBas = await buscarClienteBasPorDni(dniCliente);
+
+  if (!clienteBas) {
+    await crearClienteBas(cliente);
+    clienteBas = await buscarClienteBasPorDni(dniCliente);
+  }
+
+  const facturaBas = await crearFacturaBas(cliente, itemsValidados, total);
+
+  await supabase
+    .from("orders")
+    .update({
+      bas_cliente: clienteBas?.Codigo || dniCliente,
+      bas_estado: "facturado",
+      bas_response: facturaBas,
+      bas_factura: facturaBas?.Cuerpo?.Comprobantes?.[0]?.Numero || null
+    })
+    .eq("id", pedido.id);
+
+  console.log("Factura BAS creada:", facturaBas);
+
+} catch (errorBas) {
+  console.log("Error integrando BAS:", errorBas.message);
+
+  await supabase
+    .from("orders")
+    .update({
+      bas_estado: "error",
+      bas_response: {
+        error: errorBas.message
+      }
+    })
+    .eq("id", pedido.id);
+}
 
     await supabase
       .from("checkout_attempts")

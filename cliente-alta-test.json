@@ -1,0 +1,53 @@
+{
+  "Codigo": "99111222",
+  "RazonSocial": "Cliente Prueba Usina",
+  "Email": "test@usinarhodia.com",
+  "TratImpositivo": "C08",
+  "NumeroImpositivoTipo": "95",
+  "NumeroImpositivo1": "99111222",
+  "TodosSuspendidos": false,
+  "FechaAlta": "2026-06-29",
+  "EmpresaAlta": 1,
+  "TratImpositivoProv": "C08",
+  "Fechareg": "2026-06-29T21:00:00.000Z",
+  "Contactos": [
+    {
+      "Nombre": "Cliente Prueba Usina",
+      "Email": "test@usinarhodia.com",
+      "Telefono": "1111111111",
+      "Observaciones": "",
+      "Cheques": false,
+      "Cobranzas": false,
+      "Ventas": false,
+      "EnvioCmp": true
+    }
+  ],
+  "CondicionesVenta": [
+    {
+      "Codigo": "001",
+      "PorDefecto": true,
+      "ListaEstandar": "5"
+    }
+  ],
+  "Domicilios": [
+    {
+      "Descripcion": "Principal",
+      "Domicilio1": "Direccion prueba 123",
+      "Domicilio2": "",
+      "CodigoPostal": "1000",
+      "Localidad": "Buenos Aires",
+      "Provincia": "902",
+      "Pais": "ARG",
+      "Telefono": "1111111111",
+      "Observaciones": "",
+      "NroOrden": 1,
+      "Principal": true,
+      "Habilitado": true
+    }
+  ],
+  "Empresas": [
+    {
+      "Codigo": 1
+    }
+  ]
+}
