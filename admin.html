@@ -709,7 +709,20 @@ const tallesPantalon = [
   { size: "42", stock: Number(document.getElementById("stock42").value) || 0 }
 ];
 
-const stocks = tipo === "pantalon" ? tallesPantalon : tallesArriba;
+const tallesBase = tipo === "pantalon" ? tallesPantalon : tallesArriba;
+
+const stocks = [];
+
+coloresBasSeleccionados.forEach(color => {
+  tallesBase.forEach(talle => {
+    stocks.push({
+      size: talle.size,
+      stock: talle.stock,
+      color: color.value,
+      color_name: color.dataset.nombre
+    });
+  });
+});
 
 const response = await fetch("https://usina-rhodia-production.up.railway.app/admin/crear-producto", {
   method: "POST",

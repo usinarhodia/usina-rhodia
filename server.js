@@ -550,10 +550,12 @@ app.post("/admin/crear-producto", verificarAdmin, async (req, res) => {
     }
 
     const stockParaInsertar = stocks.map(item => ({
-      product_id: producto.id,
-      size: item.size,
-      stock: item.stock
-    }));
+  product_id: producto.id,
+  size: item.size,
+  color: item.color,
+  color_name: item.color_name,
+  stock: item.stock
+}));
 
     const { error: errorStock } = await supabase
       .from("product_stock")
