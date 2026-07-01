@@ -223,7 +223,7 @@ h1{
 <input type="number" id="stockXXL" placeholder="Stock XXL" value="0">
 <input type="number" id="stockXXXL" placeholder="Stock XXXL" value="0">
 
-  <button onclick="crearProducto('arriba')">
+  <button onclick="generarStockVariantes('arriba'); crearProducto('arriba')">
   Crear producto prenda superior
 </button>
 
@@ -238,7 +238,7 @@ h1{
 <input type="number" id="stock40" placeholder="Stock 40" value="0">
 <input type="number" id="stock42" placeholder="Stock 42" value="0">
 
-<button onclick="crearProducto('pantalon')">
+<button onclick="generarStockVariantes('pantalon'); crearProducto('pantalon')">
   Crear producto pantalón / jean
 </button>
 
@@ -635,31 +635,38 @@ coloresSinRepetir.forEach(color => {
 
 setTimeout(() => {
   document.querySelectorAll("#coloresBasContainer .colorProducto").forEach(input => {
-    input.addEventListener("change", generarStockVariantes);
+    input.addEventListener("change", () => {
+  generarStockVariantes("arriba");
+});
   });
 }, 100);
 
 }
 
-function generarStockVariantes(){
+function generarStockVariantes(tipo){
   const contenedor = document.getElementById("stockVariantes");
 
   const colores = [
     ...document.querySelectorAll("#coloresBasContainer .colorProducto:checked")
   ];
 
-  const tipo = document.querySelector("#stock28") ? "pantalon" : "arriba";
-
   const tallesArriba = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
   const tallesPantalon = ["28", "30", "32", "34", "36", "38", "40", "42"];
 
-  const talles = tallesPantalon;
+  const talles = tipo === "pantalon"
+    ? tallesPantalon
+    : tallesArriba;
 
   contenedor.innerHTML = "";
 
   colores.forEach(color => {
     contenedor.innerHTML += `
-      <div style="background:#181818; padding:18px; border-radius:14px; margin-bottom:18px;">
+      <div style="
+        background:#181818;
+        padding:18px;
+        border-radius:14px;
+        margin-bottom:18px;
+      ">
         <h4>${color.dataset.nombre} (${color.value})</h4>
 
         ${talles.map(talle => `
