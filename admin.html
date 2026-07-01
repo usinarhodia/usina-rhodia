@@ -229,20 +229,13 @@ h1{
 
 <h3>Stock pantalón / jean</h3>
 
-<input type="number" id="stock28" placeholder="Stock 28" value="0">
-<input type="number" id="stock30" placeholder="Stock 30" value="0">
-<input type="number" id="stock32" placeholder="Stock 32" value="0">
-<input type="number" id="stock34" placeholder="Stock 34" value="0">
-<input type="number" id="stock36" placeholder="Stock 36" value="0">
-<input type="number" id="stock38" placeholder="Stock 38" value="0">
-<input type="number" id="stock40" placeholder="Stock 40" value="0">
-<input type="number" id="stock42" placeholder="Stock 42" value="0">
+<div id="stockVariantesPantalon"></div>
 
 <button type="button" onclick="prepararStockPantalon()">
   Cargar stock pantalón / jean por color
 </button>
 
-<button onclick="crearProducto('pantalon')">
+<button type="button" onclick="crearProducto('pantalon')">
   Crear producto pantalón / jean
 </button>
 
@@ -648,7 +641,10 @@ setTimeout(() => {
 }
 
 function generarStockVariantes(tipo){
-  const contenedor = document.getElementById("stockVariantes");
+  const contenedor =
+  tipo === "pantalon"
+    ? document.getElementById("stockVariantesPantalon")
+    : document.getElementById("stockVariantes");
 
   const colores = [
     ...document.querySelectorAll("#coloresBasContainer .colorProducto:checked")
@@ -695,7 +691,7 @@ function prepararStockPantalon(){
 
   generarStockVariantes("pantalon");
 
-  const contenedor = document.getElementById("stockVariantes");
+  const contenedor = document.getElementById("stockVariantesPantalon");
 
   if(!contenedor.innerHTML.trim()){
     alert("Primero seleccioná al menos un color BAS");
