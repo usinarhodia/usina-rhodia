@@ -212,7 +212,8 @@ h1{
 
 </div>
 
-  <h3>Stock por talle</h3>
+  <h3>Stock por color y talle</h3>
+<div id="stockVariantes"></div>
 
 <input type="number" id="stockXS" placeholder="Stock XS" value="0">
 <input type="number" id="stockS" placeholder="Stock S" value="0">
@@ -632,6 +633,50 @@ coloresSinRepetir.forEach(color => {
   `;
 });
 
+setTimeout(() => {
+  document.querySelectorAll("#coloresBasContainer .colorProducto").forEach(input => {
+    input.addEventListener("change", generarStockVariantes);
+  });
+}, 100);
+
+}
+
+function generarStockVariantes(){
+  const contenedor = document.getElementById("stockVariantes");
+
+  const colores = [
+    ...document.querySelectorAll("#coloresBasContainer .colorProducto:checked")
+  ];
+
+  const tipo = document.querySelector("#stock28") ? "pantalon" : "arriba";
+
+  const tallesArriba = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+  const tallesPantalon = ["28", "30", "32", "34", "36", "38", "40", "42"];
+
+  const talles = tallesPantalon;
+
+  contenedor.innerHTML = "";
+
+  colores.forEach(color => {
+    contenedor.innerHTML += `
+      <div style="background:#181818; padding:18px; border-radius:14px; margin-bottom:18px;">
+        <h4>${color.dataset.nombre} (${color.value})</h4>
+
+        ${talles.map(talle => `
+          <input
+            type="number"
+            class="stockVariante"
+            data-size="${talle}"
+            data-color="${color.value}"
+            data-color-name="${color.dataset.nombre}"
+            placeholder="Stock ${talle}"
+            value="0"
+            style="margin-bottom:8px;"
+          >
+        `).join("")}
+      </div>
+    `;
+  });
 }
 
 async function crearProducto(tipo){
@@ -709,20 +754,14 @@ const tallesPantalon = [
   { size: "42", stock: Number(document.getElementById("stock42").value) || 0 }
 ];
 
-const tallesBase = tipo === "pantalon" ? tallesPantalon : tallesArriba;
-
-const stocks = [];
-
-coloresBasSeleccionados.forEach(color => {
-  tallesBase.forEach(talle => {
-    stocks.push({
-      size: talle.size,
-      stock: talle.stock,
-      color: color.value,
-      color_name: color.dataset.nombre
-    });
-  });
-});
+const stocks = [
+  ...document.querySelectorAll(".stockVariante")
+].map(input => ({
+  size: input.dataset.size,
+  color: input.dataset.color,
+  color_name: input.dataset.colorName,
+  stock: Number(input.value) || 0
+}));
 
 const response = await fetch("https://usina-rhodia-production.up.railway.app/admin/crear-producto", {
   method: "POST",
