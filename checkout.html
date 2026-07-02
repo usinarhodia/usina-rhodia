@@ -428,6 +428,20 @@
 
   <script>
 
+    function limpiarCarritoViejo(){
+  const hoy = new Date().toDateString();
+  const fechaCarrito = localStorage.getItem("cart_date");
+
+  if (fechaCarrito && fechaCarrito !== hoy) {
+    localStorage.removeItem("carrito");
+    localStorage.removeItem("ultimoPedidoToken");
+  }
+
+  localStorage.setItem("cart_date", hoy);
+}
+
+limpiarCarritoViejo();
+
     const SUPABASE_URL = "https://vegbamfkmcyvgvnjmxgs.supabase.co";
 const SUPABASE_KEY = "sb_publishable_BFRP4PzzRhvUw3OF0NZtpw_gXjejWn9";
 

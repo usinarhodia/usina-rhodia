@@ -334,6 +334,17 @@ const data = resultado.pedidos;
         <p><b>DNI:</b> ${pedido.customer_dni || "-"}</p>
 
         <p><b>Total:</b> $${pedido.total}</p>
+
+<p><b>Fecha:</b> ${new Date(pedido.created_at).toLocaleString("es-AR")}</p>
+
+<p><b>Pago:</b> ${pedido.payment_status || "-"}</p>
+
+<p><b>Payment ID:</b> ${pedido.payment_id || "-"}</p>
+
+<p><b>BAS:</b> ${pedido.bas_estado || "pendiente"}</p>
+
+<p><b>Respuesta BAS:</b> ${pedido.bas_response || "-"}</p>
+
         <p><b>Productos:</b></p>
 
 <ul>

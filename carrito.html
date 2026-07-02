@@ -433,6 +433,21 @@
   </footer>
 
   <script>
+
+function limpiarCarritoViejo(){
+  const hoy = new Date().toDateString();
+  const fechaCarrito = localStorage.getItem("cart_date");
+
+  if (fechaCarrito && fechaCarrito !== hoy) {
+    localStorage.removeItem("carrito");
+    localStorage.removeItem("ultimoPedidoToken");
+  }
+
+  localStorage.setItem("cart_date", hoy);
+}
+
+limpiarCarritoViejo();
+
     function obtenerCarrito() {
       return JSON.parse(localStorage.getItem("carrito")) || [];
     }
