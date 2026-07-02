@@ -244,6 +244,16 @@ h1{
   Pedidos
 </h2>
 
+<div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;">
+  <button onclick="filtrarPedidos('todos')">Todos</button>
+  <button onclick="filtrarPedidos('paid')">Pagados</button>
+  <button onclick="filtrarPedidos('preparado')">Preparados</button>
+  <button onclick="filtrarPedidos('enviado')">Enviados</button>
+  <button onclick="filtrarPedidos('entregado')">Entregados</button>
+  <button onclick="filtrarPedidos('ready_pickup')">Listos para retirar</button>
+  <button onclick="filtrarPedidos('bas_error')">Error BAS</button>
+</div>
+
 <div id="pedidos"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
@@ -295,6 +305,14 @@ const supabaseClient = supabase.createClient(
   supabaseKey
 );
 
+let pedidosOriginales = [];
+let filtroPedidosActual = "todos";
+
+function filtrarPedidos(filtro){
+  filtroPedidosActual = filtro;
+  renderizarPedidos();
+}
+
 async function cargarPedidos(){
 
   const response = await fetch("https://usina-rhodia-production.up.railway.app/admin/pedidos", {
@@ -312,141 +330,76 @@ if(!response.ok){
 }
 
 const data = resultado.pedidos;
+pedidosOriginales = data;
+renderizarPedidos();
+return;
+
+
+function renderizarPedidos(){
+  let data = [...pedidosOriginales];
+
+  if(filtroPedidosActual !== "todos"){
+    if(filtroPedidosActual === "bas_error"){
+      data = data.filter(pedido => pedido.bas_estado === "error");
+    }else{
+      data = data.filter(pedido => pedido.status === filtroPedidosActual);
+    }
+  }
 
   const contenedor = document.getElementById("pedidos");
-
   contenedor.innerHTML = "";
 
   data.forEach(pedido => {
-
     contenedor.innerHTML += `
-
       <div class="pedido">
-
         <h2>Pedido #${pedido.id}</h2>
 
         <p><b>Cliente:</b> ${pedido.customer_name}</p>
-
         <p><b>Email:</b> ${pedido.customer_email}</p>
-
         <p><b>Teléfono:</b> ${pedido.customer_phone}</p>
-
         <p><b>DNI:</b> ${pedido.customer_dni || "-"}</p>
-
         <p><b>Total:</b> $${pedido.total}</p>
-
-<p><b>Fecha:</b> ${new Date(pedido.created_at).toLocaleString("es-AR")}</p>
-
-<p><b>Pago:</b> ${pedido.payment_status || "-"}</p>
-
-<p><b>Payment ID:</b> ${pedido.payment_id || "-"}</p>
-
-<p><b>BAS:</b> ${pedido.bas_estado || "pendiente"}</p>
-
-<p><b>Respuesta BAS:</b> ${pedido.bas_response || "-"}</p>
+        <p><b>Fecha:</b> ${new Date(pedido.created_at).toLocaleString("es-AR")}</p>
+        <p><b>BAS:</b> ${pedido.bas_estado || "pendiente"}</p>
 
         <p><b>Productos:</b></p>
-
-<ul>
-  ${pedido.order_items.map(item => `
-    <li>
-      ${item.product_name} — Color ${item.color || "-"} — Talle ${item.size} — x${item.quantity} — $${item.unit_price}
-    </li>
-  `).join("")}
-</ul>
+        <ul>
+          ${pedido.order_items.map(item => `
+            <li>
+              ${item.product_name} — Color ${item.color || "-"} — Talle ${item.size} — x${item.quantity} — $${item.unit_price}
+            </li>
+          `).join("")}
+        </ul>
 
         <p><b>Entrega:</b> ${pedido.delivery_method}</p>
         <p><b>Dirección:</b> ${pedido.address || "-"}</p>
-<p><b>Piso / Departamento:</b> ${pedido.floor_apartment || "-"}</p>
-<p><b>Ciudad:</b> ${pedido.city || "-"}</p>
-<p><b>Código postal:</b> ${pedido.postal_code || "-"}</p>
+        <p><b>Piso / Departamento:</b> ${pedido.floor_apartment || "-"}</p>
+        <p><b>Ciudad:</b> ${pedido.city || "-"}</p>
+        <p><b>Código postal:</b> ${pedido.postal_code || "-"}</p>
 
         <div class="estado ${pedido.status}">
           ${pedido.status}
         </div>
 
+        <a href="pedido.html?token=${pedido.tracking_token}" target="_blank" style="display:inline-block;margin-top:12px;background:#ff2a2a;color:white;padding:10px 14px;border-radius:10px;text-decoration:none;font-weight:bold;">
+          Abrir pedido
+        </a>
 
-<a
-  href="pedido.html?token=${pedido.tracking_token}"
-  target="_blank"
-  style="
-    display:inline-block;
-    margin-top:12px;
-    background:#ff2a2a;
-    color:white;
-    padding:10px 14px;
-    border-radius:10px;
-    text-decoration:none;
-    font-weight:bold;
-  "
->
-  Abrir pedido
-</a>
+        <div style="margin-top:15px; display:flex; gap:10px; flex-wrap:wrap;">
+          <button onclick="cambiarEstadoPedido(${pedido.id}, 'preparado')">Preparado</button>
+          <button onclick="cambiarEstadoPedido(${pedido.id}, 'enviado')">Enviado</button>
+          <button onclick="cambiarEstadoPedido(${pedido.id}, 'entregado')">Entregado</button>
+          <button onclick="cambiarEstadoPedido(${pedido.id}, 'ready_pickup')">Listo para retirar</button>
 
-
-<div style="margin-top:15px; display:flex; gap:10px; flex-wrap:wrap;">
-
-  <button onclick="cambiarEstadoPedido(${pedido.id}, 'preparado')">
-    Preparado
-  </button>
-
-  <button onclick="cambiarEstadoPedido(${pedido.id}, 'enviado')">
-    Enviado
-  </button>
-
-  <button onclick="cambiarEstadoPedido(${pedido.id}, 'entregado')">
-    Entregado
-  </button>
-
-  <button onclick="cambiarEstadoPedido(${pedido.id}, 'ready_pickup')">
-  Listo para retirar
-</button>
-
-<div style="margin-top:20px; width:100%;">
-
-  <input
-    type="text"
-    id="tracking-${pedido.id}"
-    placeholder="Código Andreani"
-    style="
-      width:100%;
-      margin-bottom:10px;
-      padding:12px;
-      border-radius:10px;
-      border:none;
-      background:#1a1a1a;
-      color:white;
-    "
-  >
-
-  <input
-    type="text"
-    id="trackingurl-${pedido.id}"
-    placeholder="Link seguimiento"
-    style="
-      width:100%;
-      margin-bottom:10px;
-      padding:12px;
-      border-radius:10px;
-      border:none;
-      background:#1a1a1a;
-      color:white;
-    "
-  >
-
-  <button onclick="guardarTracking(${pedido.id})">
-    Guardar tracking
-  </button>
-
-</div>
-
-</div>
+          <div style="margin-top:20px; width:100%;">
+            <input type="text" id="tracking-${pedido.id}" placeholder="Código Andreani" style="width:100%; margin-bottom:10px; padding:12px; border-radius:10px; border:none; background:#1a1a1a; color:white;">
+            <input type="text" id="trackingurl-${pedido.id}" placeholder="Link seguimiento" style="width:100%; margin-bottom:10px; padding:12px; border-radius:10px; border:none; background:#1a1a1a; color:white;">
+            <button onclick="guardarTracking(${pedido.id})">Guardar tracking</button>
+          </div>
+        </div>
       </div>
-
     `;
-
   });
-
 }
 
 
