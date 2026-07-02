@@ -332,7 +332,7 @@ if(!response.ok){
 const data = resultado.pedidos;
 pedidosOriginales = data;
 renderizarPedidos();
-return;
+}
 
 
 function renderizarPedidos(){
@@ -709,26 +709,7 @@ for(let i = 0; i < imagenes.length; i++){
   imageUrls.push(publicUrlData.publicUrl);
 }
 
-const tallesArriba = [
-  { size: "XS", stock: Number(document.getElementById("stockXS").value) || 0 },
-  { size: "S", stock: Number(document.getElementById("stockS").value) || 0 },
-  { size: "M", stock: Number(document.getElementById("stockM").value) || 0 },
-  { size: "L", stock: Number(document.getElementById("stockL").value) || 0 },
-  { size: "XL", stock: Number(document.getElementById("stockXL").value) || 0 },
-  { size: "XXL", stock: Number(document.getElementById("stockXXL").value) || 0 },
-  { size: "XXXL", stock: Number(document.getElementById("stockXXXL").value) || 0 }
-];
 
-const tallesPantalon = [
-  { size: "28", stock: Number(document.getElementById("stock28").value) || 0 },
-  { size: "30", stock: Number(document.getElementById("stock30").value) || 0 },
-  { size: "32", stock: Number(document.getElementById("stock32").value) || 0 },
-  { size: "34", stock: Number(document.getElementById("stock34").value) || 0 },
-  { size: "36", stock: Number(document.getElementById("stock36").value) || 0 },
-  { size: "38", stock: Number(document.getElementById("stock38").value) || 0 },
-  { size: "40", stock: Number(document.getElementById("stock40").value) || 0 },
-  { size: "42", stock: Number(document.getElementById("stock42").value) || 0 }
-];
 
 const stocks = [
   ...document.querySelectorAll(".stockVariante")
