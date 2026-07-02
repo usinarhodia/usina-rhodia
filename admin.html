@@ -643,6 +643,8 @@ function generarStockVariantes(tipo){
     ...document.querySelectorAll("#coloresBasContainer .colorProducto:checked")
   ];
 
+  const tallesArriba = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+  const tallesPantalon = ["28", "30", "32", "34", "36", "38", "40", "42"];
 
   const talles = tipo === "pantalon"
     ? tallesPantalon
