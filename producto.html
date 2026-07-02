@@ -450,14 +450,27 @@ colorNombreSeleccionado = nombres[0];
 
   const { data: stock } = await query;
 
+  const esPantalon = stock.some(item =>
+  ["28","30","32","34","36","38","40","42"].includes(String(item.size))
+);
+
+const stockFiltrado = stock.filter(item => {
+  const talle = String(item.size);
+  const tallesPantalon = ["28","30","32","34","36","38","40","42"];
+
+  return esPantalon
+    ? tallesPantalon.includes(talle)
+    : !tallesPantalon.includes(talle);
+});
+
   const talles = document.getElementById("talles");
 
-  if (!stock || stock.length === 0) {
+  if (!stockFiltrado || stockFiltrado.length === 0) {
     talles.innerHTML = "<p>No hay stock disponible.</p>";
     return;
   }
 
-  talles.innerHTML = stock.map((item, index) => `
+  talles.innerHTML = stockFiltrado.map((item, index) => `
     <button 
       class="talle-btn ${item.stock <= 0 ? "agotado" : ""} ${index === 0 && item.stock > 0 ? "activo" : ""}"
       ${item.stock <= 0 ? "disabled" : ""}
@@ -467,7 +480,7 @@ colorNombreSeleccionado = nombres[0];
     </button>
   `).join("");
 
-  const primerDisponible = stock.find(item => item.stock > 0);
+  const primerDisponible = stockFiltrado.find(item => item.stock > 0);
 
   if (primerDisponible) {
     talleSeleccionado = primerDisponible.size;
