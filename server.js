@@ -815,14 +815,27 @@ app.post("/webhook", async (req, res) => {
       return res.sendStatus(200);
     }
 
-    if (intento.status === "paid") {
-      console.log("Intento ya procesado, no se duplica pedido");
-      return res.sendStatus(200);
-    }
+    if (intento.status !== "pending") {
+  console.log("Intento ya está siendo procesado o ya fue pagado:", intento.status);
+  return res.sendStatus(200);
+}
 
-    const cliente = intento.cliente;
-    const itemsValidados = intento.items;
-    const total = intento.total;
+const { data: intentoBloqueado, error: errorBloqueo } = await supabase
+  .from("checkout_attempts")
+  .update({ status: "processing" })
+  .eq("id", attemptId)
+  .eq("status", "pending")
+  .select("*")
+  .single();
+
+if (errorBloqueo || !intentoBloqueado) {
+  console.log("Otro webhook ya tomó este intento, no se duplica");
+  return res.sendStatus(200);
+}
+
+    const cliente = intentoBloqueado.cliente;
+const itemsValidados = intentoBloqueado.items;
+const total = intentoBloqueado.total;
 const trackingToken = crypto.randomUUID();
     const { data: pedido, error: errorPedido } = await supabase
       .from("orders")
