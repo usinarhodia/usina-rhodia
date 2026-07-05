@@ -246,17 +246,7 @@ function hoyBas(){
 }
 
 function talleBas(talle){
-  const mapa = {
-    XS: "0XS",
-    S: "00S",
-    M: "00M",
-    L: "00L",
-    XL: "0XL",
-    XXL: "XXL",
-    XXXL: "3XL"
-  };
-
-  return mapa[talle] || talle;
+  return String(talle || "").trim();
 }
 
 function extraerColorBas(color){
