@@ -85,8 +85,9 @@ app.post("/crear-preferencia", async (req, res) => {
         .from("product_stock")
         .select("*")
         .eq("product_id", productId)
-        .eq("size", talle)
-        .single();
+.eq("size", talle)
+.eq("color", extraerColorBas(color))
+.single();
 
       if (errorStock || !stock) {
         return res.status(400).json({
@@ -919,8 +920,9 @@ checkout_attempt_id: intento.id
         .from("product_stock")
         .select("*")
         .eq("product_id", item.product_id)
-        .eq("size", item.size)
-        .single();
+.eq("size", item.size)
+.eq("color", extraerColorBas(item.color))
+.single();
 
       if (errorStock || !stockActual) {
         console.log("No se encontró stock para:", item);
