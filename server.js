@@ -113,7 +113,8 @@ app.post("/crear-preferencia", async (req, res) => {
         quantity: cantidad,
         unit_price: precioReal,
         subtotal,
-coditm: producto.coditm
+coditm: producto.coditm,
+bas_size: stock.bas_size
       });
     }
 
@@ -382,7 +383,7 @@ async function crearFacturaBas(cliente, itemsValidados, total){
     return {
       CodigoItem: item.coditm,
       Color: extraerColorBas(item.color),
-      Talle: talleBas(item.size),
+      Talle: item.bas_size,
       PendienteRemitirFacturar: "N",
       NumeroUnidadMedida: "1",
       CantidadPrimeraUnidad: item.quantity,
@@ -543,6 +544,7 @@ app.post("/admin/crear-producto", verificarAdmin, async (req, res) => {
     const stockParaInsertar = stocks.map(item => ({
   product_id: producto.id,
   size: item.size,
+  bas_size: item.bas_size,
   color: item.color,
   color_name: item.color_name,
   stock: item.stock

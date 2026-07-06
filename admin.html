@@ -597,43 +597,57 @@ setTimeout(() => {
 
 }
 
-function generarStockVariantes(tipo){
+async function generarStockVariantes(tipo){
+  const codigo = document.getElementById("coditm").value;
+
+  if(!codigo){
+    alert("Primero seleccioná un artículo BAS");
+    return;
+  }
+
   const contenedor =
-  tipo === "pantalon"
-    ? document.getElementById("stockVariantesPantalon")
-    : document.getElementById("stockVariantes");
+    tipo === "pantalon"
+      ? document.getElementById("stockVariantesPantalon")
+      : document.getElementById("stockVariantes");
 
   const colores = [
     ...document.querySelectorAll("#coloresBasContainer .colorProducto:checked")
   ];
 
-  const tallesArriba = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
-  const tallesPantalon = ["28", "30", "32", "34", "36", "38", "40", "42"];
+  if(colores.length === 0){
+    contenedor.innerHTML = "";
+    return;
+  }
 
-  const talles = tipo === "pantalon"
-    ? tallesPantalon
-    : tallesArriba;
+  const { data, error } = await supabaseClient
+    .from("bas_articulos_talles_colores")
+    .select("*")
+    .eq("CODIGO", codigo);
+
+  if(error){
+    console.log(error);
+    alert("Error cargando talles BAS");
+    return;
+  }
 
   contenedor.innerHTML = "";
 
   colores.forEach(color => {
+    const tallesDelColor = data.filter(item => item.COLOR === color.value);
+
     contenedor.innerHTML += `
-      <div style="
-        background:#181818;
-        padding:18px;
-        border-radius:14px;
-        margin-bottom:18px;
-      ">
+      <div style="background:#181818;padding:18px;border-radius:14px;margin-bottom:18px;">
         <h4>${color.dataset.nombre} (${color.value})</h4>
 
-        ${talles.map(talle => `
+        ${tallesDelColor.map(item => `
           <input
             type="number"
             class="stockVariante"
-            data-size="${talle}"
-            data-color="${color.value}"
-            data-color-name="${color.dataset.nombre}"
-            placeholder="Stock ${talle}"
+            data-size="${item.TALLE}"
+            data-bas-size="${item.TALLE}"
+            data-color="${item.COLOR}"
+            data-color-name="${item.NOMBRE_COLOR}"
+            placeholder="Stock ${item.TALLE}"
             value="0"
             style="margin-bottom:8px;"
           >
@@ -715,6 +729,7 @@ const stocks = [
   ...document.querySelectorAll(".stockVariante")
 ].map(input => ({
   size: input.dataset.size,
+  bas_size: input.dataset.basSize,
   color: input.dataset.color,
   color_name: input.dataset.colorName,
   stock: Number(input.value) || 0
