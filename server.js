@@ -844,7 +844,7 @@ const trackingToken = crypto.randomUUID();
         total: total,
         status: "paid",
 tracking_token: trackingToken,
-checkout_attempt_id: intento.id
+checkout_attempt_id: intentoBloqueado.id
       })
       .select()
       .single();

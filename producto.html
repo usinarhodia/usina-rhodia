@@ -470,6 +470,12 @@ const stockFiltrado = stock.filter(item => {
     return;
   }
 
+  const ordenTalles = ["XS", "S", "M", "L", "XL", "XXL", "XXXL", "XXXXL", "28", "30", "32", "34", "36", "38", "40", "42"];
+
+stockFiltrado.sort((a, b) => {
+  return ordenTalles.indexOf(a.size) - ordenTalles.indexOf(b.size);
+});
+
   talles.innerHTML = stockFiltrado.map((item, index) => `
     <button 
       class="talle-btn ${item.stock <= 0 ? "agotado" : ""} ${index === 0 && item.stock > 0 ? "activo" : ""}"

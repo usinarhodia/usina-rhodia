@@ -597,6 +597,21 @@ setTimeout(() => {
 
 }
 
+function mostrarTalleVisual(talleBas){
+  const mapa = {
+    "038": "XS",
+    "040": "S",
+    "042": "M",
+    "044": "L",
+    "046": "XL",
+    "048": "XXL",
+    "050": "XXXL",
+    "052": "XXXXL"
+  };
+
+  return mapa[talleBas] || talleBas;
+}
+
 async function generarStockVariantes(tipo){
   const codigo = document.getElementById("coditm").value;
 
@@ -633,7 +648,16 @@ async function generarStockVariantes(tipo){
   contenedor.innerHTML = "";
 
   colores.forEach(color => {
-    const tallesDelColor = data.filter(item => item.COLOR === color.value);
+    const ordenTalles = ["XS", "S", "M", "L", "XL", "XXL", "XXXL", "XXXXL", "28", "30", "32", "34", "36", "38", "40", "42"];
+
+const tallesDelColor = data
+  .filter(item => item.COLOR === color.value)
+  .sort((a, b) => {
+    const talleA = mostrarTalleVisual(a.TALLE);
+    const talleB = mostrarTalleVisual(b.TALLE);
+
+    return ordenTalles.indexOf(talleA) - ordenTalles.indexOf(talleB);
+  });
 
     contenedor.innerHTML += `
       <div style="background:#181818;padding:18px;border-radius:14px;margin-bottom:18px;">
@@ -643,11 +667,11 @@ async function generarStockVariantes(tipo){
           <input
             type="number"
             class="stockVariante"
-            data-size="${item.TALLE}"
+            data-size="${mostrarTalleVisual(item.TALLE)}"
             data-bas-size="${item.TALLE}"
             data-color="${item.COLOR}"
             data-color-name="${item.NOMBRE_COLOR}"
-            placeholder="Stock ${item.TALLE}"
+            placeholder="Stock ${mostrarTalleVisual(item.TALLE)}"
             value="0"
             style="margin-bottom:8px;"
           >
