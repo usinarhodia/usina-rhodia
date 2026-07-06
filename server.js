@@ -401,6 +401,39 @@ async function crearFacturaBas(cliente, itemsValidados, total){
   const totalGravado = itemsBas.reduce((acc, item) => acc + item.ImporteGravado, 0);
   const totalIva = itemsBas.reduce((acc, item) => acc + item.ImporteIva, 0);
 
+  const payloadFacturaBas = {
+  Fecha: hoyBas(),
+  Comprobante: "FB",
+  Prefijo: "00105",
+  Cliente: dni,
+  TotalGravado: totalGravado,
+  TotalIva: totalIva,
+  Total: total,
+  MetodoPago: "D",
+  ImputacionContable: "640000000",
+  Caja: "1",
+  Deposito: 112,
+  Empresa: 1,
+  Sucursal: 1,
+  FechaCreacion: new Date().toISOString(),
+  TratImpositivo: "C08",
+  TratImpositivoProv: "C08",
+  CondicionVentaCompra: "001",
+  ObservacionEntrega: "",
+  ObservacionComprobante: "Venta ecommerce Usina Rhodia",
+  EntregaEn: "",
+  Usuario: "AP",
+  Items: itemsBas,
+  Efectivos: [
+    {
+      MedioPago: "NPS",
+      Importe: total
+    }
+  ]
+};
+
+console.log("Payload factura BAS:", JSON.stringify(payloadFacturaBas, null, 2));
+
   const response = await fetch(`${process.env.BAS_URL}/api/ComprobantesVenta?IgnoraAdvertencias=false`, {
     method: "POST",
     headers: {
@@ -408,36 +441,7 @@ async function crearFacturaBas(cliente, itemsValidados, total){
       "Authorization": `Bearer ${token}`,
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({
-      Fecha: hoyBas(),
-      Comprobante: "FB",
-      Prefijo: "00105",
-      Cliente: dni,
-      TotalGravado: totalGravado,
-      TotalIva: totalIva,
-      Total: total,
-      MetodoPago: "D",
-      ImputacionContable: "640000000",
-      Caja: "1",
-      Deposito: 112,
-      Empresa: 1,
-      Sucursal: 1,
-      FechaCreacion: new Date().toISOString(),
-      TratImpositivo: "C08",
-      TratImpositivoProv: "C08",
-      CondicionVentaCompra: "001",
-      ObservacionEntrega: "",
-      ObservacionComprobante: "Venta ecommerce Usina Rhodia",
-      EntregaEn: "",
-      Usuario: "AP",
-      Items: itemsBas,
-      Efectivos: [
-        {
-          MedioPago: "NPS",
-          Importe: total
-        }
-      ]
-    })
+    body: JSON.stringify(payloadFacturaBas)
   });
 
   const data = await response.json();

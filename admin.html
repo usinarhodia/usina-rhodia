@@ -599,14 +599,23 @@ setTimeout(() => {
 
 function mostrarTalleVisual(talleBas){
   const mapa = {
-    "038": "XS",
-    "040": "S",
-    "042": "M",
-    "044": "L",
-    "046": "XL",
-    "048": "XXL",
-    "050": "XXXL",
-    "052": "XXXXL"
+    "038":"XS",
+    "040":"S",
+    "042":"M",
+    "044":"L",
+    "046":"XL",
+    "048":"XXL",
+    "050":"XXXL",
+    "052":"XXXXL",
+
+    "00XS":"XS",
+    "00S":"S",
+    "00M":"M",
+    "00L":"L",
+    "0XL":"XL",
+    "XXL":"XXL",
+    "3XL":"XXXL",
+    "4XL":"XXXXL"
   };
 
   return mapa[talleBas] || talleBas;
