@@ -889,17 +889,28 @@ checkout_attempt_id: intentoBloqueado.id
 
   const facturaBas = await crearFacturaBas(cliente, itemsValidados, total);
 
-  await supabase
-    .from("orders")
-    .update({
-      bas_cliente: clienteBas?.Codigo || dniCliente,
-      bas_estado: "facturado",
-      bas_response: facturaBas,
-      bas_factura: facturaBas?.Cuerpo?.Comprobantes?.[0]?.Numero || null
-    })
-    .eq("id", pedido.id);
+  const comprobantes = facturaBas?.Comprobantes || [];
 
-  console.log("Factura BAS creada:", facturaBas);
+const factura = comprobantes.find(c => c.Comprobante === "FAB");
+const remito = comprobantes.find(c => c.Comprobante === "REM");
+const recibo = comprobantes.find(c => c.Comprobante === "REC.");
+
+await supabase
+  .from("orders")
+  .update({
+    bas_cliente: clienteBas?.Codigo || dniCliente,
+    bas_estado: "facturado",
+    bas_response: facturaBas,
+
+    bas_factura: factura?.Numero || null,
+    bas_remito: remito?.Numero || null,
+    bas_recibo: recibo?.Numero || null,
+    bas_transaccion: facturaBas?.IdTransaccion || null
+  })
+  .eq("id", pedido.id);
+
+  console.log("Factura BAS creada:");
+console.log(JSON.stringify(facturaBas, null, 2));
 
 } catch (errorBas) {
   console.log("Error integrando BAS:", errorBas.message);
