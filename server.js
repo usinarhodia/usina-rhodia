@@ -302,6 +302,69 @@ async function crearClienteBas(cliente){
   const dni = String(cliente.dni).replace(/\D/g, "");
   const nombreCompleto = `${cliente.nombre} ${cliente.apellido}`;
 
+  const payloadClienteBas = {
+    Codigo: dni,
+    RazonSocial: nombreCompleto,
+    Email: cliente.email,
+    TratImpositivo: "C08",
+    NumeroImpositivoTipo: "95",
+    NumeroImpositivo1: dni,
+    TodosSuspendidos: false,
+    FechaAlta: hoyBas(),
+    EmpresaAlta: 1,
+    TratImpositivoProv: "C08",
+    Fechareg: new Date().toISOString(),
+
+    Contactos: [
+      {
+        Nombre: nombreCompleto,
+        Email: cliente.email,
+        Telefono: cliente.telefono,
+        Observaciones: "",
+        Cheques: false,
+        Cobranzas: false,
+        Ventas: false,
+        EnvioCmp: true
+      }
+    ],
+
+    CondicionesVenta: [
+      {
+        Codigo: "001",
+        PorDefecto: true,
+        ListaEstandar: "5"
+      }
+    ],
+
+    Domicilios: [
+      {
+        Descripcion: "Principal",
+        Domicilio1: cliente.direccion || "",
+        Domicilio2: cliente.depto || "",
+        CodigoPostal: cliente.cp || "",
+        Localidad: cliente.ciudad || "",
+        Provincia: "902",
+        Pais: "ARG",
+        Telefono: cliente.telefono,
+        Observaciones: "",
+        NroOrden: 1,
+        Principal: true,
+        Habilitado: true
+      }
+    ],
+
+    Empresas: [
+      {
+        Codigo: 1
+      }
+    ]
+  };
+
+  console.log(
+    "Payload cliente BAS:",
+    JSON.stringify(payloadClienteBas, null, 2)
+  );
+
   const response = await fetch(`${process.env.BAS_URL}/api/Clientes`, {
     method: "POST",
     headers: {
@@ -309,65 +372,20 @@ async function crearClienteBas(cliente){
       "Authorization": `Bearer ${token}`,
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({
-      Codigo: dni,
-      RazonSocial: nombreCompleto,
-      Email: cliente.email,
-      TratImpositivo: "C08",
-      NumeroImpositivoTipo: "95",
-      NumeroImpositivo1: dni,
-      TodosSuspendidos: false,
-      FechaAlta: hoyBas(),
-      EmpresaAlta: 1,
-      TratImpositivoProv: "C08",
-      Fechareg: new Date().toISOString(),
-      Contactos: [
-        {
-          Nombre: nombreCompleto,
-          Email: cliente.email,
-          Telefono: cliente.telefono,
-          Observaciones: "",
-          Cheques: false,
-          Cobranzas: false,
-          Ventas: false,
-          EnvioCmp: true
-        }
-      ],
-      CondicionesVenta: [
-        {
-          Codigo: "001",
-          PorDefecto: true,
-          ListaEstandar: "5"
-        }
-      ],
-      Domicilios: [
-        {
-          Descripcion: "Principal",
-          Domicilio1: cliente.direccion || "",
-          Domicilio2: cliente.depto || "",
-          CodigoPostal: cliente.cp || "",
-          Localidad: cliente.ciudad || "",
-          Provincia: "902",
-          Pais: "ARG",
-          Telefono: cliente.telefono,
-          Observaciones: "",
-          NroOrden: 1,
-          Principal: true,
-          Habilitado: true
-        }
-      ],
-      Empresas: [
-        {
-          Codigo: 1
-        }
-      ]
-    })
+    body: JSON.stringify(payloadClienteBas)
   });
 
   const data = await response.json();
 
+  console.log(
+    "Respuesta creación cliente BAS:",
+    JSON.stringify(data, null, 2)
+  );
+
   if(!response.ok){
-    throw new Error("Error creando cliente BAS: " + JSON.stringify(data));
+    throw new Error(
+      "Error creando cliente BAS: " + JSON.stringify(data)
+    );
   }
 
   return data;
