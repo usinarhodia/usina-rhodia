@@ -443,11 +443,11 @@ async function crearFacturaBas(cliente, itemsValidados, total){
   Usuario: "AP",
   Items: itemsBas,
   Efectivos: [
-    {
-      MedioPago: "NPS",
-      Importe: total
-    }
-  ]
+  {
+    MedioPago: "MP",
+    Importe: total
+  }
+]
 };
 
 console.log("Payload factura BAS:", JSON.stringify(payloadFacturaBas, null, 2));
