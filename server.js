@@ -329,12 +329,12 @@ async function crearClienteBas(cliente){
     ],
 
     CondicionesVenta: [
-      {
-        Codigo: "001",
-        PorDefecto: true,
-        ListaEstandar: "5"
-      }
-    ],
+  {
+    Codigo: "001",
+    PorDefecto: true,
+    ListaEstandar: "LPL"
+  }
+],
 
     Domicilios: [
       {
@@ -412,7 +412,7 @@ async function crearFacturaBas(cliente, itemsValidados, total){
       ImporteGravado: importes.gravado,
       ImporteIva: importes.iva,
       TasaIva: 21,
-      Deposito: 112
+      Deposito: 14
     };
   });
 
@@ -422,17 +422,17 @@ async function crearFacturaBas(cliente, itemsValidados, total){
   const payloadFacturaBas = {
   Fecha: hoyBas(),
   Comprobante: "FB",
-  Prefijo: "00105",
+  Prefijo: "00118",
   Cliente: dni,
   TotalGravado: totalGravado,
   TotalIva: totalIva,
   Total: total,
   MetodoPago: "D",
   ImputacionContable: "640000000",
-  Caja: "1",
-  Deposito: 112,
+  Caja: "14W",
+  Deposito: 14,
   Empresa: 1,
-  Sucursal: 1,
+  Sucursal: 14,
   FechaCreacion: new Date().toISOString(),
   TratImpositivo: "C08",
   TratImpositivoProv: "C08",
@@ -440,7 +440,7 @@ async function crearFacturaBas(cliente, itemsValidados, total){
   ObservacionEntrega: "",
   ObservacionComprobante: "Venta ecommerce Usina Rhodia",
   EntregaEn: "",
-  Usuario: "AP",
+  Usuario: "MBRAVO",
   Items: itemsBas,
   Efectivos: [
   {
