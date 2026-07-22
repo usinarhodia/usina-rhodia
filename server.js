@@ -986,7 +986,7 @@ console.log(JSON.stringify(facturaBas, null, 2));
     }
 
     await resend.emails.send({
-      from: "USINA RHODIA <onboarding@resend.dev>",
+      from: "USINA RHODIA <compras@mail.usinarhodia.com>",
       to: cliente.email,
       subject: `Tu compra fue aprobada #${pedido.id}`,
       html: `
