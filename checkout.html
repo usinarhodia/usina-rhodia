@@ -351,7 +351,15 @@
 
 <div class="campo">
   <label>DNI</label>
-  <input type="text" id="dni" placeholder="Ej: 12345678">
+  <input
+  type="text"
+  id="dni"
+  placeholder="Ej: 12345678"
+  inputmode="numeric"
+  maxlength="8"
+  pattern="[0-9]{7,8}"
+  oninput="this.value = this.value.replace(/\D/g, '').slice(0, 8)"
+>
 </div>
 
         </div>
@@ -523,6 +531,12 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   if (!nombre || !apellido || !telefono || !email || !dni) {
   mensaje.style.display = "block";
   mensaje.textContent = "Completá nombre, apellido, teléfono, email y DNI para continuar.";
+  return;
+}
+
+if (!/^\d{7,8}$/.test(dni)) {
+  mensaje.style.display = "block";
+  mensaje.textContent = "El DNI debe tener 7 u 8 números, sin puntos ni guiones.";
   return;
 }
 
