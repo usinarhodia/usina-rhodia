@@ -986,36 +986,130 @@ console.log(JSON.stringify(facturaBas, null, 2));
     }
 
     await resend.emails.send({
-      from: "USINA RHODIA <compras@mail.usinarhodia.com>",
-      to: cliente.email,
-      subject: `Tu compra fue aprobada #${pedido.id}`,
-      html: `
-        <div style="font-family:Arial;padding:20px;">
-          <h1>Pago aprobado ✅</h1>
+  from: "USINA RHODIA <compras@mail.usinarhodia.com>",
+  to: cliente.email,
+  subject: `Compra aprobada #${pedido.id} | Usina Rhodia`,
+  html: `
+    <div style="
+      margin:0;
+      padding:30px 16px;
+      background:#f3f3f3;
+      font-family:Arial,Helvetica,sans-serif;
+      color:#171717;
+    ">
+      <div style="
+        max-width:620px;
+        margin:0 auto;
+        background:#ffffff;
+        border-radius:18px;
+        overflow:hidden;
+        border:1px solid #e5e5e5;
+      ">
 
-          <p>Hola ${cliente.nombre} ${cliente.apellido},</p>
-
-          <p>Tu compra fue aprobada correctamente.</p>
-
-          <p>Podés seguir tu pedido acá:</p>
-
-          <a
-            href="https://usina-rhodia-production.up.railway.app/pedido.html?token=${trackingToken}"
-            style="
-              display:inline-block;
-              background:#ff2a2a;
-              color:white;
-              padding:14px 20px;
-              border-radius:10px;
-              text-decoration:none;
-              font-weight:bold;
-            "
-          >
-            Ver mi pedido
-          </a>
+        <div style="
+          background:#111111;
+          color:#ffffff;
+          padding:24px;
+          text-align:center;
+        ">
+          <div style="
+            font-size:24px;
+            font-weight:800;
+            letter-spacing:2px;
+          ">
+            USINA RHODIA
+          </div>
         </div>
-      `
-    });
+
+        <div style="padding:30px;">
+          <h1 style="
+            margin:0 0 18px;
+            font-size:28px;
+            color:#111111;
+          ">
+            Pago aprobado
+          </h1>
+
+          <p style="font-size:16px;line-height:1.6;margin:0 0 14px;">
+            Hola ${cliente.nombre} ${cliente.apellido},
+          </p>
+
+          <p style="font-size:16px;line-height:1.6;margin:0 0 14px;">
+            Recibimos correctamente el pago de tu compra.
+          </p>
+
+          <div style="
+            background:#f7f7f7;
+            border-radius:12px;
+            padding:16px;
+            margin:20px 0;
+          ">
+            <p style="margin:0 0 8px;font-size:15px;">
+              <strong>Número de pedido:</strong> #${pedido.id}
+            </p>
+
+            <p style="margin:0;font-size:15px;">
+              <strong>Total:</strong> $${Number(total).toLocaleString("es-AR")}
+            </p>
+          </div>
+
+          <p style="font-size:16px;line-height:1.6;margin:0 0 18px;">
+            Podés consultar el estado de tu pedido desde el siguiente botón:
+          </p>
+
+          <div style="text-align:center;margin:26px 0;">
+            <a
+              href="https://usina-rhodia-production.up.railway.app/pedido.html?token=${trackingToken}"
+              style="
+                display:inline-block;
+                background:#d71920;
+                color:#ffffff;
+                padding:15px 24px;
+                border-radius:10px;
+                text-decoration:none;
+                font-weight:bold;
+                font-size:15px;
+              "
+            >
+              Ver mi pedido
+            </a>
+          </div>
+
+          <div style="
+            margin-top:28px;
+            padding:16px;
+            border-left:4px solid #d71920;
+            background:#fff7f7;
+          ">
+            <p style="
+              margin:0;
+              font-size:14px;
+              line-height:1.6;
+            ">
+              Si necesitás Factura A, escribinos a
+              <a
+                href="mailto:rodhia@surpacifico.com.ar"
+                style="color:#d71920;font-weight:bold;"
+              >
+                rodhia@surpacifico.com.ar
+              </a>
+              indicando tu número de pedido y los datos de facturación.
+            </p>
+          </div>
+
+          <p style="
+            margin:28px 0 0;
+            font-size:14px;
+            color:#666666;
+            line-height:1.6;
+          ">
+            Gracias por comprar en Usina Rhodia.
+          </p>
+        </div>
+      </div>
+    </div>
+  `
+});
 
     console.log("Mail enviado");
 
