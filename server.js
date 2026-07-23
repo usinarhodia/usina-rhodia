@@ -293,16 +293,16 @@ async function getAndreaniToken() {
     throw new Error("Faltan variables de entorno de Andreani");
   }
 
-  const basicAuth = Buffer
-    .from(`${username}:${password}`)
-    .toString("base64");
-
   const response = await fetch(`${baseUrl}/login`, {
     method: "POST",
     headers: {
-      Authorization: `Basic ${basicAuth}`,
-      Accept: "application/json, text/plain"
-    }
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      userName: username,
+      password: password
+    })
   });
 
   const responseText = await response.text();
