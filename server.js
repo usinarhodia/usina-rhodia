@@ -1269,9 +1269,7 @@ try {
         andreani_response: ordenAndreani,
 
         tracking_code: numeroEnvio,
-tracking_url: numeroEnvio
-  ? `https://www.andreani.com/#!/personas/seguimiento/${numeroEnvio}`
-  : null
+tracking_url: null
       })
       .eq("id", pedido.id);
 
