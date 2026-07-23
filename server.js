@@ -51,9 +51,32 @@ app.post("/crear-preferencia", async (req, res) => {
       return res.status(400).json({ error: "Datos inválidos" });
     }
 
-    const { nombre, apellido, email, telefono, dni, entrega, direccion, depto, ciudad, cp } = cliente;
+    const {
+  nombre,
+  apellido,
+  email,
+  telefono,
+  dni,
+  entrega,
+  direccion,
+  depto,
+  ciudad,
+  provincia,
+  cp
+} = cliente;
 
-    if (!nombre || !apellido || !email || !telefono || !dni || !entrega || !direccion || !ciudad || !cp) {
+    if (
+  !nombre ||
+  !apellido ||
+  !email ||
+  !telefono ||
+  !dni ||
+  !entrega ||
+  !direccion ||
+  !ciudad ||
+  !provincia ||
+  !cp
+) {
       return res.status(400).json({ error: "Faltan datos del cliente o facturación" });
     }
 
@@ -343,7 +366,7 @@ async function crearClienteBas(cliente){
         Domicilio2: cliente.depto || "",
         CodigoPostal: cliente.cp || "",
         Localidad: cliente.ciudad || "",
-        Provincia: "902",
+        Provincia: cliente.provincia,
         Pais: "ARG",
         Telefono: cliente.telefono,
         Observaciones: "",

@@ -399,6 +399,37 @@
   </div>
 
   <div class="campo">
+  <label>Provincia</label>
+  <select id="provincia">
+    <option value="">Seleccioná una provincia</option>
+    <option value="901">C. Aut. de Bs. As.</option>
+    <option value="902">Buenos Aires</option>
+    <option value="903">Catamarca</option>
+    <option value="904">Córdoba</option>
+    <option value="905">Corrientes</option>
+    <option value="906">Chaco</option>
+    <option value="907">Chubut</option>
+    <option value="908">Entre Ríos</option>
+    <option value="909">Formosa</option>
+    <option value="910">Jujuy</option>
+    <option value="911">La Pampa</option>
+    <option value="912">La Rioja</option>
+    <option value="913">Mendoza</option>
+    <option value="914">Misiones</option>
+    <option value="915">Neuquén</option>
+    <option value="916">Río Negro</option>
+    <option value="917">Salta</option>
+    <option value="918">San Juan</option>
+    <option value="919">San Luis</option>
+    <option value="920">Santa Cruz</option>
+    <option value="921">Santa Fe</option>
+    <option value="922">Santiago del Estero</option>
+    <option value="923">Tierra del Fuego</option>
+    <option value="924">Tucumán</option>
+  </select>
+</div>
+
+  <div class="campo">
     <label>Código postal</label>
     <input type="text" id="cp" placeholder="Ej: 1878">
   </div>
@@ -521,6 +552,9 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   const ciudad = document.getElementById("ciudad") ? document.getElementById("ciudad").value.trim() : "";
   const cp = document.getElementById("cp") ? document.getElementById("cp").value.trim() : "";
   const depto = document.getElementById("depto") ? document.getElementById("depto").value.trim() : "";
+  const provincia = document.getElementById("provincia")
+  ? document.getElementById("provincia").value
+  : "";
 
   if (carrito.length === 0) {
     mensaje.style.display = "block";
@@ -540,9 +574,9 @@ if (!/^\d{7,8}$/.test(dni)) {
   return;
 }
 
- if (!direccion || !ciudad || !cp) {
+ if (!direccion || !ciudad || !provincia || !cp) {
   mensaje.style.display = "block";
-  mensaje.textContent = "Completá dirección, ciudad y código postal. Estos datos son necesarios para realizar la factura.";
+  mensaje.textContent = "Completá dirección, ciudad, provincia y código postal. Estos datos son necesarios para realizar la factura.";
   return;
 }
 
@@ -584,7 +618,8 @@ try {
         direccion: direccion,
         depto: depto,
         ciudad: ciudad,
-        cp: cp
+provincia: provincia,
+cp: cp
       },
       items: productosSeguros
     })
