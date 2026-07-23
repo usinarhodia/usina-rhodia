@@ -1279,6 +1279,27 @@ app.get("/admin/andreani-estado-test/:numeroEnvio", verificarAdmin, async (req, 
   }
 });
 
+app.get("/admin/andreani-trazas-test/:numeroEnvio", verificarAdmin, async (req, res) => {
+  try {
+    const { numeroEnvio } = req.params;
+
+    const trazas = await obtenerTrazasAndreani(numeroEnvio);
+
+    res.json({
+      success: true,
+      trazas
+    });
+
+  } catch (error) {
+    console.log("Error trazas Andreani test:", error.message);
+
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 
 async function obtenerPagoMercadoPago(paymentId){
   for(let intento = 1; intento <= 3; intento++){
