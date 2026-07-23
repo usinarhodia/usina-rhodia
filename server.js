@@ -336,14 +336,66 @@ async function getAndreaniToken() {
   return token.trim();
 }
 
-async function crearOrdenAndreaniPrueba() {
+function obtenerRegionAndreani(provinciaBas) {
+  const regiones = {
+    "901": "AR-C",
+    "902": "AR-B",
+    "903": "AR-K",
+    "904": "AR-X",
+    "905": "AR-W",
+    "906": "AR-H",
+    "907": "AR-U",
+    "908": "AR-E",
+    "909": "AR-P",
+    "910": "AR-Y",
+    "911": "AR-L",
+    "912": "AR-F",
+    "913": "AR-M",
+    "914": "AR-N",
+    "915": "AR-Q",
+    "916": "AR-R",
+    "917": "AR-A",
+    "918": "AR-J",
+    "919": "AR-D",
+    "920": "AR-Z",
+    "921": "AR-S",
+    "922": "AR-G",
+    "923": "AR-V",
+    "924": "AR-T"
+  };
+
+  return regiones[String(provinciaBas)] || "AR-B";
+}
+
+function separarCalleNumero(direccion) {
+  const texto = String(direccion || "").trim();
+  const coincidencia = texto.match(/^(.*?)[\s,]+(\d+[a-zA-Z]?)$/);
+
+  if (!coincidencia) {
+    return {
+      calle: texto,
+      numero: "0"
+    };
+  }
+
+  return {
+    calle: coincidencia[1].trim(),
+    numero: coincidencia[2].trim()
+  };
+}
+
+async function crearOrdenAndreani(cliente, pedido, total) {
   const token = await getAndreaniToken();
-  const baseUrl = process.env.ANDREANI_URL;
+  const baseUrl = process.env.ANDREANI_URL.replace(/\/+$/, "");
+
+  const domicilio = separarCalleNumero(cliente.direccion);
+  const dni = String(cliente.dni || "").replace(/\D/g, "");
+  const telefono = String(cliente.telefono || "").replace(/\D/g, "");
 
   const payload = {
     contrato: process.env.ANDREANI_CONTRATO_DOMICILIO,
     sucursalClienteID: Number(process.env.ANDREANI_SUCURSAL),
-    idPedido: `PRUEBA-${Date.now()}`,
+    idPedido: `PEDIDO-${pedido.id}`,
 
     origen: {
       postal: {
@@ -360,13 +412,13 @@ async function crearOrdenAndreaniPrueba() {
 
     destino: {
       postal: {
-        codigoPostal: "1878",
-        calle: "Mitre",
-        numero: "500",
-        piso: "",
-        departamento: "",
-        localidad: "Quilmes",
-        region: "AR-B",
+        codigoPostal: String(cliente.cp),
+        calle: domicilio.calle,
+        numero: domicilio.numero,
+        piso: cliente.depto || "",
+        departamento: cliente.depto || "",
+        localidad: cliente.ciudad,
+        region: obtenerRegionAndreani(cliente.provincia),
         pais: "Argentina"
       }
     },
@@ -386,21 +438,21 @@ async function crearOrdenAndreaniPrueba() {
 
     destinatario: [
       {
-        nombreCompleto: "Cliente de Prueba",
-        email: "prueba@usinarhodia.com",
+        nombreCompleto: `${cliente.nombre} ${cliente.apellido}`,
+        email: cliente.email,
         documentoTipo: "DNI",
-        documentoNumero: "12345678",
+        documentoNumero: dni,
         telefonos: [
           {
             tipo: 1,
-            numero: "5491100000000"
+            numero: telefono
           }
         ]
       }
     ],
 
     remito: {
-      numeroRemito: `PRUEBA-${Date.now()}`,
+      numeroRemito: `PEDIDO-${pedido.id}`,
       complementarios: []
     },
 
@@ -411,12 +463,12 @@ async function crearOrdenAndreaniPrueba() {
         altoCm: 10,
         anchoCm: 10,
         volumenCm: 1500,
-        valorDeclaradoSinImpuestos: 0,
-        valorDeclaradoConImpuestos: 30000,
+        valorDeclaradoSinImpuestos: Math.round(Number(total) / 1.21),
+        valorDeclaradoConImpuestos: Number(total),
         referencias: [
           {
             meta: "pedido",
-            contenido: "Prueba Usina Rhodia"
+            contenido: `Pedido Usina Rhodia #${pedido.id}`
           }
         ],
         descripcion: "Prendas de vestir"
@@ -451,13 +503,6 @@ async function crearOrdenAndreaniPrueba() {
     data = responseText;
   }
 
-  console.log(
-    "Respuesta orden Andreani:",
-    typeof data === "string"
-      ? data
-      : JSON.stringify(data, null, 2)
-  );
-
   if (!response.ok) {
     throw new Error(
       `Error creando orden Andreani (${response.status}): ${responseText}`
@@ -465,27 +510,6 @@ async function crearOrdenAndreaniPrueba() {
   }
 
   return data;
-}
-
-function hoyBas(){
-  return new Date().toISOString().slice(0, 10);
-}
-
-function talleBas(talle){
-  return String(talle || "").trim();
-}
-
-function extraerColorBas(color){
-  const match = String(color || "").match(/\(([^)]+)\)/);
-  return match ? match[1] : color;
-}
-
-function calcularImportes(precioFinal, cantidad){
-  const total = Number(precioFinal) * Number(cantidad);
-  const gravado = Math.round(total / 1.21);
-  const iva = total - gravado;
-
-  return { total, gravado, iva };
 }
 
 async function buscarClienteBasPorDni(dni){
@@ -1013,25 +1037,6 @@ app.get("/admin/andreani-test", verificarAdmin, async (req, res) => {
   }
 });
 
-app.get("/admin/andreani-orden-test", verificarAdmin, async (req, res) => {
-  try {
-    const orden = await crearOrdenAndreaniPrueba();
-
-    res.json({
-      success: true,
-      message: "Orden de prueba Andreani creada correctamente",
-      orden
-    });
-
-  } catch (error) {
-    console.log("Error orden Andreani test:", error.message);
-
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
-});
 
 async function obtenerPagoMercadoPago(paymentId){
   for(let intento = 1; intento <= 3; intento++){
@@ -1204,6 +1209,75 @@ console.log(JSON.stringify(facturaBas, null, 2));
       bas_estado: "error",
       bas_response: {
         error: errorBas.message
+      }
+    })
+    .eq("id", pedido.id);
+}
+
+try {
+  const metodoEntrega = String(cliente.entrega || "").toLowerCase();
+
+  const esEnvioDomicilio =
+    metodoEntrega.includes("domicilio") ||
+    metodoEntrega.includes("envío") ||
+    metodoEntrega.includes("envio");
+
+  if (esEnvioDomicilio) {
+    const ordenAndreani = await crearOrdenAndreani(
+      cliente,
+      pedido,
+      total
+    );
+
+    const numeroEnvio =
+      ordenAndreani?.bultos?.[0]?.numeroDeEnvio || null;
+
+    const agrupador =
+      ordenAndreani?.agrupadorDeBultos || null;
+
+    const etiquetaUrl =
+      ordenAndreani?.etiquetasPorAgrupador || null;
+
+    await supabase
+      .from("orders")
+      .update({
+        andreani_numero_envio: numeroEnvio,
+        andreani_agrupador: agrupador,
+        andreani_etiqueta_url: etiquetaUrl,
+        andreani_estado: ordenAndreani?.estado || "Pendiente",
+        andreani_response: ordenAndreani,
+
+        tracking_code: numeroEnvio,
+tracking_url: numeroEnvio
+  ? `https://www.andreani.com/#!/personas/seguimiento/${numeroEnvio}`
+  : null
+      })
+      .eq("id", pedido.id);
+
+    console.log(
+      `Orden Andreani creada para pedido ${pedido.id}:`,
+      numeroEnvio
+    );
+
+  } else {
+    console.log(
+      `Pedido ${pedido.id} sin envío Andreani:`,
+      cliente.entrega
+    );
+  }
+
+} catch (errorAndreani) {
+  console.log(
+    "Error integrando Andreani:",
+    errorAndreani.message
+  );
+
+  await supabase
+    .from("orders")
+    .update({
+      andreani_estado: "error",
+      andreani_response: {
+        error: errorAndreani.message
       }
     })
     .eq("id", pedido.id);
