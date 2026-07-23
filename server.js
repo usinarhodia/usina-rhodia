@@ -80,6 +80,25 @@ app.post("/crear-preferencia", async (req, res) => {
       return res.status(400).json({ error: "Faltan datos del cliente o facturación" });
     }
 
+    const provinciasBasValidas = [
+  "901", "902", "903", "904", "905", "906",
+  "907", "908", "909", "910", "911", "912",
+  "913", "914", "915", "916", "917", "918",
+  "919", "920", "921", "922", "923", "924"
+];
+
+if (!provinciasBasValidas.includes(String(provincia))) {
+  return res.status(400).json({
+    error: "Código de provincia inválido"
+  });
+}
+
+if (!/^\d{7,8}$/.test(String(dni))) {
+  return res.status(400).json({
+    error: "El DNI debe contener 7 u 8 números"
+  });
+}
+
     let total = 0;
     const itemsValidados = [];
 
