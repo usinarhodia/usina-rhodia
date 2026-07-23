@@ -1142,45 +1142,54 @@ app.get("/pedido-andreani/:trackingToken", async (req, res) => {
         : trazas?.eventos || trazas?.trazas || [];
 
     const eventos = eventosOriginales.map(evento => ({
-      fecha:
-        evento.fecha ||
-        evento.fechaEvento ||
-        evento.fechaHora ||
-        null,
+  fecha:
+    evento.Fecha ||
+    evento.fecha ||
+    evento.fechaEvento ||
+    evento.fechaHora ||
+    null,
 
-      estado:
-        evento.estado ||
-        evento.estadoDescripcion ||
-        evento.descripcionEstado ||
-        null,
+  estado:
+    evento.Estado ||
+    evento.estado ||
+    evento.estadoDescripcion ||
+    evento.descripcionEstado ||
+    null,
 
-      evento:
-        evento.evento ||
-        evento.descripcion ||
-        evento.descripcionEvento ||
-        null,
+  evento:
+    evento.Evento ||
+    evento.evento ||
+    evento.descripcion ||
+    evento.descripcionEvento ||
+    null,
 
-      motivo:
-        evento.motivo ||
-        evento.descripcionMotivo ||
-        null,
+  motivo:
+    evento.Motivo ||
+    evento.motivo ||
+    evento.descripcionMotivo ||
+    null,
 
-      submotivo:
-        evento.submotivo ||
-        evento.descripcionSubmotivo ||
-        null,
+  submotivo:
+    evento.Submotivo ||
+    evento.submotivo ||
+    evento.descripcionSubmotivo ||
+    null,
 
-      sucursal:
-        evento.sucursal?.descripcion ||
-        evento.sucursalDescripcion ||
-        evento.sucursal ||
-        null,
+  sucursal:
+    evento.Sucursal?.descripcion ||
+    evento.sucursal?.descripcion ||
+    evento.Sucursal ||
+    evento.sucursalDescripcion ||
+    evento.sucursal ||
+    null,
 
-      comentario:
-        evento.comentario ||
-        evento.observacion ||
-        null
-    }));
+  comentario:
+    evento.Comentario ||
+    evento.comentario ||
+    evento.Observacion ||
+    evento.observacion ||
+    null
+}));
 
     const estado =
       estadoOrden?.estado ||
