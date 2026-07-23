@@ -512,6 +512,44 @@ async function crearOrdenAndreani(cliente, pedido, total) {
   return data;
 }
 
+async function obtenerEstadoOrdenAndreani(numeroEnvio) {
+  const token = await getAndreaniToken();
+  const baseUrl = process.env.ANDREANI_URL.replace(/\/+$/, "");
+
+  if (!numeroEnvio) {
+    throw new Error("Falta el número de envío Andreani");
+  }
+
+  const response = await fetch(
+    `${baseUrl}/v2/ordenes-de-envio/${numeroEnvio}`,
+    {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "x-authorization-token": token
+      }
+    }
+  );
+
+  const responseText = await response.text();
+
+  let data;
+
+  try {
+    data = JSON.parse(responseText);
+  } catch {
+    data = responseText;
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      `Error consultando estado Andreani (${response.status}): ${responseText}`
+    );
+  }
+
+  return data;
+}
+
 function hoyBas(){
   return new Date().toISOString().slice(0, 10);
 }
@@ -1050,6 +1088,27 @@ app.get("/admin/andreani-test", verificarAdmin, async (req, res) => {
 
   } catch (error) {
     console.log("Error Andreani test:", error.message);
+
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+app.get("/admin/andreani-estado-test/:numeroEnvio", verificarAdmin, async (req, res) => {
+  try {
+    const { numeroEnvio } = req.params;
+
+    const estado = await obtenerEstadoOrdenAndreani(numeroEnvio);
+
+    res.json({
+      success: true,
+      estado
+    });
+
+  } catch (error) {
+    console.log("Error estado Andreani test:", error.message);
 
     res.status(500).json({
       success: false,
