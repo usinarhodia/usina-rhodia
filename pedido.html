@@ -80,6 +80,49 @@ const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 const params = new URLSearchParams(window.location.search);
 const token = params.get("token");
 
+function formatearFechaAndreani(fecha) {
+  if (!fecha) return "";
+
+  const fechaCompatible = String(fecha).replace(
+    /(\.\d{3})\d+/,
+    "$1"
+  );
+
+  const valor = new Date(fechaCompatible);
+
+  if (Number.isNaN(valor.getTime())) {
+    return fecha;
+  }
+
+  return valor.toLocaleString("es-AR", {
+    dateStyle: "short",
+    timeStyle: "short"
+  });
+}
+
+function nombreEventoAndreani(evento) {
+  const nombres = {
+    OrdenDeEnvioSolicitada: "Envío solicitado",
+    OrdenDeEnvioCreada: "Orden de envío creada"
+  };
+
+  return nombres[evento] || evento || "Actualización del envío";
+}
+
+function alternarSeguimiento() {
+  const historial = document.getElementById("historialAndreani");
+  const boton = document.getElementById("botonSeguimientoAndreani");
+
+  if (!historial || !boton) return;
+
+  const oculto = historial.style.display === "none";
+
+  historial.style.display = oculto ? "block" : "none";
+  boton.textContent = oculto
+    ? "Ocultar seguimiento"
+    : "Seguir envío";
+}
+
 async function cargarPedido(){
 
   const contenedor = document.getElementById("pedido");
@@ -169,15 +212,60 @@ if (pedido.status === "picked_up") {
       <b>Código Andreani:</b> ${andreani.numeroEnvio}
     </p>
 
-    <p style="margin:0 0 8px;">
-      <b>Estado Andreani:</b> ${andreani.estado}
+    <p style="margin:0 0 14px;">
+      <b>Estado actual:</b>
+      ${andreani.eventos?.[0]?.estado || andreani.estado}
     </p>
 
-    ${andreani.sucursal ? `
-      <p style="margin:0;">
-        <b>Sucursal de distribución:</b> ${andreani.sucursal}
-      </p>
-    ` : ""}
+    <button
+      type="button"
+      id="botonSeguimientoAndreani"
+      class="btn"
+      style="border:none;cursor:pointer;margin-top:5px;"
+      onclick="alternarSeguimiento()"
+    >
+      Seguir envío
+    </button>
+
+    <div
+      id="historialAndreani"
+      style="display:none;margin-top:22px;"
+    >
+      <h3 style="margin-bottom:16px;">
+        Historial del envío
+      </h3>
+
+      ${andreani.eventos?.length ? andreani.eventos.map(evento => `
+        <div style="
+          padding:14px 0;
+          border-top:1px solid #333;
+        ">
+          <div style="font-weight:bold;margin-bottom:5px;">
+            ${nombreEventoAndreani(evento.evento)}
+          </div>
+
+          ${evento.estado ? `
+            <div style="margin-bottom:4px;">
+              ${evento.estado}
+            </div>
+          ` : ""}
+
+          ${evento.fecha ? `
+            <div style="font-size:14px;color:#aaa;">
+              ${formatearFechaAndreani(evento.fecha)}
+            </div>
+          ` : ""}
+
+          ${evento.sucursal ? `
+            <div style="font-size:14px;color:#aaa;margin-top:4px;">
+              ${evento.sucursal}
+            </div>
+          ` : ""}
+        </div>
+      `).join("") : `
+        <p>Todavía no hay movimientos registrados.</p>
+      `}
+    </div>
   </div>
 ` : ""}
 
