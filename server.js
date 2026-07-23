@@ -550,6 +550,44 @@ async function obtenerEstadoOrdenAndreani(numeroEnvio) {
   return data;
 }
 
+async function obtenerTrazasAndreani(numeroEnvio) {
+  const token = await getAndreaniToken();
+  const baseUrl = process.env.ANDREANI_URL.replace(/\/+$/, "");
+
+  if (!numeroEnvio) {
+    throw new Error("Falta el número de envío Andreani");
+  }
+
+  const response = await fetch(
+    `${baseUrl}/v3/envios/${numeroEnvio}/trazas`,
+    {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "x-authorization-token": token
+      }
+    }
+  );
+
+  const responseText = await response.text();
+
+  let data;
+
+  try {
+    data = JSON.parse(responseText);
+  } catch {
+    data = responseText;
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      `Error consultando trazas Andreani (${response.status}): ${responseText}`
+    );
+  }
+
+  return data;
+}
+
 function hoyBas(){
   return new Date().toISOString().slice(0, 10);
 }
@@ -1093,17 +1131,64 @@ app.get("/pedido-andreani/:trackingToken", async (req, res) => {
       });
     }
 
-    const respuestaAndreani = await obtenerEstadoOrdenAndreani(
-      pedido.andreani_numero_envio
-    );
+    const [estadoOrden, trazas] = await Promise.all([
+      obtenerEstadoOrdenAndreani(pedido.andreani_numero_envio),
+      obtenerTrazasAndreani(pedido.andreani_numero_envio)
+    ]);
 
-    const sucursal =
-      respuestaAndreani?.sucursalDeDistribucion?.descripcion || null;
+    const eventosOriginales =
+      Array.isArray(trazas)
+        ? trazas
+        : trazas?.eventos || trazas?.trazas || [];
+
+    const eventos = eventosOriginales.map(evento => ({
+      fecha:
+        evento.fecha ||
+        evento.fechaEvento ||
+        evento.fechaHora ||
+        null,
+
+      estado:
+        evento.estado ||
+        evento.estadoDescripcion ||
+        evento.descripcionEstado ||
+        null,
+
+      evento:
+        evento.evento ||
+        evento.descripcion ||
+        evento.descripcionEvento ||
+        null,
+
+      motivo:
+        evento.motivo ||
+        evento.descripcionMotivo ||
+        null,
+
+      submotivo:
+        evento.submotivo ||
+        evento.descripcionSubmotivo ||
+        null,
+
+      sucursal:
+        evento.sucursal?.descripcion ||
+        evento.sucursalDescripcion ||
+        evento.sucursal ||
+        null,
+
+      comentario:
+        evento.comentario ||
+        evento.observacion ||
+        null
+    }));
 
     const estado =
-      respuestaAndreani?.estado ||
+      estadoOrden?.estado ||
       pedido.andreani_estado ||
       "Sin información";
+
+    const sucursal =
+      estadoOrden?.sucursalDeDistribucion?.descripcion || null;
 
     await supabase
       .from("orders")
@@ -1117,18 +1202,19 @@ app.get("/pedido-andreani/:trackingToken", async (req, res) => {
       tieneEnvioAndreani: true,
       numeroEnvio: pedido.andreani_numero_envio,
       estado,
-      sucursal
+      sucursal,
+      eventos
     });
 
   } catch (error) {
     console.log(
-      "Error consultando Andreani para cliente:",
+      "Error consultando seguimiento Andreani:",
       error.message
     );
 
     res.status(500).json({
       success: false,
-      error: "No se pudo consultar el estado del envío"
+      error: "No se pudo consultar el seguimiento del envío"
     });
   }
 });
