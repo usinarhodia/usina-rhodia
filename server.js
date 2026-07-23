@@ -336,6 +336,137 @@ async function getAndreaniToken() {
   return token.trim();
 }
 
+async function crearOrdenAndreaniPrueba() {
+  const token = await getAndreaniToken();
+  const baseUrl = process.env.ANDREANI_URL;
+
+  const payload = {
+    contrato: process.env.ANDREANI_CONTRATO_DOMICILIO,
+    sucursalClienteID: Number(process.env.ANDREANI_SUCURSAL),
+    idPedido: `PRUEBA-${Date.now()}`,
+
+    origen: {
+      postal: {
+        codigoPostal: "1878",
+        calle: "Primera Junta",
+        numero: "525",
+        piso: "",
+        departamento: "",
+        localidad: "Quilmes",
+        region: "AR-B",
+        pais: "Argentina"
+      }
+    },
+
+    destino: {
+      postal: {
+        codigoPostal: "1878",
+        calle: "Mitre",
+        numero: "500",
+        piso: "",
+        departamento: "",
+        localidad: "Quilmes",
+        region: "AR-B",
+        pais: "Argentina"
+      }
+    },
+
+    remitente: {
+      nombreCompleto: "SURPACIFICO SA",
+      email: "rodhia@surpacifico.com.ar",
+      documentoTipo: "CUIT",
+      documentoNumero: "30607219725",
+      telefonos: [
+        {
+          tipo: 1,
+          numero: "5491139543761"
+        }
+      ]
+    },
+
+    destinatario: [
+      {
+        nombreCompleto: "Cliente de Prueba",
+        email: "prueba@usinarhodia.com",
+        documentoTipo: "DNI",
+        documentoNumero: "12345678",
+        telefonos: [
+          {
+            tipo: 1,
+            numero: "5491100000000"
+          }
+        ]
+      }
+    ],
+
+    remito: {
+      numeroRemito: `PRUEBA-${Date.now()}`,
+      complementarios: []
+    },
+
+    bultos: [
+      {
+        kilos: 1,
+        largoCm: 15,
+        altoCm: 10,
+        anchoCm: 10,
+        volumenCm: 1500,
+        valorDeclaradoSinImpuestos: 0,
+        valorDeclaradoConImpuestos: 30000,
+        referencias: [
+          {
+            meta: "pedido",
+            contenido: "Prueba Usina Rhodia"
+          }
+        ],
+        descripcion: "Prendas de vestir"
+      }
+    ],
+
+    pagoPendienteEnMostrador: false
+  };
+
+  console.log(
+    "Payload orden Andreani:",
+    JSON.stringify(payload, null, 2)
+  );
+
+  const response = await fetch(`${baseUrl}/v2/ordenes-de-envio`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "x-authorization-token": token
+    },
+    body: JSON.stringify(payload)
+  });
+
+  const responseText = await response.text();
+
+  let data;
+
+  try {
+    data = JSON.parse(responseText);
+  } catch {
+    data = responseText;
+  }
+
+  console.log(
+    "Respuesta orden Andreani:",
+    typeof data === "string"
+      ? data
+      : JSON.stringify(data, null, 2)
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `Error creando orden Andreani (${response.status}): ${responseText}`
+    );
+  }
+
+  return data;
+}
+
 function hoyBas(){
   return new Date().toISOString().slice(0, 10);
 }
@@ -874,6 +1005,26 @@ app.get("/admin/andreani-test", verificarAdmin, async (req, res) => {
 
   } catch (error) {
     console.log("Error Andreani test:", error.message);
+
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+app.get("/admin/andreani-orden-test", verificarAdmin, async (req, res) => {
+  try {
+    const orden = await crearOrdenAndreaniPrueba();
+
+    res.json({
+      success: true,
+      message: "Orden de prueba Andreani creada correctamente",
+      orden
+    });
+
+  } catch (error) {
+    console.log("Error orden Andreani test:", error.message);
 
     res.status(500).json({
       success: false,
