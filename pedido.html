@@ -105,31 +105,31 @@ async function cargarPedido(){
 
   let estadoTexto = pedido.status;
 
-if(pedido.status === "pending"){
+if (pedido.status === "pending") {
   estadoTexto = "Pendiente de pago";
 }
 
-if(pedido.status === "paid"){
+if (pedido.status === "paid") {
   estadoTexto = "Pago aprobado";
 }
 
-if(pedido.status === "preparing"){
+if (pedido.status === "preparado") {
   estadoTexto = "Preparando pedido";
 }
 
-if(pedido.status === "shipped"){
+if (pedido.status === "enviado") {
   estadoTexto = "Pedido enviado";
 }
 
-if(pedido.status === "delivered"){
+if (pedido.status === "entregado") {
   estadoTexto = "Pedido entregado";
 }
 
-if(pedido.status === "ready_pickup"){
+if (pedido.status === "ready_pickup") {
   estadoTexto = "Listo para retirar";
 }
 
-if(pedido.status === "picked_up"){
+if (pedido.status === "picked_up") {
   estadoTexto = "Pedido retirado";
 }
 
