@@ -1309,6 +1309,67 @@ app.get("/admin/andreani-trazas-test/:numeroEnvio", verificarAdmin, async (req, 
   }
 });
 
+app.get("/admin/andreani-etiqueta/:orderId", verificarAdmin, async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    const { data: pedido, error } = await supabase
+      .from("orders")
+      .select("id, andreani_etiqueta_url, andreani_numero_envio")
+      .eq("id", orderId)
+      .single();
+
+    if (error || !pedido) {
+      return res.status(404).json({
+        success: false,
+        error: "Pedido no encontrado"
+      });
+    }
+
+    if (!pedido.andreani_etiqueta_url) {
+      return res.status(404).json({
+        success: false,
+        error: "El pedido no tiene etiqueta Andreani"
+      });
+    }
+
+    const tokenAndreani = await getAndreaniToken();
+
+    const response = await fetch(pedido.andreani_etiqueta_url, {
+      method: "GET",
+      headers: {
+        Accept: "application/pdf",
+        "x-authorization-token": tokenAndreani
+      }
+    });
+
+    if (!response.ok) {
+      const texto = await response.text();
+
+      throw new Error(
+        `Error obteniendo etiqueta Andreani (${response.status}): ${texto}`
+      );
+    }
+
+    const archivo = Buffer.from(await response.arrayBuffer());
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `inline; filename="etiqueta-andreani-${pedido.andreani_numero_envio}.pdf"`
+    );
+
+    res.send(archivo);
+
+  } catch (error) {
+    console.log("Error descargando etiqueta Andreani:", error.message);
+
+    res.status(500).json({
+      success: false,
+      error: "No se pudo obtener la etiqueta Andreani"
+    });
+  }
+});
 
 async function obtenerPagoMercadoPago(paymentId){
   for(let intento = 1; intento <= 3; intento++){
