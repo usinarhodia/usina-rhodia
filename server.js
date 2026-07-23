@@ -284,6 +284,58 @@ async function getBasToken(){
   return data.access_token;
 }
 
+async function getAndreaniToken() {
+  const username = process.env.ANDREANI_USERNAME;
+  const password = process.env.ANDREANI_PASSWORD;
+  const baseUrl = process.env.ANDREANI_URL;
+
+  if (!username || !password || !baseUrl) {
+    throw new Error("Faltan variables de entorno de Andreani");
+  }
+
+  const basicAuth = Buffer
+    .from(`${username}:${password}`)
+    .toString("base64");
+
+  const response = await fetch(`${baseUrl}/login`, {
+    method: "POST",
+    headers: {
+      Authorization: `Basic ${basicAuth}`,
+      Accept: "application/json, text/plain"
+    }
+  });
+
+  const responseText = await response.text();
+
+  if (!response.ok) {
+    throw new Error(
+      `Error autenticando con Andreani (${response.status}): ${responseText}`
+    );
+  }
+
+  let data;
+
+  try {
+    data = JSON.parse(responseText);
+  } catch {
+    data = responseText;
+  }
+
+  const token =
+    data?.token ||
+    data?.access_token ||
+    data?.accessToken ||
+    data;
+
+  if (!token || typeof token !== "string") {
+    throw new Error(
+      `Andreani no devolvió un token válido: ${responseText}`
+    );
+  }
+
+  return token.trim();
+}
+
 function hoyBas(){
   return new Date().toISOString().slice(0, 10);
 }
@@ -803,6 +855,26 @@ app.get("/admin/bas-test", verificarAdmin, async (req, res) => {
 
   } catch (error) {
     console.log("Error BAS test:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+app.get("/admin/andreani-test", verificarAdmin, async (req, res) => {
+  try {
+    const token = await getAndreaniToken();
+
+    res.json({
+      success: true,
+      message: "Andreani conectado correctamente",
+      token_inicio: token.slice(0, 20)
+    });
+
+  } catch (error) {
+    console.log("Error Andreani test:", error.message);
+
     res.status(500).json({
       success: false,
       error: error.message
