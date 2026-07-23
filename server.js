@@ -1057,6 +1057,82 @@ app.get("/order-by-attempt/:attemptId", async (req, res) => {
   }
 });
 
+app.get("/pedido-andreani/:trackingToken", async (req, res) => {
+  try {
+    const { trackingToken } = req.params;
+
+    if (!trackingToken) {
+      return res.status(400).json({
+        success: false,
+        error: "Falta el token del pedido"
+      });
+    }
+
+    const { data: pedido, error: errorPedido } = await supabase
+      .from("orders")
+      .select(`
+        id,
+        tracking_token,
+        andreani_numero_envio,
+        andreani_estado
+      `)
+      .eq("tracking_token", trackingToken)
+      .single();
+
+    if (errorPedido || !pedido) {
+      return res.status(404).json({
+        success: false,
+        error: "Pedido no encontrado"
+      });
+    }
+
+    if (!pedido.andreani_numero_envio) {
+      return res.json({
+        success: true,
+        tieneEnvioAndreani: false
+      });
+    }
+
+    const respuestaAndreani = await obtenerEstadoOrdenAndreani(
+      pedido.andreani_numero_envio
+    );
+
+    const sucursal =
+      respuestaAndreani?.sucursalDeDistribucion?.descripcion || null;
+
+    const estado =
+      respuestaAndreani?.estado ||
+      pedido.andreani_estado ||
+      "Sin información";
+
+    await supabase
+      .from("orders")
+      .update({
+        andreani_estado: estado
+      })
+      .eq("id", pedido.id);
+
+    res.json({
+      success: true,
+      tieneEnvioAndreani: true,
+      numeroEnvio: pedido.andreani_numero_envio,
+      estado,
+      sucursal
+    });
+
+  } catch (error) {
+    console.log(
+      "Error consultando Andreani para cliente:",
+      error.message
+    );
+
+    res.status(500).json({
+      success: false,
+      error: "No se pudo consultar el estado del envío"
+    });
+  }
+});
+
 app.get("/admin/bas-test", verificarAdmin, async (req, res) => {
   try {
     const token = await getBasToken();
