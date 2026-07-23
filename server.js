@@ -512,6 +512,27 @@ async function crearOrdenAndreani(cliente, pedido, total) {
   return data;
 }
 
+function hoyBas(){
+  return new Date().toISOString().slice(0, 10);
+}
+
+function talleBas(talle){
+  return String(talle || "").trim();
+}
+
+function extraerColorBas(color){
+  const match = String(color || "").match(/\(([^)]+)\)/);
+  return match ? match[1] : color;
+}
+
+function calcularImportes(precioFinal, cantidad){
+  const total = Number(precioFinal) * Number(cantidad);
+  const gravado = Math.round(total / 1.21);
+  const iva = total - gravado;
+
+  return { total, gravado, iva };
+}
+
 async function buscarClienteBasPorDni(dni){
   const token = await getBasToken();
 
