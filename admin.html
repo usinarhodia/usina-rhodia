@@ -697,10 +697,7 @@ async function generarStockVariantes(tipo){
             talleNumerico % 2 === 0
           );
         })
-        .sort(
-          (a, b) =>
-            Number(a.TALLE) - Number(b.TALLE)
-        );
+        .sort((a, b) => Number(a.TALLE) - Number(b.TALLE));
     }else{
       const ordenTalles = [
         "XS",
@@ -757,11 +754,14 @@ async function generarStockVariantes(tipo){
     `;
   });
 }
+
+function prepararStockPantalon(){
   console.log("Generando stock pantalón");
 
   generarStockVariantes("pantalon");
 
-  const contenedor = document.getElementById("stockVariantesPantalon");
+  const contenedor =
+    document.getElementById("stockVariantesPantalon");
 
   if(!contenedor.innerHTML.trim()){
     alert("Primero seleccioná al menos un color BAS");
