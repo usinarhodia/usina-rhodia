@@ -655,7 +655,9 @@ async function generarStockVariantes(tipo){
       : document.getElementById("stockVariantes");
 
   const colores = [
-    ...document.querySelectorAll("#coloresBasContainer .colorProducto:checked")
+    ...document.querySelectorAll(
+      "#coloresBasContainer .colorProducto:checked"
+    )
   ];
 
   if(colores.length === 0){
@@ -677,40 +679,84 @@ async function generarStockVariantes(tipo){
   contenedor.innerHTML = "";
 
   colores.forEach(color => {
-    const ordenTalles = ["XS", "S", "M", "L", "XL", "XXL", "XXXL", "XXXXL", "28", "30", "32", "34", "36", "38", "40", "42"];
+    let tallesDelColor = data.filter(
+      item => item.COLOR === color.value
+    );
 
-const tallesDelColor = data
-  .filter(item => item.COLOR === color.value)
-  .sort((a, b) => {
-    const talleA = mostrarTalleVisual(a.TALLE);
-    const talleB = mostrarTalleVisual(b.TALLE);
+    if(tipo === "pantalon"){
+      tallesDelColor = tallesDelColor
+        .filter(item => {
+          const talleNumerico = Number(
+            String(item.TALLE).trim()
+          );
 
-    return ordenTalles.indexOf(talleA) - ordenTalles.indexOf(talleB);
-  });
+          return (
+            Number.isInteger(talleNumerico) &&
+            talleNumerico >= 28 &&
+            talleNumerico <= 42 &&
+            talleNumerico % 2 === 0
+          );
+        })
+        .sort(
+          (a, b) =>
+            Number(a.TALLE) - Number(b.TALLE)
+        );
+    }else{
+      const ordenTalles = [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL",
+        "XXXL",
+        "XXXXL"
+      ];
+
+      tallesDelColor = tallesDelColor.sort((a, b) => {
+        const talleA = mostrarTalleVisual(a.TALLE);
+        const talleB = mostrarTalleVisual(b.TALLE);
+
+        return (
+          ordenTalles.indexOf(talleA) -
+          ordenTalles.indexOf(talleB)
+        );
+      });
+    }
 
     contenedor.innerHTML += `
-      <div style="background:#181818;padding:18px;border-radius:14px;margin-bottom:18px;">
+      <div style="
+        background:#181818;
+        padding:18px;
+        border-radius:14px;
+        margin-bottom:18px;
+      ">
         <h4>${color.dataset.nombre} (${color.value})</h4>
 
-        ${tallesDelColor.map(item => `
-          <input
-            type="number"
-            class="stockVariante"
-            data-size="${mostrarTalleVisual(item.TALLE)}"
-            data-bas-size="${item.TALLE}"
-            data-color="${item.COLOR}"
-            data-color-name="${item.NOMBRE_COLOR}"
-            placeholder="Stock ${mostrarTalleVisual(item.TALLE)}"
-            value="0"
-            style="margin-bottom:8px;"
-          >
-        `).join("")}
+        ${tallesDelColor.map(item => {
+          const talleVisual =
+            tipo === "pantalon"
+              ? String(Number(item.TALLE))
+              : mostrarTalleVisual(item.TALLE);
+
+          return `
+            <input
+              type="number"
+              class="stockVariante"
+              data-size="${talleVisual}"
+              data-bas-size="${item.TALLE}"
+              data-color="${item.COLOR}"
+              data-color-name="${item.NOMBRE_COLOR}"
+              placeholder="Stock ${talleVisual}"
+              value="0"
+              style="margin-bottom:8px;"
+            >
+          `;
+        }).join("")}
       </div>
     `;
   });
 }
-
-function prepararStockPantalon(){
   console.log("Generando stock pantalón");
 
   generarStockVariantes("pantalon");
@@ -778,8 +824,13 @@ for(let i = 0; i < imagenes.length; i++){
 
 
 
+const selectorStock =
+  tipo === "pantalon"
+    ? "#stockVariantesPantalon .stockVariante"
+    : "#stockVariantes .stockVariante";
+
 const stocks = [
-  ...document.querySelectorAll(".stockVariante")
+  ...document.querySelectorAll(selectorStock)
 ].map(input => ({
   size: input.dataset.size,
   bas_size: input.dataset.basSize,
