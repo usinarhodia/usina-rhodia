@@ -1377,7 +1377,7 @@ function validarFirmaMercadoPago(req) {
   const xRequestId = req.headers["x-request-id"];
   const dataId = req.query["data.id"];
 
-  if (!secret || !xSignature || !xRequestId || !dataId) {
+  if (!secret || !xSignature) {
     return false;
   }
 
@@ -1400,20 +1400,34 @@ function validarFirmaMercadoPago(req) {
     return false;
   }
 
-  const manifest =
-    `id:${dataId};request-id:${xRequestId};ts:${timestamp};`;
+  const partesManifest = [];
+
+  if (dataId) {
+    partesManifest.push(`id:${String(dataId).toLowerCase()};`);
+  }
+
+  if (xRequestId) {
+    partesManifest.push(`request-id:${xRequestId};`);
+  }
+
+  partesManifest.push(`ts:${timestamp};`);
+
+  const manifest = partesManifest.join("");
 
   const firmaCalculada = crypto
     .createHmac("sha256", secret)
     .update(manifest)
     .digest("hex");
 
-  const bufferRecibido = Buffer.from(firmaRecibida, "hex");
-  const bufferCalculado = Buffer.from(firmaCalculada, "hex");
-
-  if (bufferRecibido.length !== bufferCalculado.length) {
+  if (
+    !/^[a-f0-9]{64}$/i.test(firmaRecibida) ||
+    !/^[a-f0-9]{64}$/i.test(firmaCalculada)
+  ) {
     return false;
   }
+
+  const bufferRecibido = Buffer.from(firmaRecibida, "hex");
+  const bufferCalculado = Buffer.from(firmaCalculada, "hex");
 
   return crypto.timingSafeEqual(
     bufferRecibido,
