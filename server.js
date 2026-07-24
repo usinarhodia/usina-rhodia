@@ -1371,6 +1371,56 @@ app.get("/admin/andreani-etiqueta/:orderId", verificarAdmin, async (req, res) =>
   }
 });
 
+function validarFirmaMercadoPago(req) {
+  const secret = process.env.MP_WEBHOOK_SECRET;
+  const xSignature = req.headers["x-signature"];
+  const xRequestId = req.headers["x-request-id"];
+  const dataId = req.query["data.id"];
+
+  if (!secret || !xSignature || !xRequestId || !dataId) {
+    return false;
+  }
+
+  const partesFirma = {};
+
+  String(xSignature)
+    .split(",")
+    .forEach(parte => {
+      const [clave, valor] = parte.split("=");
+
+      if (clave && valor) {
+        partesFirma[clave.trim()] = valor.trim();
+      }
+    });
+
+  const timestamp = partesFirma.ts;
+  const firmaRecibida = partesFirma.v1;
+
+  if (!timestamp || !firmaRecibida) {
+    return false;
+  }
+
+  const manifest =
+    `id:${dataId};request-id:${xRequestId};ts:${timestamp};`;
+
+  const firmaCalculada = crypto
+    .createHmac("sha256", secret)
+    .update(manifest)
+    .digest("hex");
+
+  const bufferRecibido = Buffer.from(firmaRecibida, "hex");
+  const bufferCalculado = Buffer.from(firmaCalculada, "hex");
+
+  if (bufferRecibido.length !== bufferCalculado.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(
+    bufferRecibido,
+    bufferCalculado
+  );
+}
+
 async function obtenerPagoMercadoPago(paymentId){
   for(let intento = 1; intento <= 3; intento++){
     try{
@@ -1402,6 +1452,11 @@ async function obtenerPagoMercadoPago(paymentId){
 app.post("/webhook", async (req, res) => {
   try {
     console.log("Webhook recibido:", req.body);
+
+    if (!validarFirmaMercadoPago(req)) {
+      console.log("Firma Mercado Pago inválida");
+      return res.sendStatus(401);
+    }
 
     if (req.body.type !== "payment") {
       return res.sendStatus(200);
