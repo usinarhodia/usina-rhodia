@@ -45,7 +45,7 @@ app.use(express.static(__dirname));
 
 app.post("/crear-preferencia", async (req, res) => {
   try {
-    const { cliente, items } = req.body;
+    const { cliente, items, coupon_code } = req.body;
 
     if (!cliente || !items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ error: "Datos inválidos" });
@@ -160,6 +160,59 @@ bas_size: stock.bas_size
       });
     }
 
+    let cuponAplicado = null;
+
+const codigoCupon = String(coupon_code || "")
+  .trim()
+  .toUpperCase();
+
+if (codigoCupon) {
+  const { data: cupon, error: errorCupon } = await supabase
+    .from("coupons")
+    .select("*")
+    .eq("code", codigoCupon)
+    .ilike("customer_email", email.trim())
+    .eq("active", true)
+    .is("used_at", null)
+    .is("checkout_attempt_id", null)
+    .maybeSingle();
+
+  if (errorCupon) {
+    console.log("Error validando cupón:", errorCupon);
+
+    return res.status(500).json({
+      error: "No se pudo validar el cupón"
+    });
+  }
+
+  if (!cupon) {
+    return res.status(400).json({
+      error: "El cupón no es válido para este email o ya fue utilizado"
+    });
+  }
+
+  const porcentaje = Number(cupon.discount_percent);
+  const factorDescuento = (100 - porcentaje) / 100;
+
+  itemsValidados.forEach(item => {
+    item.unit_price = Number(
+      (Number(item.unit_price) * factorDescuento).toFixed(2)
+    );
+
+    item.subtotal = Number(
+      (item.unit_price * item.quantity).toFixed(2)
+    );
+  });
+
+  total = Number(
+    itemsValidados
+      .reduce((acumulado, item) => acumulado + item.subtotal, 0)
+      .toFixed(2)
+  );
+
+  cuponAplicado = cupon;
+}
+
     const { data: intento, error: errorIntento } = await supabase
       .from("checkout_attempts")
       .insert({
@@ -175,6 +228,38 @@ bas_size: stock.bas_size
       console.log("Error creando intento:", errorIntento);
       return res.status(500).json({ error: "Error creando intento de pago" });
     }
+
+    if (cuponAplicado) {
+  const {
+    data: cuponReservado,
+    error: errorReservaCupon
+  } = await supabase
+    .from("coupons")
+    .update({
+      checkout_attempt_id: intento.id
+    })
+    .eq("id", cuponAplicado.id)
+    .is("checkout_attempt_id", null)
+    .is("used_at", null)
+    .select()
+    .single();
+
+  if (errorReservaCupon || !cuponReservado) {
+    console.log(
+      "No se pudo reservar el cupón:",
+      errorReservaCupon
+    );
+
+    await supabase
+      .from("checkout_attempts")
+      .delete()
+      .eq("id", intento.id);
+
+    return res.status(409).json({
+      error: "El cupón acaba de ser utilizado o reservado"
+    });
+  }
+}
 
     const preference = {
       external_reference: intento.id.toString(),
@@ -195,13 +280,44 @@ bas_size: stock.bas_size
       auto_return: "approved"
     };
 
-    const response = await preferenceClient.create({ body: preference });
+    let response;
 
-    res.json({
-      id: response.id,
-      init_point: response.init_point,
-      attempt_id: intento.id
-    });
+try {
+  response = await preferenceClient.create({
+    body: preference
+  });
+} catch (errorMercadoPago) {
+  console.log(
+    "Error creando preferencia Mercado Pago:",
+    errorMercadoPago
+  );
+
+  if (cuponAplicado) {
+    await supabase
+      .from("coupons")
+      .update({
+        checkout_attempt_id: null
+      })
+      .eq("id", cuponAplicado.id)
+      .eq("checkout_attempt_id", intento.id)
+      .is("used_at", null);
+  }
+
+  await supabase
+    .from("checkout_attempts")
+    .update({
+      status: "failed"
+    })
+    .eq("id", intento.id);
+
+  throw errorMercadoPago;
+}
+
+res.json({
+  id: response.id,
+  init_point: response.init_point,
+  attempt_id: intento.id
+});
 
   } catch (error) {
     console.log("ERROR CREAR PREFERENCIA SEGURA:", error);
@@ -1689,6 +1805,15 @@ tracking_url: null
         status: "paid"
       })
       .eq("id", attemptId);
+
+      await supabase
+  .from("coupons")
+  .update({
+    active: false,
+    used_at: new Date().toISOString()
+  })
+  .eq("checkout_attempt_id", attemptId)
+  .is("used_at", null);
 
     console.log("Pedido final creado:", pedido.id);
 

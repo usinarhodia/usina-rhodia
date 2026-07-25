@@ -443,6 +443,29 @@
 
         <div id="resumenPedido"></div>
 
+        <div class="campo" style="margin:18px 0;">
+  <label for="couponCode">Código de descuento</label>
+
+  <input
+    type="text"
+    id="couponCode"
+    placeholder="Ingresá tu código"
+    autocomplete="off"
+    maxlength="50"
+    oninput="this.value = this.value.toUpperCase().replace(/\s/g, '')"
+  >
+
+  <small style="
+    display:block;
+    margin-top:8px;
+    color:#a9a9a9;
+    font-size:11px;
+    line-height:1.4;
+  ">
+    El descuento se validará con el email ingresado al continuar al pago.
+  </small>
+</div>
+
         <div class="linea-total">
           <span>Subtotal</span>
           <span id="subtotal">$0</span>
@@ -546,6 +569,11 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   const telefono = document.getElementById("telefono").value.trim();
   const email = document.getElementById("email").value.trim();
   const dni = document.getElementById("dni").value.trim();
+  const couponCode = document
+  .getElementById("couponCode")
+  .value
+  .trim()
+  .toUpperCase();
 
   const entrega = document.querySelector('input[name="entrega"]:checked').value;
   const direccion = document.getElementById("direccion") ? document.getElementById("direccion").value.trim() : "";
@@ -621,7 +649,10 @@ try {
 provincia: provincia,
 cp: cp
       },
-      items: productosSeguros
+
+      items: productosSeguros,
+
+      coupon_code: couponCode || null
     })
   });
 
@@ -645,7 +676,8 @@ if (data.init_point) {
 
 } else {
 
-  mensaje.textContent = "Error iniciando Mercado Pago.";
+  mensaje.textContent =
+  data.error || "Error iniciando Mercado Pago.";
 
 }
 
