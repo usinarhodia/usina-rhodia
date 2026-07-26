@@ -728,7 +728,7 @@ async function cargarProductosHome() {
 .select("*")
 .eq("active", true)
     .eq("active", true)
-    .order("id", { ascending: true })
+    .order("display_order", { ascending: true })
     .limit(8);
 
   if (error) {
