@@ -977,33 +977,182 @@ app.get("/admin/pedidos", verificarAdmin, async (req, res) => {
 app.post("/admin/crear-producto", verificarAdmin, async (req, res) => {
   try {
     const {
-      brand,
-      name,
-      old_price,
-      price,
-      discount,
-      coditm,
-      bas_color,
-      bas_color_name,
-      imageUrls,
-      stocks
-    } = req.body;
+  brand,
+  name,
+
+  gender,
+  category,
+  subcategory,
+  season,
+  source_catalog,
+  description,
+
+  catalog_visible,
+  featured,
+  featured_order,
+  featured_from,
+  featured_until,
+
+  old_price,
+  price,
+  discount,
+
+  coditm,
+  bas_color,
+  bas_color_name,
+
+  imageUrls,
+  stocks
+} = req.body;
+
+const generosPermitidos = [
+  "hombre",
+  "mujer",
+  "unisex"
+];
+
+const categoriasPermitidas = [
+  "abrigos",
+  "buzos",
+  "sweaters",
+  "remeras",
+  "polos",
+  "camisas",
+  "pantalones",
+  "jeans",
+  "accesorios"
+];
+
+if (
+  !brand ||
+  !name ||
+  !gender ||
+  !category ||
+  !season ||
+  !source_catalog ||
+  !coditm
+) {
+  return res.status(400).json({
+    error: "Faltan campos obligatorios del producto"
+  });
+}
+
+if (!generosPermitidos.includes(gender)) {
+  return res.status(400).json({
+    error: "Género inválido"
+  });
+}
+
+if (!categoriasPermitidas.includes(category)) {
+  return res.status(400).json({
+    error: "Categoría inválida"
+  });
+}
+
+const precioNumero = Number(price);
+
+if (!Number.isFinite(precioNumero) || precioNumero <= 0) {
+  return res.status(400).json({
+    error: "El precio debe ser mayor a cero"
+  });
+}
+
+if (featured === true) {
+  const precioAnteriorNumero = Number(old_price);
+  const descuentoNumero = Number(discount);
+
+  if (
+    !Number.isFinite(precioAnteriorNumero) ||
+    precioAnteriorNumero <= precioNumero
+  ) {
+    return res.status(400).json({
+      error: "El precio anterior debe ser mayor al precio de oferta"
+    });
+  }
+
+  if (
+    !Number.isFinite(descuentoNumero) ||
+    descuentoNumero <= 0 ||
+    descuentoNumero >= 100
+  ) {
+    return res.status(400).json({
+      error: "El descuento debe estar entre 1 y 99"
+    });
+  }
+}
+
+if (
+  !Array.isArray(imageUrls) ||
+  imageUrls.length === 0
+) {
+  return res.status(400).json({
+    error: "El producto necesita al menos una imagen"
+  });
+}
+
+if (
+  !Array.isArray(stocks) ||
+  stocks.length === 0
+) {
+  return res.status(400).json({
+    error: "El producto necesita combinaciones de stock"
+  });
+}
+
+if (
+  featured === true &&
+  (
+    !Number.isInteger(Number(featured_order)) ||
+    Number(featured_order) < 1 ||
+    Number(featured_order) > 8
+  )
+) {
+  return res.status(400).json({
+    error: "El orden destacado debe estar entre 1 y 8"
+  });
+}
+
+if (
+  featured_from &&
+  featured_until &&
+  new Date(featured_until) <= new Date(featured_from)
+) {
+  return res.status(400).json({
+    error: "La finalización debe ser posterior al inicio"
+  });
+}
 
     const { data: producto, error: errorProducto } = await supabase
-      .from("products")
-      .insert({
-        brand,
-        name,
-        old_price,
-        price,
-        discount,
-        coditm,
-        bas_color,
-        bas_color_name,
-        active: true
-      })
-      .select()
-      .single();
+  .from("products")
+  .insert({
+    brand,
+    name,
+
+    gender,
+    category,
+    subcategory: subcategory || null,
+    season,
+    source_catalog,
+    description: description || null,
+
+    catalog_visible: catalog_visible !== false,
+    featured: featured === true,
+    featured_order: featured ? featured_order : null,
+    featured_from: featured ? featured_from : null,
+    featured_until: featured ? featured_until : null,
+
+    old_price,
+    price,
+    discount,
+
+    coditm,
+    bas_color,
+    bas_color_name,
+
+    active: true
+  })
+  .select()
+  .single();
 
     if (errorProducto) {
       console.log("Error creando producto:", errorProducto);
