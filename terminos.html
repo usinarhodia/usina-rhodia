@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Términos y condiciones | Usina Rhodia</title>
+
+  <meta
+    name="description"
+    content="Conocé los términos y condiciones de compra de Usina Rhodia."
+  />
+
+  <style>
+    :root {
+      --bg: #080808;
+      --surface: #111111;
+      --surface-soft: #171717;
+      --border: #2d2d2d;
+      --text: #f5f3ef;
+      --muted: #aaa49e;
+      --red: #d90b12;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER */
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(8, 8, 8, 0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      width: min(1300px, calc(100% - 40px));
+      min-height: 86px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .header-link {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      transition: opacity 0.2s ease;
+    }
+
+    .header-link:hover {
+      opacity: 0.65;
+    }
+
+    .header-link.right {
+      justify-self: end;
+    }
+
+    .brand {
+      font-size: clamp(21px, 2vw, 27px);
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      text-align: center;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* MAIN */
+
+    main {
+      flex: 1;
+    }
+
+    .hero {
+      width: min(1300px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 78px 0 38px;
+    }
+
+    .eyebrow {
+      margin-bottom: 16px;
+      color: #ff3c42;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      max-width: 1050px;
+      font-size: clamp(50px, 8vw, 112px);
+      line-height: 0.88;
+      letter-spacing: -0.065em;
+      text-transform: uppercase;
+    }
+
+    .hero-description {
+      max-width: 760px;
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.65;
+    }
+
+    .content {
+      width: min(1300px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 30px 0 96px;
+    }
+
+    /* INTRO */
+
+    .legal-intro {
+      margin-bottom: 22px;
+      padding: 34px;
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      background: var(--surface);
+    }
+
+    .legal-intro p {
+      max-width: 920px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.75;
+    }
+
+    .legal-intro strong {
+      color: var(--text);
+    }
+
+    /* LEGAL SECTIONS */
+
+    .legal-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .legal-section {
+      display: grid;
+      grid-template-columns: 110px minmax(0, 1fr);
+      gap: 28px;
+      padding: 32px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: var(--surface);
+    }
+
+    .legal-number {
+      width: 58px;
+      height: 58px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: var(--red);
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .legal-copy h2 {
+      margin-bottom: 16px;
+      font-size: 22px;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
+    .legal-copy p,
+    .legal-copy li {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.75;
+    }
+
+    .legal-copy p + p {
+      margin-top: 14px;
+    }
+
+    .legal-copy ul {
+      margin-top: 14px;
+      padding-left: 20px;
+    }
+
+    .legal-copy li + li {
+      margin-top: 8px;
+    }
+
+    .legal-copy strong {
+      color: var(--text);
+    }
+
+    .legal-copy a {
+      color: var(--white);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* IMPORTANT BLOCK */
+
+    .important-block {
+      margin-top: 22px;
+      padding: 44px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+      gap: 50px;
+      align-items: center;
+      border-radius: 30px;
+      background: var(--red);
+    }
+
+    .important-block .eyebrow {
+      color: var(--white);
+      opacity: 0.85;
+    }
+
+    .important-block h2 {
+      max-width: 780px;
+      font-size: clamp(38px, 5.5vw, 76px);
+      line-height: 0.92;
+      letter-spacing: -0.055em;
+      text-transform: uppercase;
+    }
+
+    .important-copy {
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .important-copy strong {
+      color: var(--white);
+    }
+
+    /* CONTACT */
+
+    .contact-card {
+      margin-top: 22px;
+      padding: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 30px;
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      background: var(--surface-soft);
+    }
+
+    .contact-card h2 {
+      max-width: 720px;
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1;
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
+    }
+
+    .contact-button {
+      flex: 0 0 auto;
+      min-height: 54px;
+      padding: 0 25px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: var(--white);
+      color: #080808;
+      font-size: 13px;
+      font-weight: 900;
+      text-transform: uppercase;
+      transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+    }
+
+    .contact-button:hover {
+      transform: translateY(-2px);
+      background: #e6e6e6;
+    }
+
+    /* FOOTER */
+
+    .site-footer {
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-inner {
+      width: min(1300px, calc(100% - 40px));
+      min-height: 96px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      color: #77736f;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 900px) {
+      .header-inner {
+        grid-template-columns: 1fr auto;
+      }
+
+      .brand {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        padding-top: 22px;
+      }
+
+      .header-link {
+        grid-row: 2;
+        padding-bottom: 20px;
+      }
+
+      .legal-section {
+        grid-template-columns: 1fr;
+      }
+
+      .important-block {
+        grid-template-columns: 1fr;
+      }
+
+      .contact-card {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .header-inner,
+      .hero,
+      .content,
+      .footer-inner {
+        width: min(100% - 24px, 1300px);
+      }
+
+      .hero {
+        padding-top: 54px;
+      }
+
+      .hero h1 {
+        font-size: clamp(44px, 16vw, 68px);
+      }
+
+      .legal-intro,
+      .legal-section {
+        padding: 24px;
+      }
+
+      .important-block {
+        padding: 30px 24px;
+      }
+
+      .contact-card {
+        padding: 30px 24px;
+      }
+
+      .footer-inner {
+        min-height: 120px;
+        align-items: flex-start;
+        justify-content: center;
+        flex-direction: column;
+        padding: 28px 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <header class="site-header">
+      <div class="header-inner">
+
+        <a class="header-link" href="index.html">
+          ← Volver al inicio
+        </a>
+
+        <a class="brand" href="index.html">
+          Usina Rhodia
+        </a>
+
+        <a class="header-link right" href="guardarropa.html">
+          Ver prendas
+        </a>
+
+      </div>
+    </header>
+
+    <main>
+
+      <section class="hero">
+        <p class="eyebrow">Condiciones de uso y compra</p>
+
+        <h1>Términos y<br />condiciones.</h1>
+
+        <p class="hero-description">
+          Estas condiciones regulan el acceso a la tienda, la realización de
+          compras y la relación entre Usina Rhodia y sus clientes.
+        </p>
+      </section>
+
+      <section class="content">
+
+        <div class="legal-intro">
+          <p>
+            Al navegar por este sitio o realizar una compra, la persona usuaria
+            declara haber leído y aceptado estos términos. Las condiciones aquí
+            descriptas se aplican sin perjuicio de los derechos reconocidos por
+            la normativa argentina de defensa del consumidor, que prevalecerá
+            cuando corresponda.
+          </p>
+        </div>
+
+        <div class="legal-list">
+
+          <article class="legal-section">
+            <div>
+              <span class="legal-number">01</span>
+            </div>
+
+            <div class="legal-copy">
+              <h2>Identificación del comercio</h2>
+
+              <p>
+                La tienda opera bajo el nombre comercial
+                <strong>Usina Rhodia</strong>. Antes de publicar definitivamente
+                el sitio deberán incorporarse en el footer o en esta sección la
+                razón social, CUIT, domicilio comercial y correo electrónico
+                oficial del responsable de la venta.
+              </p>
+            </div>
+          </article>
+
+          <article class="legal-section">
+            <div>
+              <span class="legal-number">02</span>
+            </div>
+
+            <div class="legal-copy">
+              <h2>Uso del sitio</h2>
+
+              <p>
+                El sitio puede utilizarse exclusivamente con fines lícitos.
+                La persona usuaria se compromete a brindar información verdadera,
+                completa y actualizada al registrarse, comprar o comunicarse con
+                Usina Rhodia.
+              </p>
+
+              <p>
+                Queda prohibido intentar alterar el funcionamiento de la tienda,
+                acceder a información ajena, realizar operaciones fraudulentas o
+                utilizar medios de pago sin autorización.
+              </p>
+            </div>
+          </article>
+
+          <article class="legal-section">
+            <div>
+              <span class="legal-number">03</span>
+            </div>
+
+            <div class="legal-copy">
+              <h2>Productos e imágenes</h2>
+
+              <p>
+                Usina Rhodia procura que las fotografías, descripciones,
+                características, colores y talles representen fielmente los
+                productos ofrecidos.
+              </p>
+
+              <p>
+                Los colores pueden variar ligeramente según la pantalla utilizada.
+                Las fotografías son ilustrativas y pueden existir diferencias
+                mínimas propias del proceso de fabricación.
+              </p>
+            </div>
+          </article>
+
+          <article class="legal-section">
+            <div>
+              <span class="legal-number">04</span>
+            </div>
+
+            <div class="legal-copy">
+              <h2>Precios</h2>
+
+              <p>
+                Los precios publicados se expresan en pesos argentinos, salvo
+                indicación expresa en contrario.
+              </p>
+
+              <p>
+                El precio válido será el informado al momento de confirmar la
+                compra. El costo de envío, cuando corresponda, se informará
+                separadamente antes de finalizar el pedido.
+              </p>
+            </div>
+          </article>
+
+          <article class="legal-section">
+            <div>
+              <span class="legal-number">05</span>
+            </div>
+
+            <div class="legal-copy">
+              <h2>Disponibilidad y stock</h2>
+
+              <p>
+                La disponibilidad se actualiza periódicamente. Sin embargo, por
+                tratarse de un sistema conectado al inventario comercial, puede
+                existir una diferencia excepcional entre el stock mostrado y el
+                stock confirmado al preparar el pedido.
+              </p>
+
+              <p>
+                Si un producto no se encuentra disponible después de realizada la
+                compra, Usina Rhodia se comunicará con el cliente para ofrecer una
+                alternativa o realizar la solución que legalmente corresponda.
+              </p>
+            </div>
+          </article>
+
+          <article class="legal-section">
+            <div>
+              <span class="legal-number">06</span>
+            </div>
+
+            <div class="legal-copy">
+              <h2>Proceso de compra</h2>
+
+              <p>
+                Para realizar una compra es necesario seleccionar el producto,
+                color y talle, agregarlo al carrito, completar los datos del
+                checkout y elegir un medio de pago.
+              </p>
+
+              <p>
+                La recepción de una solicitud de compra no implica necesariamente
+                su aceptación definitiva. La operación queda confirmada una vez
+                aprobado el pago y validada la disponibilidad del producto.
+              </p>
+            </div>
+          </article>
+
+          <article class="legal-section">
+            <div>
+              <span class="legal-number">07</span>
+            </div>
+
+            <div class="legal-copy">
+              <h2>Medios de pago</h2>
+
+              <p>
+                Los pagos se procesan mediante Mercado Pago y las opciones que esa
+                plataforma tenga habilitadas.
+              </p>
+
+              <p>
+                Usina Rhodia no almacena los datos completos de las tarjetas.
+                La aprobación o rechazo de una operación puede depender de
+                Mercado Pago, la entidad emisora o los mecanismos de prevención
+                de fraude.
+              </p>
+
+              <p>
+                Podés consultar más información en
+                <a href="pagos.html">Medios de pago</a>.
+              </p>
+            </div>
+          </article>
+
+          <article class="legal-section">
+            <div>
+              <span class="legal-number">08</span>
+            </div>
+
+            <div class="legal-copy">
+              <h2>Envíos y entrega</h2>
+
+              <p>
+                Los métodos, costos y plazos estimados de envío serán informados
+                antes de finalizar la compra o mediante los canales de contacto
+                correspondientes.
+              </p>
+
+              <p>
+                La persona compradora es responsable de proporcionar correctamente
+                el domicilio, localidad, código postal, teléfono y datos de
+                recepción.
+              </p>
+
+              <p>
+                Podés consultar los detalles en
+                <a href="envios.html">Envíos</a>.
+              </p>
+            </div>
+          </article>
+
+          <article class="legal-section">
+            <div>
+              <span class="legal-number">09</span>
+            </div>
+
+            <div class="legal-copy">
+              <h2>Cambios</h2>
+
+              <p>
+                Los cambios voluntarios de talle o producto estarán sujetos a las
+                condiciones informadas en la sección
+                <a href="cambios.html">Cambios</a>, disponibilidad de stock y
+                estado de la prenda.
+              </p>
+
+              <p>
+                Los productos deberán conservar etiquetas, envoltorios y
+                condiciones originales, sin uso, lavado, manchas, olores ni
+                alteraciones.
+              </p>
+            </div>
+          </article>
+
+
+          <article class="legal-section">
+            <div>
+              <span class="legal-number">10</span>
+            </div>
+
+            <div class="legal-copy">
+              <h2>Productos con fallas o incorrectos</h2>
+
+              <p>
+                Si el producto recibido presenta una falla, daño atribuible al
+                despacho o no coincide con lo comprado, el cliente deberá
+                comunicarse con Usina Rhodia aportando el número de pedido y las
+                imágenes necesarias para evaluar el caso.
+              </p>
+
+              <p>
+                Esta cláusula no limita las garantías ni los derechos que la
+                legislación de consumo reconoce a la persona compradora.
+              </p>
+            </div>
+          </article>
+
+          <article class="legal-section">
+            <div>
+              <span class="legal-number">11</span>
+            </div>
+
+            <div class="legal-copy">
+              <h2>Comunicaciones</h2>
+
+              <p>
+                Usina Rhodia podrá utilizar los datos proporcionados para informar
+                el estado del pedido, solicitar aclaraciones necesarias para la
+                entrega, enviar comprobantes y responder consultas.
+              </p>
+
+              <p>
+                Nunca se solicitarán contraseñas, claves bancarias ni códigos
+                completos de seguridad de tarjetas por WhatsApp, correo
+                electrónico o redes sociales.
+              </p>
+            </div>
+          </article>
+
+          <article class="legal-section">
+            <div>
+              <span class="legal-number">12</span>
+            </div>
+
+            <div class="legal-copy">
+              <h2>Propiedad intelectual</h2>
+
+              <p>
+                Los diseños, textos, fotografías, logotipos, nombres comerciales,
+                gráficos y demás contenido del sitio se encuentran protegidos por
+                la normativa aplicable.
+              </p>
+
+              <p>
+                No se permite su reproducción, modificación, distribución o uso
+                comercial sin autorización de sus titulares.
+              </p>
+            </div>
+          </article>
+
+          <article class="legal-section">
+            <div>
+              <span class="legal-number">13</span>
+            </div>
+
+            <div class="legal-copy">
+              <h2>Disponibilidad del sitio</h2>
+
+              <p>
+                Usina Rhodia podrá realizar tareas de mantenimiento, actualización
+                o corrección que provoquen interrupciones temporales.
+              </p>
+
+              <p>
+                Se procurará mantener la tienda disponible y segura, aunque no se
+                garantiza un funcionamiento ininterrumpido frente a hechos
+                técnicos, externos o de fuerza mayor.
+              </p>
+            </div>
+          </article>
+
+          <article class="legal-section">
+            <div>
+              <span class="legal-number">14</span>
+            </div>
+
+            <div class="legal-copy">
+              <h2>Modificaciones</h2>
+
+              <p>
+                Estas condiciones podrán actualizarse para reflejar cambios
+                operativos, comerciales o legales.
+              </p>
+
+              <p>
+                La versión aplicable a una compra será la vigente y publicada al
+                momento de confirmar la operación, sin perjuicio de los derechos
+                inderogables de la persona consumidora.
+              </p>
+            </div>
+          </article>
+
+          <article class="legal-section">
+            <div>
+              <span class="legal-number">15</span>
+            </div>
+
+            <div class="legal-copy">
+              <h2>Legislación y reclamos</h2>
+
+              <p>
+                Las relaciones de consumo se regirán por la normativa vigente en
+                la República Argentina.
+              </p>
+
+              <p>
+                Ante un inconveniente, la persona compradora podrá comunicarse
+                primero con Usina Rhodia para buscar una solución y conservará
+                siempre la posibilidad de recurrir a los organismos públicos de
+                defensa del consumidor que correspondan.
+              </p>
+            </div>
+          </article>
+
+        </div>
+
+        <section class="important-block">
+
+          <div>
+            <p class="eyebrow">Tus derechos están protegidos</p>
+
+            <h2>Estas condiciones no reemplazan la ley.</h2>
+          </div>
+
+          <div class="important-copy">
+            <p>
+  Usina Rhodia respeta íntegramente la legislación argentina de
+  defensa del consumidor.
+</p>
+          </div>
+
+        </section>
+
+        <section class="contact-card">
+
+          <h2>¿Tenés una consulta sobre tu compra?</h2>
+
+          <a
+            class="contact-button"
+            href="https://wa.me/5491139543761?text=Hola%2C%20tengo%20una%20consulta%20sobre%20los%20t%C3%A9rminos%20de%20compra%20de%20Usina%20Rhodia."
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Consultar por WhatsApp
+          </a>
+
+        </section>
+
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <span>© 2026 Usina Rhodia</span>
+        <span>Última actualización: agosto de 2026</span>
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>

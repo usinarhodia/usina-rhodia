@@ -1,625 +1,1551 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>USINA RHODIA | Producto</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0b0b">
+
+  <title>Producto | Usina Rhodia</title>
+  <meta
+    name="description"
+    content="Descubrí este producto en Usina Rhodia."
+  >
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+  >
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
-    body { background: #0f0f0f; color: #fff; }
-    a { text-decoration: none; color: inherit; }
-    img { display: block; width: 100%; }
-
-    .top-strip { width: 100%; background: #c91010; }
-    .top-strip-inner { max-width: 1400px; margin: 0 auto; padding: 10px 28px; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
-    .top-strip-left { font-size: 12px; font-weight: 800; letter-spacing: 1.4px; text-transform: uppercase; }
-    .top-strip-right { font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: rgba(255,255,255,0.92); }
-
-    header { position: sticky; top: 0; z-index: 100; background: rgba(15,15,15,0.95); border-bottom: 1px solid rgba(255,255,255,0.08); }
-    .header-inner { max-width: 1400px; margin: 0 auto; padding: 18px 28px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-    .logo { font-size: 24px; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; }
-    .header-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-    .header-link { font-size: 12px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: #ff2a2a; }
-
-    .cart-link { display: inline-flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 14px; background: #171717; border: 1px solid rgba(255,255,255,0.10); font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
-    .cart-count { min-width: 24px; height: 24px; padding: 0 7px; border-radius: 999px; background: #ff2a2a; font-size: 11px; font-weight: 900; display: inline-flex; align-items: center; justify-content: center; }
-
-    .producto-page { max-width: 1400px; margin: 0 auto; padding: 28px; }
-    .producto-layout { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 30px; align-items: start; }
-
-    .galeria { display: grid; grid-template-columns: 100px 1fr; gap: 16px; position: sticky; top: 120px; }
-    .miniaturas { display: flex; flex-direction: column; gap: 14px; }
-    .miniatura { width: 100%; height: 120px; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.10); background: #181818; cursor: pointer; }
-    .miniatura.activa { border-color: #ff2a2a; }
-    .miniatura img { height: 100%; object-fit: cover; }
-
-    .imagen-principal { background: #171717; border: 1px solid rgba(255,255,255,0.08); border-radius: 28px; overflow: hidden; min-height: 760px; }
-    .imagen-principal img { height: 100%; min-height: 760px; object-fit: cover; }
-
-    .info-producto { background: #171717; border: 1px solid rgba(255,255,255,0.08); border-radius: 28px; padding: 34px; }
-    .marca { display: inline-block; margin-bottom: 12px; color: #ff2a2a; font-size: 12px; font-weight: 800; letter-spacing: 1.4px; text-transform: uppercase; }
-    .titulo-producto { font-size: 42px; line-height: 0.98; font-weight: 900; text-transform: uppercase; margin-bottom: 22px; }
-    .precio-box { display: flex; align-items: end; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
-    .precio-anterior { font-size: 20px; color: #8e8e8e; text-decoration: line-through; font-weight: 600; }
-    .precio-actual { font-size: 44px; font-weight: 900; letter-spacing: -1px; }
-    .descuento { background: #ff2a2a; padding: 8px 12px; border-radius: 999px; font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
-
-    .bloque { padding-top: 22px; border-top: 1px solid rgba(255,255,255,0.08); }
-    .bloque-titulo { font-size: 12px; font-weight: 800; letter-spacing: 1.4px; text-transform: uppercase; color: #ff2a2a; margin-bottom: 14px; }
-
-    .talles { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; }
-    .talle-btn { min-width: 86px; padding: 14px 18px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.10); background: #101010; color: #fff; font-size: 13px; font-weight: 800; cursor: pointer; }
-    .talle-btn.activo { background: #ff2a2a; border-color: #ff2a2a; }
-    .talle-btn.agotado { background: #1c1c1c; color: #6f6f6f; cursor: not-allowed; opacity: 0.55; }
-
-    .stock-info { font-size: 14px; color: #d2d2d2; line-height: 1.5; min-height: 24px; }
-    .stock-info strong { color: #fff; }
-
-    .cantidad-box { margin-top: 18px; display: inline-flex; align-items: center; gap: 18px; background: #101010; border: 1px solid rgba(255,255,255,0.10); border-radius: 16px; padding: 8px; }
-    .cantidad-box button { width: 38px; height: 38px; border: none; border-radius: 12px; background: #ff2a2a; color: white; font-size: 18px; font-weight: 900; cursor: pointer; }
-    .cantidad-box span { min-width: 28px; text-align: center; font-size: 15px; font-weight: 900; }
-
-    .acciones { margin-top: 24px; }
-    .btn-principal { width: 100%; border: none; border-radius: 16px; padding: 16px 18px; font-size: 13px; font-weight: 800; letter-spacing: 1.1px; text-transform: uppercase; cursor: pointer; background: #ff2a2a; color: #fff; }
-
-    .notificacion { position: fixed; top: 20px; right: 20px; background: #171717; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; min-width: 260px; max-width: 320px; opacity: 0; transform: translateY(-20px); pointer-events: none; transition: all 0.3s ease; z-index: 9999; }
-    .notificacion.activa { opacity: 1; transform: translateY(0); }
-    .notificacion img { width: 50px; height: 60px; object-fit: cover; border-radius: 8px; }
-    .notif-texto { display: flex; flex-direction: column; }
-    .notif-texto strong { font-size: 13px; font-weight: 800; text-transform: uppercase; }
-    .notif-texto span { font-size: 12px; color: #cfcfcf; }
-
-    footer { border-top: 1px solid rgba(255,255,255,0.08); padding: 22px 28px; text-align: center; color: #b8b8b8; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-top: 40px; }
-
-    @media (max-width: 1200px) {
-      .producto-layout { grid-template-columns: 1fr; }
-      .galeria { position: static; }
-      .imagen-principal, .imagen-principal img { min-height: 620px; }
+    :root {
+      --bg: #0b0b0b;
+      --surface: #151515;
+      --surface-2: #1a1a1a;
+      --text: #f7f5f1;
+      --muted: #a9a59f;
+      --line: rgba(255,255,255,.12);
+      --accent: #c91010;
+      --cream: #efede7;
+      --shell: 1440px;
+      --ease: cubic-bezier(.2,.7,.2,1);
     }
 
-    @media (max-width: 780px) {
-      .top-strip-inner, .header-inner, .producto-page, footer { padding-left: 16px; padding-right: 16px; }
-      .top-strip-inner, .header-inner { flex-direction: column; align-items: flex-start; gap: 8px; }
-      .header-actions { width: 100%; justify-content: flex-start; }
-      .galeria { grid-template-columns: 1fr; }
-      .miniaturas { flex-direction: row; overflow-x: auto; }
-      .miniatura { min-width: 88px; height: 100px; }
-      .imagen-principal, .imagen-principal img { min-height: 480px; }
-      .info-producto { padding: 24px; }
-      .titulo-producto { font-size: 30px; }
-      .precio-actual { font-size: 36px; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    #colores{
-  display:flex;
-  gap:10px;
-  margin:10px 0 20px;
-}
+    html {
+      scroll-behavior: smooth;
+    }
 
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Montserrat", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
 
-.color-btn.activo{
-  border-color:#ff2a2a;
-}
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
-#talles{
-  margin-top: 16px;
-}
+    button,
+    select {
+      font: inherit;
+    }
 
-.colores-producto{
-  display:flex;
-  gap:12px;
-  margin-top:14px;
-  margin-bottom:22px;
-}
+    button {
+      color: inherit;
+    }
 
+    img {
+      display: block;
+      width: 100%;
+    }
 
-.color-btn.activo{
-  background:#ff2a2a;
-  border-color:#ff2a2a;
-}
+    .shell {
+      width: min(calc(100% - 56px), var(--shell));
+      margin-inline: auto;
+    }
 
-.colores-producto{
-  display:flex;
-  gap:18px;
-  margin-top:14px;
-  margin-bottom:28px;
-}
+    .announcement {
+      background: var(--accent);
+    }
 
+    .announcement__inner {
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.1px;
+      text-align: center;
+      text-transform: uppercase;
+    }
 
-.color-btn.activo{
-  border-color:#ff2a2a;
-  box-shadow:0 0 0 3px rgba(255,42,42,.25);
-}
+    .site-header {
+      position: sticky;
+      z-index: 100;
+      top: 0;
+      background: rgba(11,11,11,.97);
+      border-bottom: 1px solid rgba(255,255,255,.16);
+      box-shadow: 0 10px 28px rgba(0,0,0,.22);
+      backdrop-filter: blur(18px);
+    }
 
-.color-wrap{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:7px;
-  color:white;
-  font-size:11px;
-  font-weight:bold;
-  max-width:80px;
-  text-align:center;
-}
+    .header__inner {
+      min-height: 78px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 24px;
+    }
 
-#talles{
-  margin-top:16px;
-}
+    .back-link {
+      justify-self: start;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
 
-#colores{
-  display:flex;
-  gap:12px;
-  margin-top:14px;
-  margin-bottom:26px;
-}
+    .brand {
+      justify-self: center;
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 3px;
+    }
 
-.color-circulo{
-  width:46px;
-  height:46px;
-  min-width:46px;
-  border-radius:50%;
-  border:2px solid #333;
-  cursor:pointer;
-}
+    .cart-link {
+      justify-self: end;
+      min-height: 42px;
+      padding: 0 12px 0 15px;
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
 
-.color-circulo.activo{
-  border-color:#ff2a2a;
-  box-shadow:0 0 0 4px rgba(255,42,42,.25);
-}
+    .cart-count {
+      min-width: 22px;
+      height: 22px;
+      padding-inline: 5px;
+      border-radius: 999px;
+      background: #fff;
+      color: #111;
+      display: grid;
+      place-items: center;
+    }
 
-#talles{
-  margin-top:16px;
-}
+    .loading,
+    .error-state {
+      min-height: 70vh;
+      display: grid;
+      place-items: center;
+      padding: 40px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.7;
+    }
 
+    .loading[hidden],
+    .error-state[hidden],
+    .product-page[hidden] {
+      display: none !important;
+    }
+
+    .product-main {
+      padding: 38px 0 90px;
+    }
+
+    .product-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.18fr) minmax(380px, .82fr);
+      gap: 52px;
+      align-items: start;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: 88px minmax(0, 1fr);
+      gap: 14px;
+      position: sticky;
+      top: 116px;
+    }
+
+    .thumbnails {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .thumbnail {
+      aspect-ratio: 3 / 4;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #171717;
+      cursor: pointer;
+      opacity: .58;
+      transition: opacity .2s ease, border-color .2s ease;
+    }
+
+    .thumbnail.active,
+    .thumbnail:hover {
+      opacity: 1;
+      border-color: rgba(255,255,255,.38);
+    }
+
+    .thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .main-image {
+      position: relative;
+      min-height: 680px;
+      aspect-ratio: 4 / 5;
+      overflow: hidden;
+      border-radius: 24px;
+      background: #151515;
+    }
+
+    .main-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .7s var(--ease);
+    }
+
+    .main-image:hover img {
+      transform: scale(1.025);
+    }
+
+    .discount-badge {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--accent);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .8px;
+    }
+
+    .product-panel {
+      padding: 10px 0 0;
+    }
+
+    .product-brand {
+      color: #f04a4a;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .product-title {
+      margin-top: 12px;
+      font-size: clamp(38px, 5vw, 66px);
+      line-height: .94;
+      letter-spacing: -2.8px;
+      text-transform: uppercase;
+    }
+
+    .product-code {
+      margin-top: 12px;
+      color: #716e69;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .price-row {
+      margin-top: 28px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .current-price {
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    .old-price {
+      color: #77736e;
+      font-size: 15px;
+      text-decoration: line-through;
+    }
+
+    .installments {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .divider {
+      margin: 28px 0;
+      border: 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .option-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.1px;
+      text-transform: uppercase;
+    }
+
+    .selected-value {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .color-options,
+    .size-options {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .option-button {
+      min-height: 44px;
+      padding: 0 15px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #131313;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+      transition: border-color .2s ease, background .2s ease;
+    }
+
+    .option-button:hover,
+    .option-button.active {
+      border-color: rgba(255,255,255,.5);
+      background: #202020;
+    }
+
+    .option-button.disabled {
+      opacity: .34;
+      cursor: not-allowed;
+      text-decoration: line-through;
+    }
+
+    .stock-message {
+      min-height: 18px;
+      margin-top: 13px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .stock-message.low {
+      color: #ff6b6b;
+      font-weight: 700;
+    }
+
+    .quantity-row {
+      margin-top: 26px;
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 12px;
+    }
+
+    .quantity-select {
+      min-height: 54px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #111;
+      color: #fff;
+      outline: none;
+    }
+
+    .add-button {
+      min-height: 54px;
+      border: 0;
+      border-radius: 999px;
+      background: #fff;
+      color: #111;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: transform .2s ease, opacity .2s ease;
+    }
+
+    .add-button:hover {
+      transform: translateY(-2px);
+    }
+
+    .add-button:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .whatsapp-button {
+      width: 100%;
+      min-height: 50px;
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .benefits {
+      margin-top: 28px;
+      border-top: 1px solid var(--line);
+    }
+
+    .benefit {
+      min-height: 62px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      color: #d4d0ca;
+      font-size: 12px;
+    }
+
+    .benefit strong {
+      color: #fff;
+    }
+
+    .description-block {
+      padding: 90px 0;
+      background: var(--cream);
+      color: #171717;
+    }
+
+    .description-grid {
+      display: grid;
+      grid-template-columns: .72fr 1.28fr;
+      gap: 80px;
+    }
+
+    .description-grid h2,
+    .related-header h2 {
+      font-size: clamp(38px, 5vw, 68px);
+      line-height: .94;
+      letter-spacing: -2.8px;
+      text-transform: uppercase;
+    }
+
+    .description-text {
+      color: #55514c;
+      font-size: 15px;
+      line-height: 1.85;
+      white-space: pre-line;
+    }
+
+    .related-section {
+      padding: 90px 0;
+    }
+
+    .related-header {
+      margin-bottom: 34px;
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 30px;
+    }
+
+    .related-header a {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 28px 16px;
+    }
+
+    .related-card-image {
+      aspect-ratio: 3 / 4;
+      border-radius: 17px;
+      overflow: hidden;
+      background: #171717;
+    }
+
+    .related-card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .55s var(--ease);
+    }
+
+    .related-card:hover img {
+      transform: scale(1.035);
+    }
+
+    .related-card-info {
+      padding: 13px 2px 0;
+    }
+
+    .related-brand {
+      color: #f04a4a;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .related-name {
+      margin-top: 6px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .related-price {
+      margin-top: 9px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .toast {
+      position: fixed;
+      z-index: 300;
+      right: 20px;
+      bottom: 20px;
+      max-width: 340px;
+      padding: 16px 18px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 15px;
+      background: rgba(19,19,19,.97);
+      box-shadow: 0 18px 50px rgba(0,0,0,.45);
+      color: #fff;
+      font-size: 12px;
+      line-height: 1.5;
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: opacity .22s ease, transform .22s ease;
+    }
+
+    .toast.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .site-footer {
+      padding: 28px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .footer__inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      color: #77736e;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 1050px) {
+      .product-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .gallery {
+        position: static;
+      }
+
+      .main-image {
+        min-height: 0;
+      }
+
+      .product-panel {
+        max-width: 760px;
+      }
+
+      .related-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .shell {
+        width: min(calc(100% - 28px), var(--shell));
+      }
+
+      .header__inner {
+        min-height: 68px;
+        grid-template-columns: auto 1fr auto;
+      }
+
+      .back-link {
+        font-size: 0;
+      }
+
+      .back-link::before {
+        content: "←";
+        font-size: 18px;
+      }
+
+      .brand {
+        font-size: 15px;
+        letter-spacing: 1.8px;
+      }
+
+      .cart-link {
+        min-height: 38px;
+        padding: 0 8px;
+      }
+
+      .cart-link > span:first-child {
+        display: none;
+      }
+
+      .product-main {
+        padding: 16px 0 66px;
+      }
+
+      .gallery {
+        grid-template-columns: 1fr;
+      }
+
+      .thumbnails {
+        order: 2;
+        flex-direction: row;
+        overflow-x: auto;
+      }
+
+      .thumbnail {
+        flex: 0 0 70px;
+      }
+
+      .main-image {
+        border-radius: 18px;
+      }
+
+      .product-panel {
+        padding-top: 18px;
+      }
+
+      .product-title {
+        font-size: 42px;
+        letter-spacing: -1.9px;
+      }
+
+      .quantity-row {
+        grid-template-columns: 1fr;
+      }
+
+      .description-block,
+      .related-section {
+        padding: 66px 0;
+      }
+
+      .description-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+
+      .related-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .related-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px 10px;
+      }
+
+      .footer__inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
   </style>
 </head>
 
 <body>
-
-  <div class="top-strip">
-    <div class="top-strip-inner">
-      <a href="index.html" class="top-strip-left">USINA RHODIA</a>
-      <div class="top-strip-right">Ofertas por 24 horas · Stock limitado · Sin reposición</div>
+  <div class="announcement">
+    <div class="shell announcement__inner">
+      Envíos a todo el país · Compra segura · Cambios simples
     </div>
   </div>
 
-  <header>
-    <div class="header-inner">
-      <a href="index.html" class="logo">USINA RHODIA</a>
+  <header class="site-header">
+    <div class="shell header__inner">
+      <a class="back-link" href="guardarropa.html">← Volver al catálogo</a>
 
-      <div class="header-actions">
-        <a href="index.html" class="header-link">Volver a ofertas</a>
-        <a href="carrito.html" class="cart-link">
-          <span>Carrito</span>
-          <span class="cart-count" id="cartCount">0</span>
-        </a>
-      </div>
+      <a class="brand" href="index.html">
+        USINA RHODIA
+      </a>
+
+      <a class="cart-link" href="carrito.html">
+        <span>Carrito</span>
+        <span class="cart-count" id="cartCount">0</span>
+      </a>
     </div>
   </header>
 
-  <main class="producto-page">
-    <div class="producto-layout">
-
-      <section class="galeria">
-        <div class="miniaturas" id="miniaturas"></div>
-
-        <div class="imagen-principal">
-          <img id="imagenPrincipal" src="" alt="Producto principal">
-        </div>
-      </section>
-
-      <section class="info-producto">
-        <span class="marca" id="marcaProducto"></span>
-        <h1 class="titulo-producto" id="nombreProducto"></h1>
-
-        <div class="precio-box">
-          <span class="precio-anterior" id="precioAnterior"></span>
-          <span class="precio-actual" id="precioActual"></span>
-          <span class="descuento" id="descuentoProducto"></span>
-        </div>
-
-        <div class="bloque-titulo">Elegí producto</div>
-
-<div id="bloqueColor">
-  <h3>Color</h3>
-  <div id="colores" class="colores-producto"></div>
-</div>
-
-<h3 style="margin-top:24px;">Talle</h3>
-<div class="talles" id="talles"></div>
-
-
-          <div class="stock-info" id="stockInfo"></div>
-
-          <div class="cantidad-box">
-            <button type="button" onclick="cambiarCantidad(-1)">-</button>
-            <span id="cantidadSeleccionada">1</span>
-            <button type="button" onclick="cambiarCantidad(1)">+</button>
-          </div>
-
-          <div class="acciones">
-            <button class="btn-principal" id="btnComprar" onclick="agregarAlCarrito()">Agregar al carrito</button>
-          </div>
-        </div>
-      </section>
-
-    </div>
-  </main>
-
-  <footer>
-    USINA RHODIA — Producto
-  </footer>
-
-  <div id="notificacion" class="notificacion">
-    <img id="notifImg" src="" alt="">
-    <div class="notif-texto">
-      <strong id="notifNombre"></strong>
-      <span id="notifDetalle"></span>
-    </div>
+  <div class="loading" id="loadingState">
+    Cargando producto…
   </div>
 
+  <div class="error-state" id="errorState" hidden>
+    No encontramos este producto.<br>
+    <a href="guardarropa.html">Volver al catálogo</a>
+  </div>
+
+  <div class="product-page" id="productPage" hidden>
+    <main>
+      <section class="product-main">
+        <div class="shell product-layout">
+          <div class="gallery">
+            <div class="thumbnails" id="thumbnails"></div>
+
+            <div class="main-image">
+              <img id="mainImage" src="" alt="">
+              <span class="discount-badge" id="discountBadge" hidden></span>
+            </div>
+          </div>
+
+          <div class="product-panel">
+            <p class="product-brand" id="productBrand"></p>
+            <h1 class="product-title" id="productTitle"></h1>
+            <p class="product-code" id="productCode"></p>
+
+            <div class="price-row">
+              <span class="current-price" id="currentPrice"></span>
+              <span class="old-price" id="oldPrice" hidden></span>
+            </div>
+
+            <p class="installments" id="installments"></p>
+
+            <hr class="divider">
+
+            <div id="colorSection" hidden>
+              <div class="option-label">
+                <span>Color</span>
+                <span class="selected-value" id="selectedColor"></span>
+              </div>
+
+              <div class="color-options" id="colorOptions"></div>
+            </div>
+
+            <div id="sizeSection" hidden>
+              <hr class="divider">
+
+              <div class="option-label">
+                <span>Talle</span>
+                <span class="selected-value" id="selectedSize"></span>
+              </div>
+
+              <div class="size-options" id="sizeOptions"></div>
+              <p class="stock-message" id="stockMessage"></p>
+            </div>
+
+            <div class="quantity-row">
+              <select class="quantity-select" id="quantitySelect" aria-label="Cantidad">
+                <option value="1">Cantidad: 1</option>
+              </select>
+
+              <button class="add-button" id="addButton" type="button" disabled>
+                Seleccioná color y talle
+              </button>
+            </div>
+
+            <a
+              class="whatsapp-button"
+              id="whatsappButton"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Consultar por WhatsApp
+            </a>
+
+            <div class="benefits">
+              <div class="benefit">
+                <span>✓</span>
+                <span><strong>Envíos a todo el país</strong> mediante Andreani.</span>
+              </div>
+
+              <div class="benefit">
+                <span>✓</span>
+                <span><strong>Pago seguro</strong> con Mercado Pago.</span>
+              </div>
+
+              <div class="benefit">
+                <span>✓</span>
+                <span><strong>Stock real</strong> por color y talle.</span>
+              </div>
+
+              <div class="benefit">
+                <span>✓</span>
+                <span><strong>Cambios simples</strong> según las políticas de la tienda.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="description-block">
+        <div class="shell description-grid">
+          <h2>Detalles de la prenda.</h2>
+          <p class="description-text" id="productDescription"></p>
+        </div>
+      </section>
+
+      <section class="related-section">
+        <div class="shell">
+          <header class="related-header">
+            <h2>También puede gustarte.</h2>
+            <a href="guardarropa.html">Ver todo →</a>
+          </header>
+
+          <div class="related-grid" id="relatedGrid"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell footer__inner">
+        <span>© <span id="currentYear"></span> Usina Rhodia</span>
+        <span>Brooksfield · Mistral</span>
+      </div>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+
   <script>
-
-function limpiarCarritoViejo(){
-  const hoy = new Date().toDateString();
-  const fechaCarrito = localStorage.getItem("cart_date");
-
-  if (fechaCarrito && fechaCarrito !== hoy) {
-    localStorage.removeItem("carrito");
-    localStorage.removeItem("ultimoPedidoToken");
-  }
-
-  localStorage.setItem("cart_date", hoy);
-}
-
-limpiarCarritoViejo();
-    
-    const SUPABASE_URL = "https://vegbamfkmcyvgvnjmxgs.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_BFRP4PzzRhvUw3OF0NZtpw_gXjejWn9";
-
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    const params = new URLSearchParams(window.location.search);
-    const productoId = Number(params.get("id"));
-
-    let productoActual = null;
-    let talleSeleccionado = null;
-    let stockSeleccionado = 0;
-    let cantidadSeleccionada = 1;
-    let colorSeleccionado = "";
-    let colorNombreSeleccionado = "";
-
-    function formatearPrecio(valor) {
-      return "$" + valor.toLocaleString("es-AR");
-    }
-
-    async function cargarProducto() {
-      const { data: producto, error } = await supabaseClient
-        .from("products")
-        .select("*")
-        .eq("id", productoId)
-        .single();
-
-      if (error || !producto) {
-        document.body.innerHTML = "<h1 style='color:white;padding:40px;'>Producto no encontrado</h1>";
-        return;
-      }
-
-      productoActual = producto;
-
-const bloqueColor = document.getElementById("bloqueColor");
-const coloresDiv = document.getElementById("colores");
-
-function obtenerColorVisual(nombreColor, codigoColor) {
-  const nombre = (nombreColor || "").toUpperCase();
-
-  if (nombre.includes("NEGRO")) return "#000000";
-  if (nombre.includes("BLANCO")) return "#ffffff";
-  if (nombre.includes("GRIS")) return "#777777";
-  if (nombre.includes("AZUL")) return "#1f4fff";
-  if (nombre.includes("ROJO")) return "#d60000";
-  if (nombre.includes("VERDE")) return "#008000";
-  if (nombre.includes("AMARILLO")) return "#ffd400";
-  if (nombre.includes("CAMEL")) return "#c19a6b";
-  if (nombre.includes("TOSTADO")) return "#8b5a2b";
-  if (nombre.includes("MARINO")) return "#001f3f";
-  if (nombre.includes("CELESTE")) return "#73c9ff";
-
-  return "#222222";
-}
-
-if (productoActual.bas_color_name && productoActual.bas_color) {
-  bloqueColor.style.display = "block";
-
-  function convertirAArray(valor) {
-  if (!valor) return [];
-
-  if (Array.isArray(valor)) return valor;
-
-  if (typeof valor === "string") {
-    try {
-      const parseado = JSON.parse(valor);
-      if (Array.isArray(parseado)) return parseado;
-    } catch (e) {}
-
-    return valor
-      .replace("{", "")
-      .replace("}", "")
-      .replace("[", "")
-      .replace("]", "")
-      .replaceAll('"', "")
-      .split(",")
-      .map(item => item.trim())
-      .filter(Boolean);
-  }
-
-  return [valor];
-}
-
-const nombres = convertirAArray(productoActual.bas_color_name);
-const codigos = convertirAArray(productoActual.bas_color);
-
-  colorSeleccionado = codigos[0];
-colorNombreSeleccionado = nombres[0];
-
-  coloresDiv.innerHTML = nombres.map((nombre, index) => {
-    const colorVisual = obtenerColorVisual(nombre, codigos[index]);
-
-    return `
-      <button
-        class="color-circulo ${index === 0 ? "activo" : ""}"
-        title="${nombre}"
-        style="background:${colorVisual};"
-        onclick="seleccionarColor('${codigos[index]}', '${nombres[index]}', this)"
-      ></button>
-    `;
-  }).join("");
-
-} else {
-  bloqueColor.style.display = "none";
-  coloresDiv.innerHTML = "";
-}
-
-      document.getElementById("marcaProducto").textContent = producto.brand;
-      document.getElementById("nombreProducto").textContent = producto.name;
-      document.getElementById("precioAnterior").textContent = formatearPrecio(producto.old_price);
-      document.getElementById("precioActual").textContent = formatearPrecio(producto.price);
-      document.getElementById("descuentoProducto").textContent = "-" + producto.discount + "%";
-
-      await cargarImagenes();
-      await cargarStock();
-      actualizarContadorCarrito();
-    }
-
-    async function cargarImagenes() {
-      const { data: imagenes } = await supabaseClient
-        .from("product_images")
-        .select("*")
-        .eq("product_id", productoId)
-        .order("position", { ascending: true });
-
-      const miniaturas = document.getElementById("miniaturas");
-      const imagenPrincipal = document.getElementById("imagenPrincipal");
-
-      if (!imagenes || imagenes.length === 0) {
-        imagenPrincipal.src = "img/producto-1.jpg";
-        return;
-      }
-
-      imagenPrincipal.src = imagenes[0].image_url;
-
-      miniaturas.innerHTML = imagenes.map((img, index) => `
-        <button class="miniatura ${index === 0 ? "activa" : ""}" onclick="cambiarImagen('${img.image_url}', this)">
-          <img src="${img.image_url}" alt="Vista ${index + 1}">
-        </button>
-      `).join("");
-    }
-
-    function colorCSS(color){
-  const colores = {
-    "Negro": "#000000",
-    "Blanco": "#ffffff",
-    "Azul": "#003cff",
-    "Rojo": "#ff0000",
-    "Verde": "#008000",
-    "Beige": "#d6c3a3",
-    "Gris": "#808080",
-    "Celeste": "#7ec8e3"
-  };
-
-  return colores[color] || "#111";
-}
-
-    async function cargarStock() {
-  let query = supabaseClient
-    .from("product_stock")
-    .select("*")
-    .eq("product_id", productoId);
-
-  if (colorSeleccionado) {
-    query = query.eq("color", String(colorSeleccionado).trim());
-  }
-
-  const { data: stock } = await query;
-
-  const esPantalon = stock.some(item =>
-  ["28","30","32","34","36","38","40","42"].includes(String(item.size))
-);
-
-const stockFiltrado = stock.filter(item => {
-  const talle = String(item.size);
-  const tallesPantalon = ["28","30","32","34","36","38","40","42"];
-
-  return esPantalon
-    ? tallesPantalon.includes(talle)
-    : !tallesPantalon.includes(talle);
-});
-
-  const talles = document.getElementById("talles");
-
-  if (!stockFiltrado || stockFiltrado.length === 0) {
-    talles.innerHTML = "<p>No hay stock disponible.</p>";
-    return;
-  }
-
-  const ordenTalles = ["XS", "S", "M", "L", "XL", "XXL", "XXXL", "XXXXL", "28", "30", "32", "34", "36", "38", "40", "42"];
-
-stockFiltrado.sort((a, b) => {
-  return ordenTalles.indexOf(a.size) - ordenTalles.indexOf(b.size);
-});
-
-  talles.innerHTML = stockFiltrado.map((item, index) => `
-    <button 
-      class="talle-btn ${item.stock <= 0 ? "agotado" : ""} ${index === 0 && item.stock > 0 ? "activo" : ""}"
-      ${item.stock <= 0 ? "disabled" : ""}
-      onclick="seleccionarTalle('${item.size}', ${item.stock}, this)"
-    >
-      ${item.size}
-    </button>
-  `).join("");
-
-  const primerDisponible = stockFiltrado.find(item => item.stock > 0);
-
-  if (primerDisponible) {
-    talleSeleccionado = primerDisponible.size;
-    stockSeleccionado = primerDisponible.stock;
-
-    document.getElementById("stockInfo").innerHTML =
-      `Color: <strong>${colorNombreSeleccionado}</strong> · Talle: <strong>${talleSeleccionado}</strong>`;
-  }
-}
-
-    function cambiarImagen(nuevaImagen, boton) {
-      document.getElementById("imagenPrincipal").src = nuevaImagen;
-      document.querySelectorAll(".miniatura").forEach(item => item.classList.remove("activa"));
-      boton.classList.add("activa");
-    }
-
-    function seleccionarTalle(talle, stock, boton) {
-      talleSeleccionado = talle;
-      stockSeleccionado = stock;
-      cantidadSeleccionada = 1;
-
-      document.getElementById("cantidadSeleccionada").textContent = cantidadSeleccionada;
-      document.querySelectorAll(".talle-btn").forEach(item => item.classList.remove("activo"));
-      boton.classList.add("activo");
-      document.getElementById("stockInfo").innerHTML = `Talle seleccionado: <strong>${talleSeleccionado}</strong>`;
-    }
-
-    function cambiarCantidad(cambio) {
-      const nuevaCantidad = cantidadSeleccionada + cambio;
-
-      if (nuevaCantidad < 1) return;
-
-      if (nuevaCantidad > stockSeleccionado) {
-        mostrarNotificacion("No hay más stock disponible en talle " + talleSeleccionado);
-        return;
-      }
-
-      cantidadSeleccionada = nuevaCantidad;
-      document.getElementById("cantidadSeleccionada").textContent = cantidadSeleccionada;
-    }
-
-    function obtenerCarrito() {
-      return JSON.parse(localStorage.getItem("carrito")) || [];
-    }
-
-    function guardarCarrito(carrito) {
-  localStorage.setItem("carrito", JSON.stringify(carrito));
-  localStorage.setItem("cart_date", new Date().toDateString());
-}
-
-    function agregarAlCarrito() {
-      if (!productoActual || !talleSeleccionado || stockSeleccionado <= 0) return;
-
-      let carrito = obtenerCarrito();
-
-      const colorCarrito = colorNombreSeleccionado + " (" + colorSeleccionado + ")";
-
-const existente = carrito.find(item =>
-  item.product_id === productoActual.id &&
-  item.talle === talleSeleccionado &&
-  item.color === colorCarrito
-);
-
-      const cantidadActual = existente ? existente.cantidad : 0;
-
-      if (cantidadActual + cantidadSeleccionada > stockSeleccionado) {
-        mostrarNotificacion("No hay más stock disponible en talle " + talleSeleccionado);
-        return;
-      }
-
-      const productoCarrito = {
-        product_id: productoActual.id,
-        marca: productoActual.brand,
-        nombre: productoActual.name,
-        precio: productoActual.price,
-        talle: talleSeleccionado,
-        color: colorCarrito,
-        cantidad: cantidadSeleccionada,
-        imagen: document.getElementById("imagenPrincipal").src
+    (() => {
+      "use strict";
+
+      const SUPABASE_URL =
+        "https://vegbamfkmcyvgvnjmxgs.supabase.co";
+
+      const SUPABASE_KEY =
+        "sb_publishable_BFRP4PzzRhvUw3OF0NZtpw_gXjejWn9";
+
+      const supabaseClient = supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+      const state = {
+        product: null,
+        images: [],
+        stockRows: [],
+        selectedColorCode: "",
+        selectedColorName: "",
+        selectedSize: "",
+        selectedStock: 0
       };
-      
 
-      if (existente) {
-        existente.cantidad += cantidadSeleccionada;
-      } else {
-        carrito.push(productoCarrito);
+      const elements = {
+        loadingState: document.getElementById("loadingState"),
+        errorState: document.getElementById("errorState"),
+        productPage: document.getElementById("productPage"),
+        thumbnails: document.getElementById("thumbnails"),
+        mainImage: document.getElementById("mainImage"),
+        discountBadge: document.getElementById("discountBadge"),
+        productBrand: document.getElementById("productBrand"),
+        productTitle: document.getElementById("productTitle"),
+        productCode: document.getElementById("productCode"),
+        currentPrice: document.getElementById("currentPrice"),
+        oldPrice: document.getElementById("oldPrice"),
+        installments: document.getElementById("installments"),
+        colorSection: document.getElementById("colorSection"),
+        selectedColor: document.getElementById("selectedColor"),
+        colorOptions: document.getElementById("colorOptions"),
+        sizeSection: document.getElementById("sizeSection"),
+        selectedSize: document.getElementById("selectedSize"),
+        sizeOptions: document.getElementById("sizeOptions"),
+        stockMessage: document.getElementById("stockMessage"),
+        quantitySelect: document.getElementById("quantitySelect"),
+        addButton: document.getElementById("addButton"),
+        whatsappButton: document.getElementById("whatsappButton"),
+        productDescription: document.getElementById("productDescription"),
+        relatedGrid: document.getElementById("relatedGrid"),
+        cartCount: document.getElementById("cartCount"),
+        currentYear: document.getElementById("currentYear"),
+        toast: document.getElementById("toast")
+      };
+
+      function limpiarCarritoViejo() {
+        const hoy = new Date().toDateString();
+        const fechaCarrito = localStorage.getItem("cart_date");
+
+        if (fechaCarrito && fechaCarrito !== hoy) {
+          localStorage.removeItem("carrito");
+          localStorage.removeItem("ultimoPedidoToken");
+        }
+
+        localStorage.setItem("cart_date", hoy);
       }
 
-      guardarCarrito(carrito);
-      actualizarContadorCarrito();
-      mostrarNotificacion("Talle " + talleSeleccionado + " agregado al carrito");
-    }
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
 
-    function mostrarNotificacion(mensaje) {
-      const notif = document.getElementById("notificacion");
-      const img = document.getElementById("notifImg");
-      const nombre = document.getElementById("notifNombre");
-      const detalle = document.getElementById("notifDetalle");
+      function formatPrice(value) {
+        return "$" + Number(value || 0).toLocaleString("es-AR");
+      }
 
-      img.src = document.getElementById("imagenPrincipal").src;
-      nombre.textContent = productoActual ? productoActual.name : "Producto";
-      detalle.textContent = mensaje;
+      function toArray(value) {
+        if (!value) return [];
+        if (Array.isArray(value)) return value;
 
-      notif.classList.add("activa");
+        if (typeof value === "string") {
+          try {
+            const parsed = JSON.parse(value);
+            if (Array.isArray(parsed)) return parsed;
+          } catch {}
 
-      setTimeout(() => {
-        notif.classList.remove("activa");
-      }, 2500);
-    }
+          return value
+            .replace(/[{}\[\]"]/g, "")
+            .split(",")
+            .map(item => item.trim())
+            .filter(Boolean);
+        }
 
-    function actualizarContadorCarrito() {
-      const carrito = obtenerCarrito();
-      const contador = document.getElementById("cartCount");
-      if (!contador) return;
+        return [String(value)];
+      }
 
-      const totalProductos = carrito.reduce((acc, item) => acc + item.cantidad, 0);
-      contador.textContent = totalProductos;
-    }
+      function colorVisual(name) {
+        const color = String(name || "").toUpperCase();
 
-    function seleccionarColor(color, nombre, boton){
-  colorSeleccionado = String(color).trim();
-  colorNombreSeleccionado = nombre;
+        if (color.includes("NEGRO")) return "#000000";
+        if (color.includes("BLANCO") || color.includes("CRUDO")) return "#f2efe6";
+        if (color.includes("GRIS")) return "#777777";
+        if (color.includes("MARINO")) return "#001f3f";
+        if (color.includes("AZUL")) return "#1f4fff";
+        if (color.includes("ROJO") || color.includes("BORDO")) return "#9c1020";
+        if (color.includes("VERDE")) return "#406146";
+        if (color.includes("BEIGE") || color.includes("CAMEL")) return "#c19a6b";
+        if (color.includes("TOSTADO")) return "#8b5a2b";
+        if (color.includes("CELESTE")) return "#73c9ff";
 
-  document.querySelectorAll(".color-circulo").forEach(btn => {
-    btn.classList.remove("activo");
-  });
+        return "#333333";
+      }
 
-  boton.classList.add("activo");
+      function productId() {
+        return Number(
+          new URLSearchParams(window.location.search).get("id")
+        );
+      }
 
-  cargarStock();
-}
+      function showError() {
+        elements.loadingState.hidden = true;
+        elements.errorState.hidden = false;
+        elements.productPage.hidden = true;
+      }
 
-    cargarProducto();
+      function showProduct() {
+        elements.loadingState.hidden = true;
+        elements.errorState.hidden = true;
+        elements.productPage.hidden = false;
+      }
+
+      function showToast(message) {
+        elements.toast.textContent = message;
+        elements.toast.classList.add("visible");
+
+        setTimeout(() => {
+          elements.toast.classList.remove("visible");
+        }, 2500);
+      }
+
+      async function loadProduct() {
+        const id = productId();
+
+        if (!id) {
+          showError();
+          return;
+        }
+
+        const { data: product, error } = await supabaseClient
+          .from("products")
+          .select("*")
+          .eq("id", id)
+          .single();
+
+        if (error || !product) {
+          console.error(error);
+          showError();
+          return;
+        }
+
+        const [imagesResponse, stockResponse] = await Promise.all([
+          supabaseClient
+            .from("product_images")
+            .select("*")
+            .eq("product_id", id)
+            .order("position", { ascending: true }),
+
+          supabaseClient
+            .from("product_stock")
+            .select("*")
+            .eq("product_id", id)
+        ]);
+
+        state.product = product;
+        state.images = imagesResponse.data || [];
+        state.stockRows = stockResponse.data || [];
+
+        renderProduct();
+        await loadRelatedProducts();
+        showProduct();
+      }
+
+      function renderProduct() {
+        const product = state.product;
+        const price = Number(product.price || 0);
+        const oldPrice = Number(product.old_price || 0);
+        const discount = Number(product.discount || 0);
+
+        document.title =
+          `${product.name || "Producto"} | Usina Rhodia`;
+
+        elements.productBrand.textContent =
+          product.brand || "Usina Rhodia";
+
+        elements.productTitle.textContent =
+          product.name || "Producto";
+
+        elements.productCode.textContent =
+          product.coditm
+            ? `Código: ${product.coditm}`
+            : product.code
+              ? `Código: ${product.code}`
+              : "";
+
+        elements.currentPrice.textContent = formatPrice(price);
+
+        if (oldPrice > price) {
+          elements.oldPrice.hidden = false;
+          elements.oldPrice.textContent = formatPrice(oldPrice);
+        } else {
+          elements.oldPrice.hidden = true;
+        }
+
+        if (discount > 0) {
+          elements.discountBadge.hidden = false;
+          elements.discountBadge.textContent = `-${discount}%`;
+        } else {
+          elements.discountBadge.hidden = true;
+        }
+
+        elements.installments.textContent =
+          "Pagá de forma segura con Mercado Pago.";
+
+        elements.productDescription.textContent =
+          product.description ||
+          "Una prenda seleccionada por Usina Rhodia para acompañarte todos los días.";
+
+        elements.whatsappButton.href =
+          "https://wa.me/?text=" +
+          encodeURIComponent(
+            `Hola, quiero consultar por ${product.brand || ""} ${product.name || ""}.`
+          );
+
+        renderGallery();
+        renderColors();
+      }
+
+      function renderGallery() {
+        const fallback = "img/producto-1.jpg";
+        const images = state.images.length
+          ? state.images
+          : [{ image_url: fallback }];
+
+        elements.mainImage.src = images[0].image_url || fallback;
+        elements.mainImage.alt = state.product.name || "Producto";
+
+        elements.thumbnails.innerHTML = images
+          .map((image, index) => `
+            <button
+              class="thumbnail ${index === 0 ? "active" : ""}"
+              type="button"
+              data-image-index="${index}"
+              aria-label="Ver imagen ${index + 1}"
+            >
+              <img
+                src="${escapeHtml(image.image_url || fallback)}"
+                alt=""
+                loading="lazy"
+              >
+            </button>
+          `)
+          .join("");
+
+        elements.thumbnails
+          .querySelectorAll("[data-image-index]")
+          .forEach(button => {
+            button.addEventListener("click", () => {
+              const index = Number(button.dataset.imageIndex);
+              elements.mainImage.src =
+                images[index]?.image_url || fallback;
+
+              elements.thumbnails
+                .querySelectorAll(".thumbnail")
+                .forEach(item => item.classList.remove("active"));
+
+              button.classList.add("active");
+            });
+          });
+      }
+
+      function renderColors() {
+        const names = toArray(state.product.bas_color_name);
+        const codes = toArray(state.product.bas_color);
+
+        if (!names.length || !codes.length) {
+          elements.colorSection.hidden = true;
+
+          const firstRow = state.stockRows[0];
+          state.selectedColorCode =
+            firstRow ? String(firstRow.color || "").trim() : "";
+          state.selectedColorName = "";
+
+          renderSizes();
+          return;
+        }
+
+        elements.colorSection.hidden = false;
+
+        state.selectedColorCode = String(codes[0] || "").trim();
+        state.selectedColorName = String(names[0] || "").trim();
+        elements.selectedColor.textContent = state.selectedColorName;
+
+        elements.colorOptions.innerHTML = names
+          .map((name, index) => {
+            const code = String(codes[index] || codes[0] || "").trim();
+
+            return `
+              <button
+                class="option-button ${index === 0 ? "active" : ""}"
+                type="button"
+                data-color-code="${escapeHtml(code)}"
+                data-color-name="${escapeHtml(name)}"
+                title="${escapeHtml(name)}"
+              >
+                <span
+                  aria-hidden="true"
+                  style="
+                    display:inline-block;
+                    width:14px;
+                    height:14px;
+                    margin-right:8px;
+                    border-radius:50%;
+                    border:1px solid rgba(255,255,255,.35);
+                    background:${colorVisual(name)};
+                    vertical-align:-2px;
+                  "
+                ></span>
+                ${escapeHtml(name)}
+              </button>
+            `;
+          })
+          .join("");
+
+        elements.colorOptions
+          .querySelectorAll("[data-color-code]")
+          .forEach(button => {
+            button.addEventListener("click", () => {
+              state.selectedColorCode =
+                String(button.dataset.colorCode || "").trim();
+
+              state.selectedColorName =
+                String(button.dataset.colorName || "").trim();
+
+              state.selectedSize = "";
+              state.selectedStock = 0;
+
+              elements.selectedColor.textContent =
+                state.selectedColorName;
+
+              elements.colorOptions
+                .querySelectorAll(".option-button")
+                .forEach(item => item.classList.remove("active"));
+
+              button.classList.add("active");
+              renderSizes();
+            });
+          });
+
+        renderSizes();
+      }
+
+      function renderSizes() {
+        const rows = state.stockRows.filter(row => {
+          if (!state.selectedColorCode) return true;
+
+          return String(row.color || "").trim() ===
+            state.selectedColorCode;
+        });
+
+        const pantsSizes =
+          ["28","30","32","34","36","38","40","42"];
+
+        const isPants = rows.some(row =>
+          pantsSizes.includes(String(row.size))
+        );
+
+        const filtered = rows.filter(row => {
+          const size = String(row.size);
+          return isPants
+            ? pantsSizes.includes(size)
+            : !pantsSizes.includes(size);
+        });
+
+        const sizeOrder = [
+          "XS","S","M","L","XL","XXL","XXXL","XXXXL",
+          "28","30","32","34","36","38","40","42"
+        ];
+
+        filtered.sort((a, b) => {
+          const ai = sizeOrder.indexOf(String(a.size));
+          const bi = sizeOrder.indexOf(String(b.size));
+          return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+        });
+
+        if (!filtered.length) {
+          elements.sizeSection.hidden = false;
+          elements.sizeOptions.innerHTML = "";
+          elements.selectedSize.textContent = "";
+          elements.stockMessage.textContent =
+            "Stock pendiente de actualización.";
+          elements.stockMessage.classList.remove("low");
+          state.selectedSize = "";
+          state.selectedStock = 0;
+          updatePurchaseControls();
+          return;
+        }
+
+        elements.sizeSection.hidden = false;
+        elements.sizeOptions.innerHTML = filtered
+          .map(row => {
+            const stock = Number(row.stock || 0);
+            const disabled = stock <= 0;
+
+            return `
+              <button
+                class="option-button ${disabled ? "disabled" : ""}"
+                type="button"
+                data-size="${escapeHtml(row.size)}"
+                data-stock="${stock}"
+                ${disabled ? "disabled" : ""}
+              >
+                ${escapeHtml(row.size)}
+              </button>
+            `;
+          })
+          .join("");
+
+        const firstAvailable = filtered.find(
+          row => Number(row.stock || 0) > 0
+        );
+
+        if (firstAvailable) {
+          state.selectedSize = String(firstAvailable.size);
+          state.selectedStock = Number(firstAvailable.stock);
+
+          elements.selectedSize.textContent = state.selectedSize;
+
+          const firstButton = elements.sizeOptions.querySelector(
+            `[data-size="${CSS.escape(state.selectedSize)}"]`
+          );
+
+          firstButton?.classList.add("active");
+        } else {
+          state.selectedSize = "";
+          state.selectedStock = 0;
+          elements.selectedSize.textContent = "";
+        }
+
+        elements.sizeOptions
+          .querySelectorAll("[data-size]")
+          .forEach(button => {
+            button.addEventListener("click", () => {
+              state.selectedSize =
+                String(button.dataset.size || "");
+
+              state.selectedStock =
+                Number(button.dataset.stock || 0);
+
+              elements.selectedSize.textContent =
+                state.selectedSize;
+
+              elements.sizeOptions
+                .querySelectorAll(".option-button")
+                .forEach(item => item.classList.remove("active"));
+
+              button.classList.add("active");
+              updatePurchaseControls();
+            });
+          });
+
+        updatePurchaseControls();
+      }
+
+      function updatePurchaseControls() {
+        if (!state.selectedSize || state.selectedStock <= 0) {
+          elements.addButton.disabled = true;
+          elements.addButton.textContent =
+            state.stockRows.length
+              ? "Sin stock"
+              : "Consultar disponibilidad";
+
+          elements.stockMessage.textContent =
+            state.stockRows.length
+              ? "No hay stock disponible para esta opción."
+              : "Stock pendiente de actualización.";
+
+          elements.stockMessage.classList.add("low");
+          renderQuantityOptions(0);
+          return;
+        }
+
+        elements.addButton.disabled = false;
+        elements.addButton.textContent = "Agregar al carrito";
+
+        if (state.selectedStock <= 2) {
+          elements.stockMessage.textContent =
+            `Últimas ${state.selectedStock} unidades.`;
+          elements.stockMessage.classList.add("low");
+        } else {
+          elements.stockMessage.textContent =
+            `Color: ${state.selectedColorName || "Único"} · Talle: ${state.selectedSize}`;
+          elements.stockMessage.classList.remove("low");
+        }
+
+        renderQuantityOptions(state.selectedStock);
+      }
+
+      function renderQuantityOptions(stock) {
+        if (stock <= 0) {
+          elements.quantitySelect.innerHTML =
+            '<option value="1">Cantidad</option>';
+          elements.quantitySelect.disabled = true;
+          return;
+        }
+
+        const max = Math.min(stock, 10);
+
+        elements.quantitySelect.innerHTML =
+          Array.from({ length: max }, (_, index) => {
+            const quantity = index + 1;
+            return `
+              <option value="${quantity}">
+                Cantidad: ${quantity}
+              </option>
+            `;
+          }).join("");
+
+        elements.quantitySelect.disabled = false;
+      }
+
+      function getCart() {
+        try {
+          const cart = JSON.parse(localStorage.getItem("carrito"));
+          return Array.isArray(cart) ? cart : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function saveCart(cart) {
+        localStorage.setItem("carrito", JSON.stringify(cart));
+        localStorage.setItem("cart_date", new Date().toDateString());
+      }
+
+      function addToCart() {
+        if (
+          !state.product ||
+          !state.selectedSize ||
+          state.selectedStock <= 0
+        ) {
+          return;
+        }
+
+        const quantity =
+          Number(elements.quantitySelect.value || 1);
+
+        const cart = getCart();
+
+        const colorCart = state.selectedColorName
+          ? `${state.selectedColorName} (${state.selectedColorCode})`
+          : state.selectedColorCode;
+
+        const existing = cart.find(item =>
+          Number(item.product_id) === Number(state.product.id) &&
+          String(item.talle) === String(state.selectedSize) &&
+          String(item.color || "") === String(colorCart || "")
+        );
+
+        const currentQuantity =
+          existing ? Number(existing.cantidad || 0) : 0;
+
+        if (currentQuantity + quantity > state.selectedStock) {
+          showToast(
+            `No hay más stock disponible en talle ${state.selectedSize}.`
+          );
+          return;
+        }
+
+        const cartItem = {
+          product_id: state.product.id,
+          marca: state.product.brand,
+          nombre: state.product.name,
+          precio: Number(state.product.price || 0),
+          talle: state.selectedSize,
+          color: colorCart,
+          cantidad: quantity,
+          imagen:
+            elements.mainImage.src ||
+            state.images[0]?.image_url ||
+            "img/producto-1.jpg"
+        };
+
+        if (existing) {
+          existing.cantidad =
+            Number(existing.cantidad || 0) + quantity;
+        } else {
+          cart.push(cartItem);
+        }
+
+        saveCart(cart);
+        updateCartCount();
+        showToast(
+          `Talle ${state.selectedSize} agregado al carrito.`
+        );
+      }
+
+      async function loadRelatedProducts() {
+        let query = supabaseClient
+          .from("products")
+          .select("*")
+          .eq("active", true)
+          .eq("catalog_visible", true)
+          .neq("id", state.product.id)
+          .limit(4);
+
+        if (state.product.brand) {
+          query = query.ilike("brand", state.product.brand);
+        }
+
+        const { data: products, error } = await query;
+
+        if (error || !products?.length) {
+          elements.relatedGrid.innerHTML = "";
+          return;
+        }
+
+        const ids = products.map(item => item.id);
+
+        const { data: images } = await supabaseClient
+          .from("product_images")
+          .select("product_id,image_url,position")
+          .in("product_id", ids)
+          .order("position", { ascending: true });
+
+        const safeImages = images || [];
+
+        elements.relatedGrid.innerHTML = products
+          .map(item => {
+            const image = safeImages.find(
+              candidate => candidate.product_id === item.id
+            );
+
+            return `
+              <a
+                class="related-card"
+                href="producto.html?id=${encodeURIComponent(item.id)}"
+              >
+                <div class="related-card-image">
+                  <img
+                    src="${escapeHtml(image?.image_url || "img/producto-1.jpg")}"
+                    alt="${escapeHtml(item.name)}"
+                    loading="lazy"
+                  >
+                </div>
+
+                <div class="related-card-info">
+                  <div class="related-brand">
+                    ${escapeHtml(item.brand)}
+                  </div>
+
+                  <h3 class="related-name">
+                    ${escapeHtml(item.name)}
+                  </h3>
+
+                  <div class="related-price">
+                    ${formatPrice(item.price)}
+                  </div>
+                </div>
+              </a>
+            `;
+          })
+          .join("");
+      }
+
+      function updateCartCount() {
+        const total = getCart().reduce(
+          (sum, item) =>
+            sum + Number(item.cantidad || 0),
+          0
+        );
+
+        elements.cartCount.textContent = String(total);
+      }
+
+      elements.addButton.addEventListener("click", addToCart);
+
+      window.addEventListener("storage", updateCartCount);
+
+      elements.currentYear.textContent =
+        String(new Date().getFullYear());
+
+      limpiarCarritoViejo();
+      updateCartCount();
+      loadProduct();
+    })();
   </script>
 
 </body>

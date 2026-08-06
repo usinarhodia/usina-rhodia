@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Preguntas frecuentes | Usina Rhodia</title>
+
+  <meta
+    name="description"
+    content="Encontrá respuestas sobre compras, pagos, envíos, cambios y stock en Usina Rhodia."
+  />
+
+  <style>
+    :root {
+      --bg: #080808;
+      --surface: #111111;
+      --surface-soft: #171717;
+      --border: #2d2d2d;
+      --text: #f5f3ef;
+      --muted: #aaa49e;
+      --red: #d90b12;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER */
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(8, 8, 8, 0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      width: min(1300px, calc(100% - 40px));
+      min-height: 86px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .header-link {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      transition: opacity 0.2s ease;
+    }
+
+    .header-link:hover {
+      opacity: 0.65;
+    }
+
+    .header-link.right {
+      justify-self: end;
+    }
+
+    .brand {
+      font-size: clamp(21px, 2vw, 27px);
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      text-align: center;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* MAIN */
+
+    main {
+      flex: 1;
+    }
+
+    .hero {
+      width: min(1300px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 78px 0 38px;
+    }
+
+    .eyebrow {
+      margin-bottom: 16px;
+      color: #ff3c42;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      max-width: 1050px;
+      font-size: clamp(52px, 8vw, 112px);
+      line-height: 0.88;
+      letter-spacing: -0.065em;
+      text-transform: uppercase;
+    }
+
+    .hero-description {
+      max-width: 720px;
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.65;
+    }
+
+    .content {
+      width: min(1300px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 30px 0 96px;
+    }
+
+    /* QUICK LINKS */
+
+    .quick-links {
+      margin-bottom: 22px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .quick-link {
+      min-height: 88px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--surface);
+      font-size: 14px;
+      font-weight: 900;
+      text-transform: uppercase;
+      transition:
+        transform 0.2s ease,
+        border-color 0.2s ease;
+    }
+
+    .quick-link:hover {
+      transform: translateY(-3px);
+      border-color: #555;
+    }
+
+    .quick-link span:last-child {
+      color: #ff3c42;
+      font-size: 19px;
+    }
+
+    /* FAQ */
+
+    .faq-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .faq-item {
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: var(--surface);
+    }
+
+    .faq-question {
+      width: 100%;
+      min-height: 86px;
+      padding: 24px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 30px;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .faq-question-text {
+      font-size: 17px;
+      font-weight: 900;
+      line-height: 1.25;
+      text-transform: uppercase;
+    }
+
+    .faq-icon {
+      flex: 0 0 auto;
+      width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: var(--red);
+      color: var(--white);
+      font-size: 21px;
+      font-weight: 700;
+      transition: transform 0.25s ease;
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .faq-answer-inner {
+      padding: 0 28px 28px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .faq-answer-inner strong {
+      color: var(--text);
+    }
+
+    .faq-item.is-open .faq-icon {
+      transform: rotate(45deg);
+    }
+
+    /* CONTACT BLOCK */
+
+    .contact-block {
+      margin-top: 22px;
+      padding: 44px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+      gap: 50px;
+      align-items: center;
+      border-radius: 30px;
+      background: var(--red);
+    }
+
+    .contact-block .eyebrow {
+      color: var(--white);
+      opacity: 0.85;
+    }
+
+    .contact-block h2 {
+      max-width: 760px;
+      font-size: clamp(38px, 5.5vw, 76px);
+      line-height: 0.92;
+      letter-spacing: -0.055em;
+      text-transform: uppercase;
+    }
+
+    .contact-side {
+      display: flex;
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .contact-side p {
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 16px;
+      line-height: 1.65;
+    }
+
+    .contact-button {
+      display: inline-flex;
+      min-height: 54px;
+      padding: 0 25px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: var(--white);
+      color: #080808;
+      font-size: 13px;
+      font-weight: 900;
+      text-transform: uppercase;
+      transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+    }
+
+    .contact-button:hover {
+      transform: translateY(-2px);
+      background: #e6e6e6;
+    }
+
+    /* FOOTER */
+
+    .site-footer {
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-inner {
+      width: min(1300px, calc(100% - 40px));
+      min-height: 96px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      color: #77736f;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 900px) {
+      .header-inner {
+        grid-template-columns: 1fr auto;
+      }
+
+      .brand {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        padding-top: 22px;
+      }
+
+      .header-link {
+        grid-row: 2;
+        padding-bottom: 20px;
+      }
+
+      .quick-links {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .contact-block {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .header-inner,
+      .hero,
+      .content,
+      .footer-inner {
+        width: min(100% - 24px, 1300px);
+      }
+
+      .hero {
+        padding-top: 54px;
+      }
+
+      .hero h1 {
+        font-size: clamp(46px, 17vw, 70px);
+      }
+
+      .quick-links {
+        grid-template-columns: 1fr;
+      }
+
+      .faq-question {
+        min-height: 76px;
+        padding: 20px;
+      }
+
+      .faq-question-text {
+        font-size: 15px;
+      }
+
+      .faq-answer-inner {
+        padding: 0 20px 22px;
+      }
+
+      .contact-block {
+        padding: 30px 24px;
+      }
+
+      .footer-inner {
+        min-height: 120px;
+        align-items: flex-start;
+        justify-content: center;
+        flex-direction: column;
+        padding: 28px 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <header class="site-header">
+      <div class="header-inner">
+
+        <a class="header-link" href="index.html">
+          ← Volver al inicio
+        </a>
+
+        <a class="brand" href="index.html">
+          Usina Rhodia
+        </a>
+
+        <a class="header-link right" href="guardarropa.html">
+          Ver prendas
+        </a>
+
+      </div>
+    </header>
+
+    <main>
+
+      <section class="hero">
+        <p class="eyebrow">Todo lo que necesitás saber</p>
+
+        <h1>Preguntas<br />frecuentes.</h1>
+
+        <p class="hero-description">
+          Encontrá respuestas rápidas sobre compras, pagos, envíos, cambios,
+          talles y disponibilidad de productos.
+        </p>
+      </section>
+
+      <section class="content">
+
+        <nav class="quick-links" aria-label="Accesos rápidos">
+
+          <a class="quick-link" href="pagos.html">
+            <span>Medios de pago</span>
+            <span>↗</span>
+          </a>
+
+          <a class="quick-link" href="envios.html">
+            <span>Envíos</span>
+            <span>↗</span>
+          </a>
+
+          <a class="quick-link" href="cambios.html">
+            <span>Cambios</span>
+            <span>↗</span>
+          </a>
+
+          <a class="quick-link" href="guardarropa.html">
+            <span>Ver prendas</span>
+            <span>↗</span>
+          </a>
+
+        </nav>
+
+        <div class="faq-list">
+
+          <article class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              <span class="faq-question-text">
+                ¿Cómo realizo una compra?
+              </span>
+              <span class="faq-icon">+</span>
+            </button>
+
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Elegí el producto, seleccioná el color y el talle disponibles,
+                agregalo al carrito y completá los datos solicitados en el checkout.
+                Después vas a poder elegir el medio de pago y confirmar el pedido.
+              </div>
+            </div>
+          </article>
+
+          <article class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              <span class="faq-question-text">
+                ¿Qué medios de pago aceptan?
+              </span>
+              <span class="faq-icon">+</span>
+            </button>
+
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Los pagos se procesan mediante <strong>Mercado Pago</strong>.
+                Podés utilizar las tarjetas y opciones habilitadas por la plataforma.
+                Las cuotas disponibles se muestran antes de confirmar la operación.
+              </div>
+            </div>
+          </article>
+
+          <article class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              <span class="faq-question-text">
+                ¿Cómo sé si mi compra fue confirmada?
+              </span>
+              <span class="faq-icon">+</span>
+            </button>
+
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                El pedido queda confirmado cuando Mercado Pago informa que el pago
+                fue aprobado. Al finalizar vas a ver el estado de la operación.
+                Conservá el número de pedido para cualquier consulta.
+              </div>
+            </div>
+          </article>
+
+          <article class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              <span class="faq-question-text">
+                ¿Cuánto tarda el envío?
+              </span>
+              <span class="faq-icon">+</span>
+            </button>
+
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Los plazos dependen del destino, el método de entrega y la
+                disponibilidad del correo. El tiempo estimado se informa durante
+                la compra o una vez despachado el pedido.
+              </div>
+            </div>
+          </article>
+
+          <article class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              <span class="faq-question-text">
+                ¿Cómo puedo seguir mi pedido?
+              </span>
+              <span class="faq-icon">+</span>
+            </button>
+
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Cuando el pedido sea despachado, vas a recibir la información
+                disponible para realizar el seguimiento. También podés consultar
+                por WhatsApp indicando tu número de pedido.
+              </div>
+            </div>
+          </article>
+
+          <article class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              <span class="faq-question-text">
+                ¿Puedo cambiar una prenda?
+              </span>
+              <span class="faq-icon">+</span>
+            </button>
+
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Sí. Usina Rhodia realiza cambios de talle respetando las condiciones
+                informadas en la sección de cambios. La prenda debe conservar sus
+                etiquetas, no presentar uso y encontrarse en condiciones originales.
+              </div>
+            </div>
+          </article>
+
+          <article class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              <span class="faq-question-text">
+                ¿Realizan devoluciones de dinero?
+              </span>
+              <span class="faq-icon">+</span>
+            </button>
+
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Usina Rhodia realiza únicamente cambios de talle.
+                <strong>No se realizan devoluciones de dinero ni reembolsos</strong>,
+                salvo que corresponda por una obligación legal aplicable.
+              </div>
+            </div>
+          </article>
+
+          <article class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              <span class="faq-question-text">
+                ¿Qué hago si el talle que quiero no está disponible?
+              </span>
+              <span class="faq-icon">+</span>
+            </button>
+
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Podés comunicarte con nosotros para consultar disponibilidad,
+                reposición o alternativas similares. La existencia de stock puede
+                variar según color y talle.
+              </div>
+            </div>
+          </article>
+
+          <article class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              <span class="faq-question-text">
+                ¿Los colores pueden verse distintos en pantalla?
+              </span>
+              <span class="faq-icon">+</span>
+            </button>
+
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Sí. Los tonos pueden variar ligeramente según el brillo, la
+                configuración y el tipo de pantalla. Las imágenes buscan representar
+                el producto de la manera más fiel posible.
+              </div>
+            </div>
+          </article>
+
+          <article class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              <span class="faq-question-text">
+                ¿Los productos tienen stock asegurado?
+              </span>
+              <span class="faq-icon">+</span>
+            </button>
+
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                El stock se actualiza constantemente, pero puede existir una
+                diferencia entre la disponibilidad mostrada y la confirmación final
+                del pedido. Si ocurre una falta de stock, el equipo se comunicará
+                para ofrecer una alternativa.
+              </div>
+            </div>
+          </article>
+
+          <article class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              <span class="faq-question-text">
+                ¿Es seguro comprar en la tienda?
+              </span>
+              <span class="faq-icon">+</span>
+            </button>
+
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Sí. Los pagos se procesan mediante Mercado Pago.
+                Usina Rhodia no almacena los datos completos de las tarjetas ni
+                solicita claves, contraseñas o códigos de seguridad por WhatsApp.
+              </div>
+            </div>
+          </article>
+
+          <article class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              <span class="faq-question-text">
+                ¿Cómo me comunico con Usina Rhodia?
+              </span>
+              <span class="faq-icon">+</span>
+            </button>
+
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                Podés escribirnos por WhatsApp. Para ayudarte más rápido, indicá
+                tu nombre y, si ya compraste, el número de pedido.
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+        <section class="contact-block">
+
+          <div>
+            <p class="eyebrow">¿No encontraste tu respuesta?</p>
+
+            <h2>Escribinos y te ayudamos.</h2>
+          </div>
+
+          <div class="contact-side">
+            <p>
+              Nuestro equipo puede ayudarte con consultas sobre productos,
+              talles, pagos, envíos y pedidos.
+            </p>
+
+            <a
+              class="contact-button"
+              href="https://wa.me/5491139543761?text=Hola%2C%20quiero%20hacer%20una%20consulta%20sobre%20Usina%20Rhodia."
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Consultar por WhatsApp
+            </a>
+          </div>
+
+        </section>
+
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <span>© 2026 Usina Rhodia</span>
+        <span>Compra segura con Mercado Pago</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    const faqItems = document.querySelectorAll(".faq-item");
+
+    faqItems.forEach((item) => {
+      const button = item.querySelector(".faq-question");
+      const answer = item.querySelector(".faq-answer");
+
+      button.addEventListener("click", () => {
+        const isOpen = item.classList.contains("is-open");
+
+        faqItems.forEach((otherItem) => {
+          const otherButton = otherItem.querySelector(".faq-question");
+          const otherAnswer = otherItem.querySelector(".faq-answer");
+
+          otherItem.classList.remove("is-open");
+          otherButton.setAttribute("aria-expanded", "false");
+          otherAnswer.style.maxHeight = null;
+        });
+
+        if (!isOpen) {
+          item.classList.add("is-open");
+          button.setAttribute("aria-expanded", "true");
+          answer.style.maxHeight = answer.scrollHeight + "px";
+        }
+      });
+    });
+  </script>
+</body>
+</html>

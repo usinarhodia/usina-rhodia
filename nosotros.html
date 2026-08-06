@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Nosotros | Usina Rhodia</title>
+
+  <meta
+    name="description"
+    content="Conocé la propuesta, la identidad y la forma de trabajar de Usina Rhodia."
+  />
+
+  <style>
+    :root {
+      --bg: #080808;
+      --surface: #111111;
+      --surface-soft: #171717;
+      --border: #2d2d2d;
+      --text: #f5f3ef;
+      --muted: #aaa49e;
+      --red: #d90b12;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER */
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(8, 8, 8, 0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      width: min(1300px, calc(100% - 40px));
+      min-height: 86px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .header-link {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      transition: opacity 0.2s ease;
+    }
+
+    .header-link:hover {
+      opacity: 0.65;
+    }
+
+    .header-link.right {
+      justify-self: end;
+    }
+
+    .brand {
+      font-size: clamp(21px, 2vw, 27px);
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      text-align: center;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* MAIN */
+
+    main {
+      flex: 1;
+    }
+
+    .hero {
+      width: min(1300px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 78px 0 38px;
+    }
+
+    .eyebrow {
+      margin-bottom: 16px;
+      color: #ff3c42;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      max-width: 1080px;
+      font-size: clamp(52px, 8vw, 116px);
+      line-height: 0.88;
+      letter-spacing: -0.065em;
+      text-transform: uppercase;
+    }
+
+    .hero-description {
+      max-width: 760px;
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.65;
+    }
+
+    .content {
+      width: min(1300px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 30px 0 96px;
+    }
+
+    /* MANIFESTO */
+
+    .manifesto {
+      padding: 48px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+      gap: 60px;
+      align-items: center;
+      border-radius: 30px;
+      background: var(--red);
+    }
+
+    .manifesto .eyebrow {
+      color: var(--white);
+      opacity: 0.82;
+    }
+
+    .manifesto h2 {
+      max-width: 760px;
+      font-size: clamp(42px, 6vw, 82px);
+      line-height: 0.92;
+      letter-spacing: -0.055em;
+      text-transform: uppercase;
+    }
+
+    .manifesto-copy {
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+    .manifesto-copy p + p {
+      margin-top: 16px;
+    }
+
+    /* VALUES */
+
+    .section-heading {
+      margin: 72px 0 26px;
+    }
+
+    .section-heading p {
+      margin-bottom: 12px;
+      color: #ff3c42;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    .section-heading h2 {
+      max-width: 850px;
+      font-size: clamp(36px, 5.5vw, 74px);
+      line-height: 0.94;
+      letter-spacing: -0.055em;
+      text-transform: uppercase;
+    }
+
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .value-card {
+      min-height: 290px;
+      padding: 30px;
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      background: var(--surface);
+      transition:
+        transform 0.2s ease,
+        border-color 0.2s ease;
+    }
+
+    .value-card:hover {
+      transform: translateY(-4px);
+      border-color: #555;
+    }
+
+    .value-number {
+      display: inline-flex;
+      width: 42px;
+      height: 42px;
+      margin-bottom: 36px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: var(--red);
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .value-card h3 {
+      margin-bottom: 14px;
+      font-size: 22px;
+      line-height: 1.08;
+      text-transform: uppercase;
+    }
+
+    .value-card p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    /* BRANDS */
+
+    .brands-block {
+      margin-top: 22px;
+      padding: 40px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 0.65fr);
+      gap: 50px;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      background: var(--surface-soft);
+    }
+
+    .brands-copy h2 {
+      margin-bottom: 18px;
+      font-size: clamp(34px, 4.5vw, 62px);
+      line-height: 0.96;
+      letter-spacing: -0.05em;
+      text-transform: uppercase;
+    }
+
+    .brands-copy p {
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .brand-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .brand-pill {
+      min-height: 74px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: var(--surface);
+      font-size: 17px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .brand-pill span:last-child {
+      color: #ff3c42;
+    }
+
+    /* EXPERIENCE */
+
+    .experience-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .experience-card {
+      padding: 34px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: var(--surface);
+    }
+
+    .experience-card h3 {
+      margin-bottom: 14px;
+      font-size: 20px;
+      text-transform: uppercase;
+    }
+
+    .experience-card p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    /* CTA */
+
+    .cta {
+      margin-top: 22px;
+      padding: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 30px;
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      background: var(--surface-soft);
+    }
+
+    .cta-copy h2 {
+      max-width: 710px;
+      font-size: clamp(30px, 4.5vw, 54px);
+      line-height: 1;
+      letter-spacing: -0.045em;
+      text-transform: uppercase;
+    }
+
+    .cta-copy p {
+      max-width: 680px;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .cta-button {
+      flex: 0 0 auto;
+      min-height: 54px;
+      padding: 0 26px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: var(--white);
+      color: #080808;
+      font-size: 13px;
+      font-weight: 900;
+      text-transform: uppercase;
+      transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-2px);
+      background: #e6e6e6;
+    }
+
+    /* FOOTER */
+
+    .site-footer {
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-inner {
+      width: min(1300px, calc(100% - 40px));
+      min-height: 96px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      color: #77736f;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 900px) {
+      .header-inner {
+        grid-template-columns: 1fr auto;
+      }
+
+      .brand {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        padding-top: 22px;
+      }
+
+      .header-link {
+        grid-row: 2;
+        padding-bottom: 20px;
+      }
+
+      .manifesto,
+      .brands-block {
+        grid-template-columns: 1fr;
+      }
+
+      .values-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .experience-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cta {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .header-inner,
+      .hero,
+      .content,
+      .footer-inner {
+        width: min(100% - 24px, 1300px);
+      }
+
+      .hero {
+        padding-top: 54px;
+      }
+
+      .hero h1 {
+        font-size: clamp(46px, 17vw, 70px);
+      }
+
+      .manifesto {
+        padding: 30px 24px;
+      }
+
+      .value-card,
+      .experience-card {
+        padding: 24px;
+      }
+
+      .brands-block,
+      .cta {
+        padding: 30px 24px;
+      }
+
+      .footer-inner {
+        min-height: 120px;
+        align-items: flex-start;
+        justify-content: center;
+        flex-direction: column;
+        padding: 28px 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <header class="site-header">
+      <div class="header-inner">
+
+        <a class="header-link" href="index.html">
+          ← Volver al inicio
+        </a>
+
+        <a class="brand" href="index.html">
+          Usina Rhodia
+        </a>
+
+        <a class="header-link right" href="guardarropa.html">
+          Ver prendas
+        </a>
+
+      </div>
+    </header>
+
+    <main>
+
+      <section class="hero">
+        <p class="eyebrow">Una selección con identidad</p>
+
+        <h1>Vestirse bien<br />todos los días.</h1>
+
+        <p class="hero-description">
+          Usina Rhodia reúne prendas elegidas por su diseño, comodidad y
+          versatilidad. Una tienda pensada para encontrar piezas que funcionen
+          en la vida real y acompañen cada temporada.
+        </p>
+      </section>
+
+      <section class="content">
+
+        <section class="manifesto">
+
+          <div>
+            <p class="eyebrow">Nuestra propuesta</p>
+
+            <h2>Menos ruido. Mejores elecciones.</h2>
+          </div>
+
+          <div class="manifesto-copy">
+            <p>
+              Creemos que un buen guardarropa no necesita estar lleno:
+              necesita estar bien elegido.
+            </p>
+
+            <p>
+              Por eso buscamos prendas que combinen diseño, calidad y uso
+              cotidiano, con una selección clara y una experiencia de compra
+              simple.
+            </p>
+          </div>
+
+        </section>
+
+        <div class="section-heading">
+          <p>Lo que nos define</p>
+          <h2>Una tienda pensada desde el producto.</h2>
+        </div>
+
+        <section class="values-grid">
+
+          <article class="value-card">
+            <span class="value-number">01</span>
+
+            <h3>Selección cuidada</h3>
+
+            <p>
+              No buscamos sumar productos porque sí. Elegimos prendas con una
+              estética coherente, buenas terminaciones y posibilidades reales
+              de uso.
+            </p>
+          </article>
+
+          <article class="value-card">
+            <span class="value-number">02</span>
+
+            <h3>Calidad visual</h3>
+
+            <p>
+              Presentamos cada producto con imágenes claras y diferentes vistas,
+              para que puedas conocer mejor su diseño antes de comprar.
+            </p>
+          </article>
+
+          <article class="value-card">
+            <span class="value-number">03</span>
+
+            <h3>Compra simple</h3>
+
+            <p>
+              Construimos una experiencia directa, sin pasos innecesarios:
+              descubrir, elegir, pagar y recibir.
+            </p>
+          </article>
+
+        </section>
+
+        <section class="brands-block">
+
+          <div class="brands-copy">
+            <p class="eyebrow">Marcas seleccionadas</p>
+
+            <h2>Brookfield y Mistral.</h2>
+
+            <p>
+              Trabajamos con colecciones de Brookfield y Mistral, seleccionadas
+              para ofrecer alternativas urbanas, cómodas y versátiles para
+              distintos estilos y momentos.
+            </p>
+          </div>
+
+          <div class="brand-list">
+
+            <div class="brand-pill">
+              <span>Brookfield</span>
+              <span>→</span>
+            </div>
+
+            <div class="brand-pill">
+              <span>Mistral</span>
+              <span>→</span>
+            </div>
+
+          </div>
+
+        </section>
+
+        <div class="section-heading">
+          <p>Nuestra manera de trabajar</p>
+          <h2>Cuidamos cada parte de la experiencia.</h2>
+        </div>
+
+        <section class="experience-grid">
+
+          <article class="experience-card">
+            <h3>Información clara</h3>
+
+            <p>
+              Buscamos que los precios, talles, colores, fotografías y
+              disponibilidad estén presentados de forma sencilla y comprensible.
+            </p>
+          </article>
+
+          <article class="experience-card">
+            <h3>Atención cercana</h3>
+
+            <p>
+              Detrás de la tienda hay personas disponibles para ayudarte con
+              consultas sobre productos, talles, pagos, envíos o pedidos.
+            </p>
+          </article>
+
+          <article class="experience-card">
+            <h3>Stock organizado</h3>
+
+            <p>
+              La disponibilidad se administra por producto, color y talle para
+              que puedas elegir con mayor precisión.
+            </p>
+          </article>
+
+          <article class="experience-card">
+            <h3>Mejora constante</h3>
+
+            <p>
+              La tienda sigue evolucionando. Trabajamos para sumar mejores
+              herramientas, recomendaciones y formas de descubrir el catálogo.
+            </p>
+          </article>
+
+        </section>
+
+        <section class="cta">
+
+          <div class="cta-copy">
+            <h2>Encontrá tu próxima prenda.</h2>
+
+            <p>
+              Explorá la colección disponible y descubrí las opciones elegidas
+              para esta temporada.
+            </p>
+          </div>
+
+          <a class="cta-button" href="guardarropa.html">
+            Ver guardarropa
+          </a>
+
+        </section>
+
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <span>© 2026 Usina Rhodia</span>
+        <span>Brookfield · Mistral</span>
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>
