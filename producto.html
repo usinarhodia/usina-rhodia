@@ -753,7 +753,7 @@
 
             <div id="colorSection" hidden>
               <div class="option-label">
-                <span>Color</span>
+                <span>Diseño</span>
                 <span class="selected-value" id="selectedColor"></span>
               </div>
 
@@ -1153,7 +1153,9 @@
   // Armamos las opciones originales
   const allOptions = codes.map((code, index) => ({
     code: String(code || "").trim(),
-    name: String(names[index] || code || "").trim()
+    name: String(names[index] || code || "")
+  .replace(/^VARIANTE\s+/i, "DISEÑO ")
+  .trim()
   }));
 
   // Dejamos SOLAMENTE colores/variantes con stock > 0
@@ -1168,7 +1170,9 @@
 
     state.stockRows.forEach(row => {
       const code = String(row.color || "").trim();
-      const name = String(row.color_name || code || "").trim();
+      const name = String(row.color_name || code || "")
+  .replace(/^VARIANTE\s+/i, "DISEÑO ")
+  .trim();
       const stock = Number(row.stock || 0);
 
       if (
@@ -1443,7 +1447,7 @@
           elements.stockMessage.classList.add("low");
         } else {
           elements.stockMessage.textContent =
-            `Color: ${state.selectedColorName || "Único"} · Talle: ${state.selectedSize}`;
+            `Diseño: ${state.selectedColorName || "Único"} · Talle: ${state.selectedSize}`;
           elements.stockMessage.classList.remove("low");
         }
 
