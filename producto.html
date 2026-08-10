@@ -1132,85 +1132,177 @@
       }
 
       function renderColors() {
-        const names = toArray(state.product.bas_color_name);
-        const codes = toArray(state.product.bas_color);
+  const names = toArray(state.product.bas_color_name);
+  const codes = toArray(state.product.bas_color);
 
-        if (!names.length || !codes.length) {
-          elements.colorSection.hidden = true;
+  // Calculamos qué colores/variantes tienen stock REAL
+  const stockByColor = new Map();
 
-          const firstRow = state.stockRows[0];
-          state.selectedColorCode =
-            firstRow ? String(firstRow.color || "").trim() : "";
-          state.selectedColorName = "";
+  state.stockRows.forEach(row => {
+    const code = String(row.color || "").trim();
+    const stock = Number(row.stock || 0);
 
-          renderSizes();
-          return;
-        }
+    if (!code) return;
 
-        elements.colorSection.hidden = false;
+    stockByColor.set(
+      code,
+      (stockByColor.get(code) || 0) + stock
+    );
+  });
 
-        state.selectedColorCode = String(codes[0] || "").trim();
-        state.selectedColorName = String(names[0] || "").trim();
-        elements.selectedColor.textContent = state.selectedColorName;
+  // Armamos las opciones originales
+  const allOptions = codes.map((code, index) => ({
+    code: String(code || "").trim(),
+    name: String(names[index] || code || "").trim()
+  }));
 
-        elements.colorOptions.innerHTML = names
-          .map((name, index) => {
-            const code = String(codes[index] || codes[0] || "").trim();
+  // Dejamos SOLAMENTE colores/variantes con stock > 0
+  const availableOptions = allOptions.filter(option => {
+    return (stockByColor.get(option.code) || 0) > 0;
+  });
 
-            return `
-              <button
-                class="option-button ${index === 0 ? "active" : ""}"
-                type="button"
-                data-color-code="${escapeHtml(code)}"
-                data-color-name="${escapeHtml(name)}"
-                title="${escapeHtml(name)}"
-              >
-                <span
-                  aria-hidden="true"
-                  style="
-                    display:inline-block;
-                    width:14px;
-                    height:14px;
-                    margin-right:8px;
-                    border-radius:50%;
-                    border:1px solid rgba(255,255,255,.35);
-                    background:${colorVisual(name)};
-                    vertical-align:-2px;
-                  "
-                ></span>
-                ${escapeHtml(name)}
-              </button>
-            `;
-          })
-          .join("");
+  // Si por algún motivo no tenemos bas_color/bas_color_name,
+  // intentamos sacar las opciones directamente del stock.
+  if (!availableOptions.length) {
+    const fallbackOptions = [];
+
+    state.stockRows.forEach(row => {
+      const code = String(row.color || "").trim();
+      const name = String(row.color_name || code || "").trim();
+      const stock = Number(row.stock || 0);
+
+      if (
+        code &&
+        stock > 0 &&
+        !fallbackOptions.some(item => item.code === code)
+      ) {
+        fallbackOptions.push({
+          code,
+          name
+        });
+      }
+    });
+
+    if (!fallbackOptions.length) {
+      elements.colorSection.hidden = true;
+
+      state.selectedColorCode = "";
+      state.selectedColorName = "";
+
+      renderSizes();
+      return;
+    }
+
+    elements.colorSection.hidden = false;
+
+    const first = fallbackOptions[0];
+
+    state.selectedColorCode = first.code;
+    state.selectedColorName = first.name;
+
+    elements.selectedColor.textContent =
+      state.selectedColorName;
+
+    elements.colorOptions.innerHTML = fallbackOptions
+      .map((option, index) => {
+        return `
+          <button
+            class="option-button ${index === 0 ? "active" : ""}"
+            type="button"
+            data-color-code="${escapeHtml(option.code)}"
+            data-color-name="${escapeHtml(option.name)}"
+            title="${escapeHtml(option.name)}"
+          >
+            <span
+              aria-hidden="true"
+              style="
+                display:inline-block;
+                width:14px;
+                height:14px;
+                margin-right:8px;
+                border-radius:50%;
+                border:1px solid rgba(255,255,255,.35);
+                background:${colorVisual(option.name)};
+                vertical-align:-2px;
+              "
+            ></span>
+            ${escapeHtml(option.name)}
+          </button>
+        `;
+      })
+      .join("");
+
+  } else {
+    elements.colorSection.hidden = false;
+
+    const first = availableOptions[0];
+
+    state.selectedColorCode = first.code;
+    state.selectedColorName = first.name;
+
+    elements.selectedColor.textContent =
+      state.selectedColorName;
+
+    elements.colorOptions.innerHTML = availableOptions
+      .map((option, index) => {
+        return `
+          <button
+            class="option-button ${index === 0 ? "active" : ""}"
+            type="button"
+            data-color-code="${escapeHtml(option.code)}"
+            data-color-name="${escapeHtml(option.name)}"
+            title="${escapeHtml(option.name)}"
+          >
+            <span
+              aria-hidden="true"
+              style="
+                display:inline-block;
+                width:14px;
+                height:14px;
+                margin-right:8px;
+                border-radius:50%;
+                border:1px solid rgba(255,255,255,.35);
+                background:${colorVisual(option.name)};
+                vertical-align:-2px;
+              "
+            ></span>
+            ${escapeHtml(option.name)}
+          </button>
+        `;
+      })
+      .join("");
+  }
+
+  elements.colorOptions
+    .querySelectorAll("[data-color-code]")
+    .forEach(button => {
+      button.addEventListener("click", () => {
+        state.selectedColorCode =
+          String(button.dataset.colorCode || "").trim();
+
+        state.selectedColorName =
+          String(button.dataset.colorName || "").trim();
+
+        state.selectedSize = "";
+        state.selectedStock = 0;
+
+        elements.selectedColor.textContent =
+          state.selectedColorName;
 
         elements.colorOptions
-          .querySelectorAll("[data-color-code]")
-          .forEach(button => {
-            button.addEventListener("click", () => {
-              state.selectedColorCode =
-                String(button.dataset.colorCode || "").trim();
+          .querySelectorAll(".option-button")
+          .forEach(item =>
+            item.classList.remove("active")
+          );
 
-              state.selectedColorName =
-                String(button.dataset.colorName || "").trim();
-
-              state.selectedSize = "";
-              state.selectedStock = 0;
-
-              elements.selectedColor.textContent =
-                state.selectedColorName;
-
-              elements.colorOptions
-                .querySelectorAll(".option-button")
-                .forEach(item => item.classList.remove("active"));
-
-              button.classList.add("active");
-              renderSizes();
-            });
-          });
+        button.classList.add("active");
 
         renderSizes();
-      }
+      });
+    });
+
+  renderSizes();
+}
 
       function renderSizes() {
         const rows = state.stockRows.filter(row => {
