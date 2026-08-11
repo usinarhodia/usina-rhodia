@@ -1151,11 +1151,16 @@
   });
 
   // Armamos las opciones originales
-  const allOptions = codes.map((code, index) => ({
+  const allOptions = codes
+  .map((code, index) => ({
     code: String(code || "").trim(),
-    name: String(names[index] || code || "")
-  .trim()
-  }));
+    name: String(names[index] || code || "").trim()
+  }))
+  .filter(option =>
+    option.code &&
+    option.name &&
+    !/^VARIANTE\s+/i.test(option.name)
+  );
 
   // Dejamos SOLAMENTE colores/variantes con stock > 0
   const availableOptions = allOptions.filter(option => {
