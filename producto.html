@@ -1157,10 +1157,10 @@
     name: String(names[index] || code || "").trim()
   }))
   .filter(option =>
-    option.code &&
-    option.name &&
-    !/^VARIANTE\s+/i.test(option.name)
-  );
+  option.code &&
+  option.name &&
+  !/^(VARIANTE|RAYADO)\s+\d+/i.test(option.name)
+);
 
   // Dejamos SOLAMENTE colores/variantes con stock > 0
   const availableOptions = allOptions.filter(option => {
@@ -1179,10 +1179,12 @@
       const stock = Number(row.stock || 0);
 
       if (
-        code &&
-        stock > 0 &&
-        !fallbackOptions.some(item => item.code === code)
-      ) {
+  code &&
+  name &&
+  stock > 0 &&
+  !(/^(VARIANTE|RAYADO)\s+\d+/i.test(name))&&
+  !fallbackOptions.some(item => item.code === code)
+) {
         fallbackOptions.push({
           code,
           name
