@@ -1314,6 +1314,22 @@
 function mostrarTalleVisual(talleBas) {
   const talle = String(talleBas || "").trim().toUpperCase();
 
+  const categoriaProducto =
+    String(state.product?.category || "").trim().toLowerCase();
+
+  const esPantalon =
+    categoriaProducto === "pantalones" ||
+    categoriaProducto === "jeans";
+
+  // Solo en pantalones/jeans: 024 → 24, 026 → 26, etc.
+  if (
+    esPantalon &&
+    /^0(24|26|28|30|32|34|36|38|40|42)$/.test(talle)
+  ) {
+    return talle.slice(1);
+  }
+
+  // Prendas superiores
   const mapa = {
     "038": "XS",
     "040": "S",
@@ -1345,28 +1361,36 @@ function mostrarTalleVisual(talleBas) {
             state.selectedColorCode;
         });
 
-        const pantsSizes =
-          ["28","30","32","34","36","38","40","42"];
+        const categoriaProducto =
+  String(state.product?.category || "").trim().toLowerCase();
 
-        const isPants = rows.some(row =>
-          pantsSizes.includes(String(row.size))
-        );
+const isPants =
+  categoriaProducto === "pantalones" ||
+  categoriaProducto === "jeans";
 
-        const filtered = rows.filter(row => {
-          const size = String(row.size);
-          return isPants
-            ? pantsSizes.includes(size)
-            : !pantsSizes.includes(size);
-        });
+const pantsSizes = [
+  "024","026","028","030","032","034","036","038","040","042",
+  "24","26","28","30","32","34","36","38","40","42"
+];
+
+const filtered = rows.filter(row => {
+  const size = String(row.size || "").trim();
+
+  if (isPants) {
+    return pantsSizes.includes(size);
+  }
+
+  return true;
+});
 
         const sizeOrder = [
-          "XS","S","M","L","XL","XXL","XXXL","XXXXL",
-          "28","30","32","34","36","38","40","42"
-        ];
+  "XS","S","M","L","XL","XXL","XXXL","XXXXL",
+  "24","26","28","30","32","34","36","38","40","42"
+];
 
         filtered.sort((a, b) => {
-          const ai = sizeOrder.indexOf(String(a.size));
-          const bi = sizeOrder.indexOf(String(b.size));
+          const ai = sizeOrder.indexOf(mostrarTalleVisual(a.size));
+const bi = sizeOrder.indexOf(mostrarTalleVisual(b.size));
           return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
         });
 
