@@ -641,15 +641,51 @@ async function cargarCombinacionesBas(){
 
   if(!codigo) return;
 
-  const { data, error } = await supabaseClient
-    .from("bas_articulos_talles_colores")
-    .select("*")
-    .eq("CODIGO", codigo);
+  // Traemos combinaciones BAS + overrides específicos del artículo
+  const [
+    { data, error },
+    { data: overrides, error: overridesError }
+  ] = await Promise.all([
+    supabaseClient
+      .from("bas_articulos_talles_colores")
+      .select("*")
+      .eq("CODIGO", codigo),
+
+    supabaseClient
+      .from("bas_color_overrides")
+      .select("color_code,color_name")
+      .eq("coditm", codigo)
+  ]);
 
   if(error){
-    console.log(error);
+    console.log("Error cargando combinaciones BAS:", error);
     return;
   }
+
+  if(overridesError){
+    console.log("Error cargando nombres corregidos:", overridesError);
+  }
+
+  const mapaOverrides = new Map(
+    (overrides || []).map(item => [
+      String(item.color_code || "").trim(),
+      String(item.color_name || "").trim()
+    ])
+  );
+
+  const resolverNombreColor = item => {
+    const codigoColor = String(item.COLOR || "").trim();
+    const nombreBas = String(item.NOMBRE_COLOR || codigoColor).trim();
+
+    // Si tenemos corrección específica para artículo + variante,
+    // usamos ese nombre real.
+    if (mapaOverrides.has(codigoColor)) {
+      return mapaOverrides.get(codigoColor);
+    }
+
+    // Para colores normales seguimos usando BAS.
+    return nombreBas;
+  };
 
   const tallesUnicos = [...new Set(data.map(x => x.TALLE))];
   const coloresUnicos = [...new Set(data.map(x => x.COLOR))];
@@ -657,46 +693,51 @@ async function cargarCombinacionesBas(){
   console.log("Talles BAS:", tallesUnicos);
   console.log("Colores BAS:", coloresUnicos);
 
-  const contenedorColores = document.getElementById("coloresBasContainer");
-contenedorColores.innerHTML = "";
+  const contenedorColores =
+    document.getElementById("coloresBasContainer");
 
-const coloresSinRepetir = [];
+  contenedorColores.innerHTML = "";
 
-data.forEach(item => {
-  const yaExiste = coloresSinRepetir.some(color => color.COLOR === item.COLOR);
+  const coloresSinRepetir = [];
 
-  if (!yaExiste) {
-    coloresSinRepetir.push({
-      COLOR: item.COLOR,
-      NOMBRE_COLOR: item.NOMBRE_COLOR
-    });
-  }
-});
+  data.forEach(item => {
+    const yaExiste = coloresSinRepetir.some(
+      color => color.COLOR === item.COLOR
+    );
 
-coloresSinRepetir.forEach(color => {
-  contenedorColores.innerHTML += `
-    <label class="color-opcion">
-     <label class="bas-color-item">
-  <input 
-    type="checkbox" 
-    class="colorProducto" 
-    value="${color.COLOR}"
-    data-nombre="${color.NOMBRE_COLOR}"
-  >
-  <span>${color.NOMBRE_COLOR} (${color.COLOR})</span>
-</label>
-    </label>
-  `;
-});
-
-setTimeout(() => {
-  document.querySelectorAll("#coloresBasContainer .colorProducto").forEach(input => {
-    input.addEventListener("change", () => {
-  generarStockVariantes("arriba");
-});
+    if (!yaExiste) {
+      coloresSinRepetir.push({
+        COLOR: item.COLOR,
+        NOMBRE_COLOR: resolverNombreColor(item)
+      });
+    }
   });
-}, 100);
 
+  coloresSinRepetir.forEach(color => {
+    contenedorColores.innerHTML += `
+      <label class="color-opcion">
+        <label class="bas-color-item">
+          <input
+            type="checkbox"
+            class="colorProducto"
+            value="${color.COLOR}"
+            data-nombre="${color.NOMBRE_COLOR}"
+          >
+          <span>${color.NOMBRE_COLOR} (${color.COLOR})</span>
+        </label>
+      </label>
+    `;
+  });
+
+  setTimeout(() => {
+    document
+      .querySelectorAll("#coloresBasContainer .colorProducto")
+      .forEach(input => {
+        input.addEventListener("change", () => {
+          generarStockVariantes("arriba");
+        });
+      });
+  }, 100);
 }
 
 function mostrarTalleVisual(talleBas){
@@ -825,7 +866,7 @@ async function generarStockVariantes(tipo){
               data-size="${talleVisual}"
               data-bas-size="${item.TALLE}"
               data-color="${item.COLOR}"
-              data-color-name="${item.NOMBRE_COLOR}"
+              data-color-name="${color.dataset.nombre}"
               placeholder="Stock ${talleVisual}"
               value="0"
               style="margin-bottom:8px;"
