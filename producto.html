@@ -1311,6 +1311,32 @@
   renderSizes();
 }
 
+function mostrarTalleVisual(talleBas) {
+  const talle = String(talleBas || "").trim().toUpperCase();
+
+  const mapa = {
+    "038": "XS",
+    "040": "S",
+    "042": "M",
+    "044": "L",
+    "046": "XL",
+    "048": "XXL",
+    "050": "XXXL",
+    "052": "XXXXL",
+
+    "00XS": "XS",
+    "00S": "S",
+    "00M": "M",
+    "00L": "L",
+    "0XL": "XL",
+    "XXL": "XXL",
+    "3XL": "XXXL",
+    "4XL": "XXXXL"
+  };
+
+  return mapa[talle] || talle;
+}
+
       function renderSizes() {
         const rows = state.stockRows.filter(row => {
           if (!state.selectedColorCode) return true;
@@ -1359,23 +1385,24 @@
 
         elements.sizeSection.hidden = false;
         elements.sizeOptions.innerHTML = filtered
-          .map(row => {
-            const stock = Number(row.stock || 0);
-            const disabled = stock <= 0;
+  .map(row => {
+    const stock = Number(row.stock || 0);
+    const disabled = stock <= 0;
+    const talleVisual = mostrarTalleVisual(row.size);
 
-            return `
-              <button
-                class="option-button ${disabled ? "disabled" : ""}"
-                type="button"
-                data-size="${escapeHtml(row.size)}"
-                data-stock="${stock}"
-                ${disabled ? "disabled" : ""}
-              >
-                ${escapeHtml(row.size)}
-              </button>
-            `;
-          })
-          .join("");
+    return `
+      <button
+        class="option-button ${disabled ? "disabled" : ""}"
+        type="button"
+        data-size="${escapeHtml(row.size)}"
+        data-stock="${stock}"
+        ${disabled ? "disabled" : ""}
+      >
+        ${escapeHtml(talleVisual)}
+      </button>
+    `;
+  })
+  .join("");
 
         const firstAvailable = filtered.find(
           row => Number(row.stock || 0) > 0
@@ -1385,7 +1412,8 @@
           state.selectedSize = String(firstAvailable.size);
           state.selectedStock = Number(firstAvailable.stock);
 
-          elements.selectedSize.textContent = state.selectedSize;
+          elements.selectedSize.textContent =
+  mostrarTalleVisual(state.selectedSize);
 
           const firstButton = elements.sizeOptions.querySelector(
             `[data-size="${CSS.escape(state.selectedSize)}"]`
@@ -1409,7 +1437,7 @@
                 Number(button.dataset.stock || 0);
 
               elements.selectedSize.textContent =
-                state.selectedSize;
+  mostrarTalleVisual(state.selectedSize);
 
               elements.sizeOptions
                 .querySelectorAll(".option-button")
@@ -1450,7 +1478,7 @@
           elements.stockMessage.classList.add("low");
         } else {
           elements.stockMessage.textContent =
-            `Color: ${state.selectedColorName || "Único"} · Talle: ${state.selectedSize}`;
+            `Color: ${state.selectedColorName || "Único"} · Talle: ${mostrarTalleVisual(state.selectedSize)}`;
           elements.stockMessage.classList.remove("low");
         }
 
