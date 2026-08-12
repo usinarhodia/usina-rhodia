@@ -975,7 +975,10 @@ if(imagenes.length === 0){
   return;
 }
 
-  if (
+  const esFlashSale =
+  subcategoria.trim().toLowerCase() === "flash sale";
+
+if (
   !marca ||
   !nombre ||
   !genero ||
@@ -983,11 +986,22 @@ if(imagenes.length === 0){
   !temporada ||
   !catalogoOrigen ||
   !precio ||
-  !coditm ||
-  basColor.length === 0 ||
   imagenes.length === 0
 ) {
   alert("Completá todos los campos obligatorios");
+  return;
+}
+
+// Los productos normales siguen necesitando BAS.
+// Las Flash Sale pueden crearse sin colores/talles BAS.
+if (
+  !esFlashSale &&
+  (
+    !coditm ||
+    basColor.length === 0
+  )
+) {
+  alert("Seleccioná un artículo BAS y al menos un color");
   return;
 }
 
@@ -1082,11 +1096,11 @@ const response = await fetch("https://usina-rhodia-production.up.railway.app/adm
   discount: descuento,
 
   coditm,
-  bas_color: basColor,
-  bas_color_name: basColorName,
+ bas_color: esFlashSale ? [] : basColor,
+bas_color_name: esFlashSale ? [] : basColorName,
 
   imageUrls,
-  stocks
+  stocks: esFlashSale ? [] : stocks
 })
 });
 

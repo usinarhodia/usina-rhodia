@@ -1090,9 +1090,15 @@ if (
   });
 }
 
+const esFlashSale =
+  String(subcategory || "").trim().toLowerCase() === "flash sale";
+
 if (
-  !Array.isArray(stocks) ||
-  stocks.length === 0
+  !esFlashSale &&
+  (
+    !Array.isArray(stocks) ||
+    stocks.length === 0
+  )
 ) {
   return res.status(400).json({
     error: "El producto necesita combinaciones de stock"
@@ -1174,23 +1180,27 @@ if (
       return res.status(400).json({ error: "Error creando imágenes" });
     }
 
-    const stockParaInsertar = stocks.map(item => ({
-  product_id: producto.id,
-  size: item.size,
-  bas_size: item.bas_size,
-  color: item.color,
-  color_name: item.color_name,
-  stock: item.stock
-}));
+    if (Array.isArray(stocks) && stocks.length > 0) {
+  const stockParaInsertar = stocks.map(item => ({
+    product_id: producto.id,
+    size: item.size,
+    bas_size: item.bas_size,
+    color: item.color,
+    color_name: item.color_name,
+    stock: item.stock
+  }));
 
-    const { error: errorStock } = await supabase
-      .from("product_stock")
-      .insert(stockParaInsertar);
+  const { error: errorStock } = await supabase
+    .from("product_stock")
+    .insert(stockParaInsertar);
 
-    if (errorStock) {
-      console.log("Error creando stock:", errorStock);
-      return res.status(400).json({ error: "Error creando stock" });
-    }
+  if (errorStock) {
+    console.log("Error creando stock:", errorStock);
+    return res.status(400).json({
+      error: "Error creando stock"
+    });
+  }
+}
 
     res.json({
       success: true,
