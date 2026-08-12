@@ -1020,11 +1020,12 @@ const categoriasPermitidas = [
   "camisas",
   "pantalones",
   "jeans",
-  "accesorios"
+  "accesorios",
+  "flash-sale"
 ];
 
 const esFlashSale =
-  String(subcategory || "").trim().toLowerCase() === "flash sale";
+  String(category || "").trim().toLowerCase() === "flash-sale";
 
 if (
   !brand ||

@@ -181,6 +181,7 @@ h1{
   <option value="pantalones">Pantalones</option>
   <option value="jeans">Jeans</option>
   <option value="accesorios">Accesorios</option>
+  <option value="flash-sale">Flash Sale</option>
 </select>
 
 <input
@@ -976,7 +977,7 @@ if(imagenes.length === 0){
 }
 
   const esFlashSale =
-  subcategoria.trim().toLowerCase() === "flash sale";
+  String(categoria || "").trim().toLowerCase() === "flash-sale";
 
 if (
   !marca ||
