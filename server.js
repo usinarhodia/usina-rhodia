@@ -1023,6 +1023,9 @@ const categoriasPermitidas = [
   "accesorios"
 ];
 
+const esFlashSale =
+  String(subcategory || "").trim().toLowerCase() === "flash sale";
+
 if (
   !brand ||
   !name ||
@@ -1030,7 +1033,7 @@ if (
   !category ||
   !season ||
   !source_catalog ||
-  !coditm
+  (!esFlashSale && !coditm)
 ) {
   return res.status(400).json({
     error: "Faltan campos obligatorios del producto"
@@ -1090,8 +1093,6 @@ if (
   });
 }
 
-const esFlashSale =
-  String(subcategory || "").trim().toLowerCase() === "flash sale";
 
 if (
   !esFlashSale &&
