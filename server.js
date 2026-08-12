@@ -1062,6 +1062,13 @@ const precioAnteriorFinal =
     ? Number(old_price)
     : precioNumero;
 
+    const descuentoFinal =
+  discount !== null &&
+  discount !== undefined &&
+  discount !== ""
+    ? Number(discount)
+    : 0;
+
 if (!Number.isFinite(precioNumero) || precioNumero <= 0) {
   return res.status(400).json({
     error: "El precio debe ser mayor a cero"
@@ -1158,7 +1165,7 @@ if (
 
     old_price: precioAnteriorFinal,
     price,
-    discount,
+    discount: descuentoFinal,
 
     coditm,
     bas_color,
