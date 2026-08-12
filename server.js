@@ -1055,6 +1055,13 @@ if (!categoriasPermitidas.includes(category)) {
 
 const precioNumero = Number(price);
 
+const precioAnteriorFinal =
+  old_price !== null &&
+  old_price !== undefined &&
+  old_price !== ""
+    ? Number(old_price)
+    : precioNumero;
+
 if (!Number.isFinite(precioNumero) || precioNumero <= 0) {
   return res.status(400).json({
     error: "El precio debe ser mayor a cero"
@@ -1149,7 +1156,7 @@ if (
     featured_from: featured ? featured_from : null,
     featured_until: featured ? featured_until : null,
 
-    old_price,
+    old_price: precioAnteriorFinal,
     price,
     discount,
 
