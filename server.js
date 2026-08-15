@@ -167,15 +167,11 @@ const codigoCupon = String(coupon_code || "")
   .toUpperCase();
 
 if (codigoCupon) {
-  const { data: cupon, error: errorCupon } = await supabase
+  const { data: cupones, error: errorCupon } = await supabase
     .from("coupons")
     .select("*")
     .eq("code", codigoCupon)
-    .ilike("customer_email", email.trim())
-    .eq("active", true)
-    .is("used_at", null)
-    .is("checkout_attempt_id", null)
-    .maybeSingle();
+    .eq("active", true);
 
   if (errorCupon) {
     console.log("Error validando cupón:", errorCupon);
@@ -184,6 +180,24 @@ if (codigoCupon) {
       error: "No se pudo validar el cupón"
     });
   }
+
+  const cupon = (cupones || []).find(item => {
+    const emailCupon = String(item.customer_email || "")
+      .trim()
+      .toLowerCase();
+
+    // Cupón público: funciona con cualquier email
+    if (!emailCupon) {
+      return true;
+    }
+
+    // Cupón personal: sigue funcionando solo para su email
+    return (
+      emailCupon === String(email || "").trim().toLowerCase() &&
+      !item.used_at &&
+      !item.checkout_attempt_id
+    );
+  });
 
   if (!cupon) {
     return res.status(400).json({
@@ -229,7 +243,10 @@ if (codigoCupon) {
       return res.status(500).json({ error: "Error creando intento de pago" });
     }
 
-    if (cuponAplicado) {
+    if (
+  cuponAplicado &&
+  String(cuponAplicado.customer_email || "").trim() !== ""
+) {
   const {
     data: cuponReservado,
     error: errorReservaCupon
