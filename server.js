@@ -161,51 +161,107 @@ bas_size: stock.bas_size
     }
 
     let cuponAplicado = null;
+let tipoCuponAplicado = null;
 
 const codigoCupon = String(coupon_code || "")
   .trim()
   .toUpperCase();
 
 if (codigoCupon) {
-  const { data: cupones, error: errorCupon } = await supabase
-    .from("coupons")
+  // =========================================================
+  // 1. PRIMERO BUSCAMOS CUPÓN PROMOCIONAL
+  // =========================================================
+
+  const { data: promos, error: errorPromo } = await supabase
+    .from("promo_coupons")
     .select("*")
-    .eq("code", codigoCupon)
+    .ilike("code", codigoCupon)
     .eq("active", true);
 
-  if (errorCupon) {
-    console.log("Error validando cupón:", errorCupon);
+  if (errorPromo) {
+    console.log("Error validando cupón promocional:", errorPromo);
 
     return res.status(500).json({
       error: "No se pudo validar el cupón"
     });
   }
 
-  const cupon = (cupones || []).find(item => {
-    const emailCupon = String(item.customer_email || "")
-      .trim()
-      .toLowerCase();
+  const ahora = new Date();
 
-    // Cupón público: funciona con cualquier email
-    if (!emailCupon) {
-      return true;
-    }
+  const promo = (promos || []).find(item => {
+    const inicio = item.starts_at
+      ? new Date(item.starts_at)
+      : null;
 
-    // Cupón personal: sigue funcionando solo para su email
-    return (
-      emailCupon === String(email || "").trim().toLowerCase() &&
-      !item.used_at &&
-      !item.checkout_attempt_id
-    );
+    const fin = item.ends_at
+      ? new Date(item.ends_at)
+      : null;
+
+    const dentroDeFecha =
+      (!inicio || ahora >= inicio) &&
+      (!fin || ahora < fin);
+
+    const tieneUsos =
+      item.max_uses === null ||
+      item.max_uses === undefined ||
+      Number(item.used_count || 0) < Number(item.max_uses);
+
+    return dentroDeFecha && tieneUsos;
   });
 
-  if (!cupon) {
+  if (promo) {
+    cuponAplicado = promo;
+    tipoCuponAplicado = "promo";
+  }
+
+  // =========================================================
+  // 2. SI NO HAY PROMO VÁLIDA, BUSCAMOS CUPÓN PERSONAL
+  // =========================================================
+
+  if (!cuponAplicado) {
+    const { data: cupones, error: errorCupon } = await supabase
+      .from("coupons")
+      .select("*")
+      .ilike("code", codigoCupon)
+      .eq("active", true);
+
+    if (errorCupon) {
+      console.log("Error validando cupón personal:", errorCupon);
+
+      return res.status(500).json({
+        error: "No se pudo validar el cupón"
+      });
+    }
+
+    const cuponPersonal = (cupones || []).find(item => {
+      const emailCupon = String(item.customer_email || "")
+        .trim()
+        .toLowerCase();
+
+      return (
+        emailCupon === String(email || "").trim().toLowerCase() &&
+        !item.used_at &&
+        !item.checkout_attempt_id
+      );
+    });
+
+    if (cuponPersonal) {
+      cuponAplicado = cuponPersonal;
+      tipoCuponAplicado = "personal";
+    }
+  }
+
+  // =========================================================
+  // NO EXISTE NI COMO PROMO NI COMO PERSONAL
+  // =========================================================
+
+  if (!cuponAplicado) {
     return res.status(400).json({
-      error: "El cupón no es válido para este email o ya fue utilizado"
+      error: "El cupón no es válido, está vencido o ya fue utilizado"
     });
   }
 
-  const porcentaje = Number(cupon.discount_percent);
+  const porcentaje = Number(cuponAplicado.discount_percent);
   const factorDescuento = (100 - porcentaje) / 100;
 
   itemsValidados.forEach(item => {
@@ -220,11 +276,12 @@ if (codigoCupon) {
 
   total = Number(
     itemsValidados
-      .reduce((acumulado, item) => acumulado + item.subtotal, 0)
+      .reduce(
+        (acumulado, item) => acumulado + item.subtotal,
+        0
+      )
       .toFixed(2)
   );
-
-  cuponAplicado = cupon;
 }
 
     const { data: intento, error: errorIntento } = await supabase
@@ -245,7 +302,7 @@ if (codigoCupon) {
 
     if (
   cuponAplicado &&
-  String(cuponAplicado.customer_email || "").trim() !== ""
+  tipoCuponAplicado === "personal"
 ) {
   const {
     data: cuponReservado,
@@ -309,7 +366,10 @@ try {
     errorMercadoPago
   );
 
-  if (cuponAplicado) {
+  if (
+  cuponAplicado &&
+  tipoCuponAplicado === "personal"
+) {
     await supabase
       .from("coupons")
       .update({
