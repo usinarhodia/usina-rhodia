@@ -137,6 +137,24 @@ if (!/^\d{7,8}$/.test(String(dni))) {
         });
       }
 
+      const { data: variantesBas, error: errorVariantesBas } = await supabase
+  .from("bas_articulos_talles_colores")
+  .select("CODIGO")
+  .eq("CODIGO", producto.coditm)
+  .limit(1);
+
+if (errorVariantesBas) {
+  console.log(
+    "Error verificando variantes BAS:",
+    errorVariantesBas
+  );
+}
+
+const productoSinVariantesBas =
+  !errorVariantesBas &&
+  Array.isArray(variantesBas) &&
+  variantesBas.length === 0;
+
       if (stock.stock < cantidad) {
         return res.status(400).json({
           error: `Stock insuficiente para ${producto.name} talle ${talle}`
@@ -148,16 +166,17 @@ if (!/^\d{7,8}$/.test(String(dni))) {
       total += subtotal;
 
       itemsValidados.push({
-        product_id: producto.id,
-        product_name: producto.name,
-        color,
-        size: talle,
-        quantity: cantidad,
-        unit_price: precioReal,
-        subtotal,
-coditm: producto.coditm,
-bas_size: stock.bas_size
-      });
+  product_id: producto.id,
+  product_name: producto.name,
+  color,
+  size: talle,
+  quantity: cantidad,
+  unit_price: precioReal,
+  subtotal,
+  coditm: producto.coditm,
+  bas_size: stock.bas_size,
+  sin_variantes_bas: productoSinVariantesBas
+});
     }
 
     let cuponAplicado = null;
@@ -938,10 +957,17 @@ async function crearFacturaBas(cliente, itemsValidados, total){
     const importes = calcularImportes(item.unit_price, item.quantity);
 
     return {
-      CodigoItem: item.coditm,
-      Color: extraerColorBas(item.color),
-      Talle: item.bas_size,
-      PendienteRemitirFacturar: "N",
+  CodigoItem: item.coditm,
+
+  Color: item.sin_variantes_bas
+    ? ""
+    : extraerColorBas(item.color),
+
+  Talle: item.sin_variantes_bas
+    ? ""
+    : item.bas_size,
+
+  PendienteRemitirFacturar: "N",
       NumeroUnidadMedida: "1",
       CantidadPrimeraUnidad: item.quantity,
       PrecioUnitario: item.unit_price,

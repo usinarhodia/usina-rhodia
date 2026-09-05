@@ -261,6 +261,34 @@ h1{
 
 <h3>Colores disponibles</h3>
 
+<div id="manualBasContainer" style="display:none; background:#181818; padding:18px; border-radius:14px; margin-bottom:18px;">
+  <h3>Artículo BAS sin colores/talles</h3>
+
+  <p style="color:#aaa;">
+    Este artículo no tiene variantes cargadas en BAS. Podés cargarlas manualmente.
+  </p>
+
+  <input
+    type="text"
+    id="manualColorNombre"
+    placeholder="Nombre del color, ej: Gris"
+  >
+
+  <input
+    type="text"
+    id="manualColorCodigo"
+    placeholder="Código interno del color, ej: GRIS"
+  >
+
+  <button
+    type="button"
+    onclick="agregarColorManual()"
+    style="margin-top:10px;"
+  >
+    Agregar color manual
+  </button>
+</div>
+
 <div class="colores-admin" id="coloresBasContainer">
 
   <label class="color-opcion">
@@ -694,6 +722,20 @@ async function cargarCombinacionesBas(){
   console.log("Talles BAS:", tallesUnicos);
   console.log("Colores BAS:", coloresUnicos);
 
+  const manualBasContainer =
+  document.getElementById("manualBasContainer");
+
+if (!data || data.length === 0) {
+  manualBasContainer.style.display = "block";
+
+  document.getElementById("coloresBasContainer").innerHTML = "";
+  document.getElementById("stockVariantes").innerHTML = "";
+
+  return;
+}
+
+manualBasContainer.style.display = "none";
+
   const contenedorColores =
     document.getElementById("coloresBasContainer");
 
@@ -739,6 +781,89 @@ async function cargarCombinacionesBas(){
         });
       });
   }, 100);
+}
+
+function agregarColorManual() {
+  const nombre = document
+    .getElementById("manualColorNombre")
+    .value
+    .trim();
+
+  const codigo = document
+    .getElementById("manualColorCodigo")
+    .value
+    .trim()
+    .toUpperCase();
+
+  if (!nombre || !codigo) {
+    alert("Completá nombre y código del color");
+    return;
+  }
+
+  const contenedor =
+    document.getElementById("coloresBasContainer");
+
+  contenedor.innerHTML += `
+    <label class="color-opcion">
+      <label class="bas-color-item">
+        <input
+          type="checkbox"
+          class="colorProducto"
+          value="${codigo}"
+          data-nombre="${nombre}"
+          data-manual="true"
+          checked
+        >
+        <span>${nombre} (${codigo})</span>
+      </label>
+    </label>
+  `;
+
+  generarStockManual(nombre, codigo);
+
+  document.getElementById("manualColorNombre").value = "";
+  document.getElementById("manualColorCodigo").value = "";
+}
+
+function generarStockManual(nombreColor, codigoColor) {
+  const contenedor =
+    document.getElementById("stockVariantes");
+
+  const talles = [
+    "XS",
+    "S",
+    "M",
+    "L",
+    "XL",
+    "XXL",
+    "XXXL",
+    "XXXXL"
+  ];
+
+  contenedor.innerHTML += `
+    <div style="
+      background:#181818;
+      padding:18px;
+      border-radius:14px;
+      margin-bottom:18px;
+    ">
+      <h4>${nombreColor} (${codigoColor})</h4>
+
+      ${talles.map(talle => `
+        <input
+          type="number"
+          class="stockVariante"
+          data-size="${talle}"
+          data-bas-size="${talle}"
+          data-color="${codigoColor}"
+          data-color-name="${nombreColor}"
+          placeholder="Stock ${talle}"
+          value="0"
+          style="margin-bottom:8px;"
+        >
+      `).join("")}
+    </div>
+  `;
 }
 
 function mostrarTalleVisual(talleBas){
