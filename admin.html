@@ -97,6 +97,26 @@ h1{
   color:white;
 }
 
+.codigo-producto{
+  display:inline-flex;
+  align-items:center;
+  margin-left:8px;
+  padding:4px 8px;
+  border:1px solid #3a3a3a;
+  border-radius:999px;
+  background:#1c1c1c;
+  color:#ffffff;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.5px;
+  white-space:nowrap;
+}
+
+.pedido-productos li{
+  margin:8px 0;
+  line-height:1.55;
+}
+
 .colores-admin{
   display:flex;
   gap:12px;
@@ -418,6 +438,38 @@ const supabaseClient = supabase.createClient(
 
 let pedidosOriginales = [];
 let filtroPedidosActual = "todos";
+let codigosPorProducto = new Map();
+
+async function cargarCodigosProductos(pedidos){
+  const ids = [...new Set(
+    (pedidos || [])
+      .flatMap(pedido => pedido.order_items || [])
+      .map(item => item.product_id)
+      .filter(id => id !== null && id !== undefined && id !== "")
+      .map(id => Number(id))
+      .filter(Number.isFinite)
+  )];
+
+  codigosPorProducto = new Map();
+  if(ids.length === 0) return;
+
+  const { data, error } = await supabaseClient
+    .from("products")
+    .select("id,coditm")
+    .in("id", ids);
+
+  if(error){
+    console.log("Error cargando CODITM para pedidos:", error);
+    return;
+  }
+
+  (data || []).forEach(producto => {
+    codigosPorProducto.set(
+      String(producto.id),
+      String(producto.coditm || "").trim() || "—"
+    );
+  });
+}
 
 function filtrarPedidos(filtro){
   filtroPedidosActual = filtro;
@@ -442,6 +494,7 @@ if(!response.ok){
 
 const data = resultado.pedidos;
 pedidosOriginales = data;
+await cargarCodigosProductos(data);
 renderizarPedidos();
 }
 
@@ -474,12 +527,22 @@ function renderizarPedidos(){
         <p><b>BAS:</b> ${pedido.bas_estado || "pendiente"}</p>
 
         <p><b>Productos:</b></p>
-        <ul>
-          ${pedido.order_items.map(item => `
-            <li>
-              ${item.product_name} — Color ${item.color || "-"} — Talle ${item.size} — x${item.quantity} — $${item.unit_price}
-            </li>
-          `).join("")}
+        <ul class="pedido-productos">
+          ${pedido.order_items.map(item => {
+            const codigo =
+              codigosPorProducto.get(String(item.product_id)) || "—";
+
+            return `
+              <li>
+                <b>${item.product_name}</b>
+                <span class="codigo-producto">CÓDIGO: ${codigo}</span>
+                — Color ${item.color || "-"}
+                — Talle ${item.size}
+                — x${item.quantity}
+                — $${item.unit_price}
+              </li>
+            `;
+          }).join("")}
         </ul>
 
         <p><b>Entrega:</b> ${pedido.delivery_method}</p>

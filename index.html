@@ -3,1326 +3,741 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b0b0b">
-
-  <title>Usina Rhodia | Tu guardarropa, más cerca</title>
-  <meta
-    name="description"
-    content="Una selección de Brooksfield y Mistral pensada para vestirte bien todos los días. Envíos a todo el país."
-  >
-
+  <meta name="theme-color" content="#080808">
+  <title>Usina Rhodia | Brooksfield & Mistral</title>
+  <meta name="description" content="Nueva temporada Brooksfield y Mistral en Usina Rhodia. Encontrá rápido por categoría, marca, talle o color.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap"
-    rel="stylesheet"
-  >
-
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg: #0b0b0b;
-      --surface: #131313;
-      --surface-soft: #191919;
-      --text: #f7f5f1;
-      --muted: #aaa6a0;
-      --line: rgba(255, 255, 255, 0.11);
-      --accent: #c91010;
-      --cream: #efede7;
-      --shell: 1440px;
-      --ease: cubic-bezier(.2, .7, .2, 1);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: "Montserrat", sans-serif;
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-    }
-
-    body.menu-open {
-      overflow: hidden;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    button,
-    input {
-      font: inherit;
-    }
-
-    img {
-      display: block;
-      width: 100%;
-    }
-
-    .shell {
-      width: min(calc(100% - 56px), var(--shell));
-      margin-inline: auto;
-    }
-
-    .section {
-      padding-block: 82px;
-    }
-
-    section[id] {
-      scroll-margin-top: 100px;
-    }
-
-    .eyebrow {
-      color: #f04a4a;
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 1.7px;
-      text-transform: uppercase;
-    }
-
-    .announcement {
-      position: relative;
-      z-index: 120;
-      background: var(--accent);
-    }
-
-    .announcement__inner {
-      min-height: 34px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .announcement p {
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 1.2px;
-      text-align: center;
-      text-transform: uppercase;
-    }
-
-    .site-header {
-      position: sticky;
-      z-index: 100;
-      top: 12px;
-      padding-inline: 18px;
-      background: transparent;
-      border: 0;
-      box-shadow: none;
-      backdrop-filter: none;
-      transition: top .25s ease;
-    }
-
-    .site-header.is-scrolled {
-      background: transparent;
-      border: 0;
-      box-shadow: none;
-    }
-
-    .header__inner {
-      width: min(100%, 1560px);
-      min-height: 66px;
-      margin-inline: auto;
-      padding: 0 26px;
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      gap: 30px;
-      align-items: center;
-      background: rgba(12, 12, 12, .91);
-      border: 1px solid rgba(255,255,255,.14);
-      border-radius: 18px;
-      box-shadow: 0 14px 38px rgba(0,0,0,.28);
-      backdrop-filter: blur(18px);
-      transition:
-        background .25s ease,
-        border-color .25s ease,
-        box-shadow .25s ease;
-    }
-
-    .site-header.is-scrolled .header__inner {
-      background: rgba(10, 10, 10, .97);
-      border-color: rgba(255,255,255,.2);
-      box-shadow: 0 16px 42px rgba(0,0,0,.4);
-    }
-
-    .brand {
-      font-size: 19px;
-      font-weight: 900;
-      letter-spacing: 2.7px;
-      white-space: nowrap;
-    }
-
-    .desktop-nav {
-      display: flex;
-      justify-content: center;
-      gap: 34px;
-    }
-
-    .desktop-nav a,
-    .header-link {
-      font-size: 9px;
-      font-weight: 800;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-
-    .desktop-nav a {
-      color: rgba(255,255,255,.78);
-      transition: color .2s ease;
-    }
-
-    .desktop-nav a:hover {
-      color: #fff;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-    }
-
-    .header-link {
-      color: rgba(255,255,255,.76);
-    }
-
-    .cart-button {
-      min-height: 42px;
-      padding: 0 13px 0 16px;
-      border: 1px solid rgba(255,255,255,.22);
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-
-    .cart-count {
-      min-width: 22px;
-      height: 22px;
-      padding-inline: 5px;
-      border-radius: 999px;
-      background: #fff;
-      color: #111;
-      display: grid;
-      place-items: center;
-      font-size: 10px;
-    }
-
-    .menu-button,
-    .mobile-menu {
-      display: none;
-    }
-
-    .hero {
-      position: relative;
-      min-height: 100svh;
-      overflow: hidden;
-      display: flex;
-      align-items: flex-end;
-    }
-
-    .hero__media,
-    .hero__veil {
-      position: absolute;
-      inset: 0;
-    }
-
-    .hero__media img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: 72% 2%;
-      animation: heroBreath 18s var(--ease) infinite alternate;
-    }
-
-    @keyframes heroBreath {
-      from { transform: scale(1.01); }
-      to { transform: scale(1.07); }
-    }
-
-    .hero__veil {
-      background:
-        linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(0,0,0,.38) 48%, rgba(0,0,0,.28) 100%),
-        linear-gradient(to right, rgba(0,0,0,.48), transparent 64%);
-    }
-
-    .hero__content {
-      position: relative;
-      z-index: 2;
-      padding-top: 180px;
-      padding-bottom: 92px;
-    }
-
-    .hero h1 {
-      max-width: 980px;
-      margin-top: 18px;
-      font-size: clamp(58px, 8vw, 120px);
-      line-height: .88;
-      letter-spacing: -5px;
-      text-transform: uppercase;
-    }
-
-    .hero__lead {
-      max-width: 620px;
-      margin-top: 28px;
-      color: rgba(255,255,255,.8);
-      font-size: 16px;
-      line-height: 1.75;
-    }
-
-    .hero__actions {
-      margin-top: 34px;
-      display: flex;
-      align-items: center;
-      gap: 28px;
-      flex-wrap: wrap;
-    }
-
-    .button {
-      min-height: 52px;
-      padding: 0 24px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-
-    .button--light {
-      background: #fff;
-      color: #111;
-      transition: transform .25s ease;
-    }
-
-    .button--light:hover {
-      transform: translateY(-3px);
-    }
-
-    .text-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-
-    .hero__meta {
-      position: absolute;
-      z-index: 2;
-      right: 28px;
-      bottom: 26px;
-      display: flex;
-      gap: 10px;
-    }
-
-    .hero__meta span {
-      padding: 8px 11px;
-      border: 1px solid rgba(255,255,255,.2);
-      border-radius: 999px;
-      background: rgba(0,0,0,.18);
-      backdrop-filter: blur(10px);
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-
-    .reveal {
-      opacity: 0;
-      transform: translateY(22px);
-      animation: reveal .8s var(--ease) forwards;
-    }
-
-    .hero h1.reveal { animation-delay: .1s; }
-    .hero__lead.reveal { animation-delay: .22s; }
-    .hero__actions.reveal { animation-delay: .34s; }
-
-    @keyframes reveal {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-
-
-    .section-heading {
-      margin-bottom: 40px;
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 40px;
-    }
-
-    .section-heading h2 {
-      margin-top: 11px;
-      font-size: clamp(42px, 6vw, 82px);
-      line-height: .94;
-      letter-spacing: -3px;
-      text-transform: uppercase;
-    }
-
-    .section-heading > p {
-      max-width: 430px;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.7;
-    }
-
-    .collections__grid {
-      display: grid;
-      grid-template-columns: 1.18fr .82fr;
-      grid-template-rows: repeat(2, minmax(320px, 1fr));
-      gap: 18px;
-    }
-
-    .collection {
-      position: relative;
-      min-height: 320px;
-      overflow: hidden;
-      border-radius: 24px;
-      isolation: isolate;
-    }
-
-    .collection--large {
-      grid-row: 1 / 3;
-    }
-
-    .collection img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform .9s var(--ease);
-    }
-
-    .collection:hover img {
-      transform: scale(1.045);
-    }
-
-    .collection__shade {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,.88), rgba(0,0,0,.05) 70%);
-    }
-
-    .collection__copy {
-      position: absolute;
-      z-index: 2;
-      right: 26px;
-      bottom: 26px;
-      left: 26px;
-    }
-
-    .collection__copy span {
-      color: #ff5555;
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 1.4px;
-      text-transform: uppercase;
-    }
-
-    .collection__copy h3 {
-      max-width: 650px;
-      margin-top: 8px;
-      font-size: clamp(28px, 4vw, 58px);
-      line-height: .94;
-      letter-spacing: -2px;
-      text-transform: uppercase;
-    }
-
-    .collection:not(.collection--large) h3 {
-      font-size: clamp(27px, 3vw, 40px);
-    }
-
-    .collection__copy p {
-      max-width: 470px;
-      margin-top: 12px;
-      color: rgba(255,255,255,.72);
-      font-size: 13px;
-      line-height: 1.6;
-    }
-
-    .collection__copy strong {
-      margin-top: 18px;
-      display: block;
-      font-size: 10px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-
-
-
-    .trust__grid {
-      display: grid;
-      grid-template-columns: .8fr 1.2fr;
-      gap: 90px;
-    }
-
-    .trust__title h2 {
-      margin-top: 12px;
-      font-size: clamp(44px, 6vw, 80px);
-      line-height: .93;
-      letter-spacing: -3px;
-      text-transform: uppercase;
-    }
-
-    .trust__items {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .trust__items article {
-      min-height: 230px;
-      padding: 26px;
-      border-top: 1px solid var(--line);
-      border-left: 1px solid var(--line);
-    }
-
-    .trust__items article:nth-child(odd) {
-      border-left: none;
-    }
-
-    .trust__items span {
-      color: #f14a4a;
-      font-size: 10px;
-      font-weight: 800;
-    }
-
-    .trust__items h3 {
-      margin-top: 70px;
-      font-size: 20px;
-      text-transform: uppercase;
-    }
-
-    .trust__items p {
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.6;
-    }
-
-    .newsletter {
-      padding-block: 72px;
-    }
-
-    .newsletter__box {
-      padding: 42px;
-      border-radius: 26px;
-      background: var(--accent);
-      display: grid;
-      grid-template-columns: 1fr .8fr;
-      align-items: end;
-      gap: 80px;
-    }
-
-    .newsletter h2 {
-      margin-top: 10px;
-      font-size: clamp(44px, 6vw, 78px);
-      line-height: .92;
-      letter-spacing: -3px;
-      text-transform: uppercase;
-    }
-
-    .newsletter p:not(.eyebrow) {
-      max-width: 520px;
-      margin-top: 14px;
-      color: rgba(255,255,255,.8);
-      font-size: 14px;
-      line-height: 1.7;
-    }
-
-    .newsletter .eyebrow {
-      color: #fff;
-    }
-
-    .newsletter__form {
-      display: flex;
-      border-bottom: 1px solid rgba(255,255,255,.65);
-    }
-
-    .newsletter__form input {
-      width: 100%;
-      min-height: 58px;
-      border: 0;
-      outline: 0;
-      background: transparent;
-      color: #fff;
-    }
-
-    .newsletter__form input::placeholder {
-      color: rgba(255,255,255,.7);
-    }
-
-    .newsletter__form button {
-      border: 0;
-      background: transparent;
-      color: #fff;
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      cursor: pointer;
-    }
-
-    .site-footer {
-      padding: 54px 0 24px;
-      border-top: 1px solid var(--line);
-    }
-
-    .footer__grid {
-      display: grid;
-      grid-template-columns: 1.4fr repeat(3, 1fr);
-      gap: 70px;
-    }
-
-    .footer__brand p {
-      max-width: 380px;
-      margin-top: 18px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.7;
-    }
-
-    .footer__grid h2 {
-      margin-bottom: 18px;
-      font-size: 10px;
-      letter-spacing: 1.3px;
-      text-transform: uppercase;
-    }
-
-    .footer__grid > div:not(.footer__brand) {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .footer__grid > div:not(.footer__brand) a {
-      margin-block: 7px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .footer__grid a:hover {
-      color: #fff;
-    }
-
-    .footer__bottom {
-      margin-top: 70px;
-      padding-top: 22px;
-      border-top: 1px solid var(--line);
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      color: #74716c;
-      font-size: 10px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-
-    @media (max-width: 1000px) {
-      .desktop-nav,
-      .header-link {
-        display: none;
-      }
-
-      .menu-button {
-        width: 40px;
-        height: 40px;
-        border: 0;
-        background: transparent;
-        display: grid;
-        align-content: center;
-        gap: 6px;
-        cursor: pointer;
-      }
-
-      .menu-button span {
-        width: 22px;
-        height: 1px;
-        background: #fff;
-        transition: transform .25s ease;
-      }
-
-      .menu-button[aria-expanded="true"] span:first-child {
-        transform: translateY(3.5px) rotate(45deg);
-      }
-
-      .menu-button[aria-expanded="true"] span:last-child {
-        transform: translateY(-3.5px) rotate(-45deg);
-      }
-
-      .mobile-menu {
-        position: absolute;
-        top: calc(100% + 10px);
-        right: 18px;
-        left: 18px;
-        max-height: calc(100svh - 100px);
-        overflow-y: auto;
-        padding: 22px 24px;
-        background: rgba(11,11,11,.98);
-        border: 1px solid rgba(255,255,255,.14);
-        border-radius: 18px;
-        box-shadow: 0 20px 50px rgba(0,0,0,.45);
-        backdrop-filter: blur(18px);
-        display: flex;
-        flex-direction: column;
-        z-index: 99;
-      }
-
-      .mobile-menu[hidden] {
-        display: none;
-      }
-
-      .mobile-menu a {
-        padding: 20px 0;
-        border-bottom: 1px solid var(--line);
-        font-size: 18px;
-        font-weight: 700;
-      }
-
-      .trust__grid,
-      .newsletter__box {
-        grid-template-columns: 1fr;
-      }
-
-      .collections__grid {
-        grid-template-columns: 1fr;
-        grid-template-rows: none;
-      }
-
-      .collection,
-      .collection--large {
-        min-height: 560px;
-        grid-row: auto;
-      }
-
-      .footer__grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 760px) {
-      .shell {
-        width: min(calc(100% - 28px), var(--shell));
-      }
-
-      .section {
-        padding-block: 72px;
-      }
-
-      .site-header {
-        top: 8px;
-        padding-inline: 8px;
-      }
-
-      .header__inner {
-        min-height: 58px;
-        padding: 0 12px;
-        gap: 10px;
-        border-radius: 14px;
-      }
-
-      .brand {
-        justify-self: center;
-        font-size: 15px;
-        letter-spacing: 1.8px;
-      }
-
-      .mobile-menu {
-        right: 8px;
-        left: 8px;
-        border-radius: 14px;
-      }
-
-      .cart-button {
-        min-height: 38px;
-        padding: 0 8px;
-      }
-
-      .cart-button > span:first-child {
-        display: none;
-      }
-
-      .hero {
-        min-height: 92svh;
-      }
-
-      .hero__content {
-        padding-top: 160px;
-        padding-bottom: 76px;
-      }
-
-      .hero h1 {
-        font-size: 48px;
-        line-height: .92;
-        letter-spacing: -2.2px;
-      }
-
-      .hero__lead {
-        font-size: 14px;
-      }
-
-      .hero__actions {
-        align-items: stretch;
-        flex-direction: column;
-      }
-
-      .button {
-        width: 100%;
-      }
-
-      .text-link {
-        justify-content: center;
-      }
-
-      .hero__meta {
-        display: none;
-      }
-
-
-      .section-heading {
-        margin-bottom: 24px;
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 14px;
-      }
-
-      .section-heading h2 {
-        font-size: 40px;
-        letter-spacing: -1.6px;
-      }
-
-      .collection,
-      .collection--large {
-        min-height: 500px;
-        border-radius: 20px;
-      }
-
-      .collection__copy {
-        right: 20px;
-        bottom: 20px;
-        left: 20px;
-      }
-
-      .collection__copy h3,
-      .collection:not(.collection--large) h3 {
-        font-size: 34px;
-      }
-
-
-
-      .trust__grid {
-        gap: 40px;
-      }
-
-      .trust__title h2 {
-        font-size: 42px;
-        letter-spacing: -1.8px;
-      }
-
-      .trust__items {
-        grid-template-columns: 1fr;
-      }
-
-      .trust__items article,
-      .trust__items article:nth-child(odd) {
-        min-height: 190px;
-        border-left: none;
-      }
-
-      .trust__items h3 {
-        margin-top: 48px;
-      }
-
-      .newsletter__box {
-        padding: 34px 22px;
-        gap: 42px;
-      }
-
-      .newsletter h2 {
-        font-size: 42px;
-        letter-spacing: -1.8px;
-      }
-
-      .footer__grid {
-        grid-template-columns: 1fr;
-        gap: 38px;
-      }
-
-      .footer__bottom {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      html {
-        scroll-behavior: auto;
-      }
-
-      *,
-      *::before,
-      *::after {
-        animation-duration: .01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: .01ms !important;
-      }
-    }
+    :root{
+      --bg:#080808;--surface:#101010;--surface2:#151515;--surface3:#1b1b1b;
+      --text:#f5f5f2;--muted:#9b9b96;--line:#2a2a2a;--line2:#393939;
+      --accent:#d21d24;--cream:#eeeae2;--max:1560px;--ease:cubic-bezier(.2,.7,.2,1)
+    }
+    *{box-sizing:border-box;margin:0;padding:0} html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    body.lock{overflow:hidden} a{color:inherit;text-decoration:none} button,input,select{font:inherit;color:inherit} button{cursor:pointer} img{display:block;width:100%}
+    .shell{width:min(calc(100% - 48px),var(--max));margin-inline:auto}
+
+    .topbar{min-height:30px;background:var(--accent);display:grid;place-items:center;padding:7px 18px;text-align:center;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+    .site-header{position:sticky;top:0;z-index:80;background:rgba(8,8,8,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(14px)}
+    .header-main{height:68px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:20px}
+    .main-nav{display:flex;align-items:center;gap:22px}.main-nav button{border:0;background:transparent;color:#d6d6d2;font-size:10px;font-weight:600}.main-nav button:hover{color:#fff}
+    .brand{justify-self:center;font-size:18px;font-weight:800;letter-spacing:.18em;white-space:nowrap}.header-actions{justify-self:end;display:flex;align-items:center;gap:10px}
+    .icon-btn,.bag-btn,.mobile-menu-btn{height:40px;border:0;background:transparent;display:inline-flex;align-items:center;justify-content:center;gap:8px}.icon-btn{width:40px}.bag-btn{font-size:10px;font-weight:700}
+    .bag-count{min-width:22px;height:22px;border-radius:999px;background:#fff;color:#111;display:grid;place-items:center;font-size:9px}.mobile-menu-btn{display:none;width:40px}
+    .category-bar{background:#0b0b0b;border-bottom:1px solid var(--line)}
+    .category-scroll{min-height:42px;display:flex;align-items:center;justify-content:center;gap:28px;overflow:auto;scrollbar-width:none}.category-scroll::-webkit-scrollbar{display:none}
+    .category-scroll button{border:0;background:transparent;color:#9d9d99;flex:0 0 auto;font-size:10px;padding:13px 0;white-space:nowrap}.category-scroll button:hover,.category-scroll button.active{color:#fff}
+
+    /* SHOP START */
+    .shop-start{padding:22px 0 18px}.shop-panel{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(360px,.95fr);min-height:400px;border:1px solid var(--line);background:var(--surface)}
+    .shop-copy{padding:48px 48px 42px;display:flex;flex-direction:column;justify-content:center}.kicker{font-size:9px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#b6b6b0}
+    .shop-copy h1{margin-top:11px;max-width:720px;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(54px,6vw,88px);font-weight:500;line-height:.86;letter-spacing:-.035em}
+    .shop-copy>p:not(.kicker){margin-top:18px;max-width:560px;color:var(--muted);font-size:12px;line-height:1.65}
+    .category-quick-grid{margin-top:28px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:650px}
+    .category-quick{min-height:72px;padding:13px 14px;border:1px solid var(--line2);background:#0b0b0b;color:#f4f4f0;display:flex;align-items:flex-end;justify-content:space-between;text-align:left;transition:.18s ease}
+    .category-quick span{font-size:10px;font-weight:750;letter-spacing:.035em;text-transform:uppercase}.category-quick b{font-size:16px;font-weight:400;color:#73736f;transition:.18s ease}
+    .category-quick:hover{background:#fff;color:#111;border-color:#fff}.category-quick:hover b{color:#111;transform:translateX(2px)}
+    .quick-shop-label{margin-top:19px;color:#6f6f6b;font-size:8px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+    .quick-shop{margin-top:8px;display:flex;gap:7px;flex-wrap:wrap}.quick-shop button{height:36px;padding:0 13px;border:1px solid var(--line2);background:transparent;color:#bdbdb8;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}.quick-shop button:hover{background:#fff;color:#111;border-color:#fff}
+    .shop-media{position:relative;min-height:400px;overflow:hidden;background:#1b1b1b}.shop-media img{position:absolute;inset:0;height:100%;object-fit:cover;object-position:55% 10%}.shop-media:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(16,16,16,.25),transparent 35%)}
+    .shop-media-label{position:absolute;z-index:2;left:20px;bottom:18px;padding:8px 10px;background:rgba(8,8,8,.82);border:1px solid rgba(255,255,255,.2);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+
+    .promise{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:#0c0c0c}.promise-grid{display:grid;grid-template-columns:repeat(3,1fr)}
+    .promise-item{padding:14px 20px;text-align:center;border-right:1px solid var(--line)}.promise-item:last-child{border-right:0}.promise-item strong{font-size:9px;text-transform:uppercase;letter-spacing:.08em}.promise-item span{margin-left:7px;color:#777;font-size:9px}
+
+    .section{padding:54px 0}.section-head{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:22px}.section-head h2{margin-top:7px;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(38px,4.6vw,64px);font-weight:500;line-height:.9;letter-spacing:-.03em}.section-link{color:#bbb;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #777;padding-bottom:3px}
+    .new-tabs{display:flex;gap:18px;margin-bottom:18px;border-bottom:1px solid var(--line)}.new-tabs button{border:0;background:transparent;padding:0 0 10px;color:#777;font-size:10px}.new-tabs button.active{color:#fff;border-bottom:1px solid #fff}
+    .new-grid,.product-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:32px 9px}
+
+    .product-card{display:block;min-width:0}.product-link{display:block}.product-media{position:relative;aspect-ratio:3/4;background:#eeeae2;overflow:hidden}.product-media img{position:absolute;inset:0;height:100%;object-fit:cover;transition:opacity .3s ease,transform .45s var(--ease)}.product-media img.alt{opacity:0}.product-card:hover .product-media img.main{opacity:0}.product-card:hover .product-media img.alt{opacity:1}.product-card:hover .product-media img{transform:scale(1.01)}
+    .product-flag{position:absolute;left:9px;top:9px;z-index:2;background:#fff;color:#111;padding:6px 8px;font-size:8px;font-weight:800;text-transform:uppercase}.product-flag.sale{background:#111;color:#fff}.soldout{position:absolute;left:0;right:0;bottom:0;background:rgba(8,8,8,.92);padding:8px;text-align:center;font-size:8px;font-weight:800;text-transform:uppercase}
+    .product-info{padding:10px 1px 0}.product-brand{color:#858580;font-size:8px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.product-name{margin-top:4px;color:#f1f1ed;font-size:10px;line-height:1.4;min-height:28px}.product-price{margin-top:7px;display:flex;gap:8px;font-size:10px;font-weight:600}.product-old{color:#666;text-decoration:line-through;font-weight:400}.product-sub{margin-top:6px;color:#696965;font-size:8px}
+    .quick-buy{margin-top:9px;padding-top:9px;border-top:1px solid #202020}.quick-buy-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px;color:#777;font-size:7px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.quick-buy-head span:last-child{color:#5d5d59;font-weight:500}.quick-sizes{display:flex;gap:4px;flex-wrap:wrap}.quick-size,.quick-color{min-width:32px;height:29px;padding:0 8px;border:1px solid #303030;background:#0c0c0c;color:#c6c6c1;font-size:8px;font-weight:700}.quick-size:hover,.quick-size.active,.quick-color:hover{border-color:#fff;background:#fff;color:#111}.quick-colors{margin-top:8px;padding:8px;background:#101010;border:1px solid #282828}.quick-colors[hidden]{display:none}.quick-colors-label{display:block;margin-bottom:6px;color:#777;font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.07em}.quick-color-list{display:flex;gap:4px;flex-wrap:wrap}.quick-color{height:30px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.quick-toast{position:fixed;z-index:260;right:20px;bottom:20px;max-width:min(360px,calc(100% - 24px));padding:12px 14px;background:#f5f5f2;color:#111;box-shadow:0 16px 50px rgba(0,0,0,.42);font-size:10px;font-weight:700;opacity:0;transform:translateY(10px);pointer-events:none;transition:.2s}.quick-toast.show{opacity:1;transform:none}
+
+    /* CATALOG */
+    .catalog{padding:46px 0 86px;border-top:1px solid var(--line)}.catalog-top{display:grid;grid-template-columns:auto minmax(260px,560px) auto;align-items:end;gap:20px;margin-bottom:18px}.catalog-title h2{font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(38px,4vw,60px);font-weight:500;line-height:.9}.result-count{margin-top:7px;color:#73736f;font-size:9px}
+    .catalog-search{height:44px;border:1px solid var(--line2);background:#0d0d0d;display:flex;align-items:center;gap:10px;padding:0 13px}.catalog-search input{width:100%;border:0;outline:0;background:transparent;color:#fff;font-size:11px}.catalog-search input::placeholder{color:#676763}
+    .catalog-actions{display:flex;gap:7px}.filter-toggle,.sort-select{height:44px;border:1px solid var(--line2);background:#0d0d0d;color:#ddd;padding:0 12px;font-size:9px;font-weight:600}.filter-toggle{display:none}
+    .catalog-layout{display:grid;grid-template-columns:205px minmax(0,1fr);gap:34px}.filters{position:sticky;top:124px;align-self:start;max-height:calc(100vh - 145px);overflow:auto;padding-right:7px}.filter-group{padding-bottom:18px;margin-bottom:18px;border-bottom:1px solid var(--line)}.filter-group h3{margin-bottom:11px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em}.filter-list{display:flex;flex-direction:column;gap:8px}.check{display:flex;align-items:center;gap:8px;color:#9a9a95;font-size:10px}.check input{accent-color:#fff}.size-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.size-option{position:relative}.size-option input{position:absolute;opacity:0}.size-option span{height:32px;border:1px solid var(--line2);display:grid;place-items:center;color:#aaa;font-size:8px}.size-option input:checked+span{background:#fff;color:#111;border-color:#fff}.price-row{display:grid;grid-template-columns:1fr 1fr;gap:6px}.price-row input{width:100%;height:36px;border:1px solid var(--line2);background:#0d0d0d;color:#fff;padding:0 8px;outline:0;font-size:9px}.filter-clear{border:0;background:transparent;color:#aaa;font-size:8px;font-weight:800;text-transform:uppercase;text-decoration:underline;text-underline-offset:4px}
+    .filter-flow-intro{margin-bottom:14px;padding:12px 13px;border:1px solid var(--line);background:#0c0c0c}.filter-flow-intro strong{display:block;font-size:10px}.filter-flow-intro span{display:block;margin-top:4px;color:#6f6f6a;font-size:8px;line-height:1.5}
+    .stage-filter{padding-bottom:18px;margin-bottom:18px;border-bottom:1px solid var(--line);transition:opacity .18s ease}.stage-filter.is-disabled{opacity:.42}.stage-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}.stage-title{display:flex;align-items:center;gap:8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}.stage-number{width:20px;height:20px;border:1px solid #4a4a47;border-radius:999px;display:grid;place-items:center;color:#ddd;font-size:8px}.stage-status{color:#676762;font-size:7px;text-transform:uppercase;letter-spacing:.06em;text-align:right}.stage-options{display:flex;flex-wrap:wrap;gap:5px}.stage-option{min-height:34px;padding:0 10px;border:1px solid var(--line2);background:#0c0c0c;color:#aaa;font-size:8px;font-weight:700;display:inline-flex;align-items:center;gap:7px}.stage-option:hover{border-color:#777;color:#fff}.stage-option.active{background:#fff;color:#111;border-color:#fff}.stage-option small{color:inherit;opacity:.48;font-size:7px}.stage-hint{color:#5f5f5a;font-size:8px;line-height:1.55}.stage-filter:not(.is-disabled) .stage-hint{display:none}.refine-title{margin-bottom:10px;color:#6b6b66;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+    .applied{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}.applied-chip{border:1px solid var(--line2);background:#111;padding:6px 8px;color:#aaa;font-size:8px;display:inline-flex;align-items:center;gap:6px}.applied-chip button{border:0;background:transparent;color:#fff}
+    .empty-state{grid-column:1/-1;padding:54px 18px;text-align:center;border:1px solid var(--line);background:#0d0d0d;color:#777;font-size:11px;line-height:1.7}.load-more-wrap{display:flex;justify-content:center;margin-top:34px}.load-more{height:44px;padding:0 20px;border:1px solid #fff;background:#fff;color:#111;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+
+    /* SEARCH */
+    .search-layer{position:fixed;inset:0;z-index:150;background:rgba(8,8,8,.99);opacity:0;visibility:hidden;transition:.18s}.search-layer.open{opacity:1;visibility:visible}.search-shell{width:min(calc(100% - 36px),1000px);margin:auto;padding-top:64px}.search-top{display:flex;align-items:center;gap:13px;border-bottom:1px solid #666;padding-bottom:7px}.search-top input{flex:1;border:0;outline:0;background:transparent;color:#fff;font-size:clamp(24px,4vw,42px);font-weight:500;letter-spacing:-.03em}.search-close{width:44px;height:44px;border:0;background:transparent;color:#fff;font-size:27px}.search-note{margin-top:12px;color:#666;font-size:10px}.search-results{margin-top:28px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.search-card{display:grid;grid-template-columns:76px 1fr;gap:11px;align-items:center}.search-card img{width:76px;height:98px;object-fit:cover;background:#eee}.search-card strong{display:block;font-size:10px}.search-card span{display:block;margin-top:5px;color:#777;font-size:9px}.search-empty{grid-column:1/-1;color:#777;padding:24px 0;font-size:11px}
+
+    /* DRAWERS / MOBILE MENU */
+    .drawer-overlay{position:fixed;inset:0;z-index:180;background:rgba(0,0,0,.7);opacity:0;visibility:hidden;transition:.2s}.drawer-overlay.open{opacity:1;visibility:visible}.mobile-drawer{position:fixed;z-index:190;inset:0 0 0 auto;width:min(420px,100%);background:#0b0b0b;transform:translateX(100%);transition:transform .3s var(--ease);display:flex;flex-direction:column}.mobile-drawer.open{transform:translateX(0)}.drawer-head{height:62px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 18px}.drawer-head strong{font-size:12px}.drawer-close{width:40px;height:40px;border:0;background:transparent;color:#fff;font-size:24px}.drawer-body{padding:18px 18px 100px;overflow:auto}.drawer-actions{position:absolute;bottom:0;left:0;right:0;border-top:1px solid var(--line);background:#0b0b0b;padding:12px 18px calc(12px + env(safe-area-inset-bottom));display:grid;grid-template-columns:.8fr 1.2fr;gap:7px}.drawer-actions button{height:44px;font-size:9px;font-weight:800;text-transform:uppercase;border:1px solid #fff}.drawer-actions .clear{background:#0b0b0b;color:#fff}.drawer-actions .apply{background:#fff;color:#111}
+    .mobile-shopbar{position:fixed;z-index:140;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));left:10px;display:none;grid-template-columns:1fr 1fr;gap:6px;padding:6px;background:rgba(10,10,10,.96);border:1px solid #303030;box-shadow:0 16px 45px rgba(0,0,0,.5);backdrop-filter:blur(14px);opacity:0;transform:translateY(18px);pointer-events:none;transition:.22s}.mobile-shopbar.active{opacity:1;transform:none;pointer-events:auto}.mobile-shopbar button,.mobile-shopbar select{height:43px;border:1px solid #353535;background:#111;color:#f2f2ee;font-size:9px;font-weight:800;text-transform:uppercase;text-align:center}.mobile-shopbar select{width:100%;padding:0 8px;text-align-last:center}.filter-count{display:inline-grid;min-width:18px;height:18px;margin-left:5px;padding:0 4px;border-radius:999px;background:#fff;color:#111;place-items:center;font-size:8px}.filter-count:empty{display:none}body.lock .mobile-shopbar{opacity:0;pointer-events:none}
+    .mobile-menu{position:fixed;z-index:170;inset:99px 0 0 0;background:#080808;padding:24px 20px;transform:translateY(-8px);opacity:0;visibility:hidden;transition:.2s;overflow:auto}.mobile-menu.open{opacity:1;visibility:visible;transform:none}.mobile-menu button,.mobile-menu a{display:block;width:100%;text-align:left;border:0;background:transparent;color:#fff;padding:14px 0;border-bottom:1px solid var(--line);font-family:"Cormorant Garamond",Georgia,serif;font-size:31px}
+
+    .footer{background:#050505;border-top:1px solid var(--line);padding:44px 0 20px}.footer-grid{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:46px}.footer-brand{font-size:17px;font-weight:800;letter-spacing:.16em}.footer-copy{margin-top:14px;max-width:350px;color:#777;font-size:10px;line-height:1.7}.footer h3{margin-bottom:12px;color:#777;font-size:8px;text-transform:uppercase;letter-spacing:.1em}.footer-col{display:flex;flex-direction:column;gap:8px}.footer-col a{color:#aaa;font-size:9px}.footer-bottom{margin-top:38px;padding-top:17px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:18px;color:#595956;font-size:8px;text-transform:uppercase;letter-spacing:.06em}
+
+    @media(max-width:1180px){.main-nav{display:none}.mobile-menu-btn{display:inline-flex}.new-grid,.product-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.catalog-layout{grid-template-columns:185px minmax(0,1fr);gap:24px}.catalog-top{grid-template-columns:1fr 1fr}.catalog-search{grid-column:1/-1;grid-row:2}.catalog-actions{justify-self:end}}
+    @media(max-width:840px){.shell{width:min(calc(100% - 22px),var(--max))}.header-main{height:60px}.brand{font-size:14px;letter-spacing:.13em}.bag-btn>span:first-child{display:none}.category-scroll{justify-content:flex-start;gap:22px}.shop-start{padding-top:10px}.shop-panel{grid-template-columns:1fr;min-height:0}.shop-copy{padding:30px 20px 24px}.shop-copy h1{font-size:54px}.shop-media{min-height:250px}.promise-grid{grid-template-columns:1fr}.promise-item{border-right:0;border-bottom:1px solid var(--line);padding:10px 12px}.promise-item:last-child{border-bottom:0}.section{padding:42px 0}.section-head{align-items:flex-start;flex-direction:column;gap:10px}.new-grid,.product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 7px}.catalog{padding-top:38px;padding-bottom:110px}.catalog-top{display:flex;flex-direction:column;align-items:stretch}.catalog-search{order:2}.catalog-actions{order:3;display:none}.catalog-layout{display:block}.filters{display:none}.search-shell{padding-top:40px}.search-results{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr 1fr;gap:30px 22px}.mobile-shopbar{display:grid}.quick-buy-head span:last-child{display:none}.quick-size{min-width:29px;height:28px;padding:0 6px}.quick-color{height:29px;padding:0 7px}.quick-toast{right:12px;bottom:76px;left:12px;max-width:none;text-align:center}}
+    @media(max-width:520px){.shop-copy h1{font-size:47px}.shop-copy>p:not(.kicker){font-size:11px}.category-quick-grid{grid-template-columns:1fr 1fr;gap:6px}.category-quick{min-height:62px;padding:11px}.quick-shop{display:grid;grid-template-columns:1fr 1fr}.quick-shop button{width:100%}.shop-media{min-height:220px}.section-head h2,.catalog-title h2{font-size:42px}.product-name{font-size:9px;min-height:26px}.footer-grid{grid-template-columns:1fr}.footer-bottom{flex-direction:column}}
   </style>
 </head>
-
 <body>
-  <div class="announcement" aria-label="Información importante">
-    <div class="shell announcement__inner">
-      <p id="announcementText">
-        Envíos a todo el país con Andreani
-      </p>
-    </div>
-  </div>
+  <div class="topbar">Envíos a todo el país con Andreani · Compra segura con Mercado Pago</div>
 
-  <header class="site-header" id="siteHeader">
-    <div class="shell header__inner">
-      <button
-        class="menu-button"
-        id="menuButton"
-        type="button"
-        aria-label="Abrir menú"
-        aria-expanded="false"
-        aria-controls="mobileMenu"
-      >
-        <span></span>
-        <span></span>
-      </button>
-
-      <a class="brand" href="index.html">
-        USINA RHODIA
-      </a>
-
-      <nav class="desktop-nav" aria-label="Navegación principal">
-        <a href="#colecciones">Colecciones</a>
-        <a href="#newsletter">Novedades</a>
-        <a href="#nosotros">Nosotros</a>
+  <header class="site-header">
+    <div class="shell header-main">
+      <button class="mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Abrir menú"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M4 17h16"/></svg></button>
+      <nav class="main-nav" aria-label="Navegación principal">
+        <button type="button" data-nav="new">Novedades</button><button type="button" data-filter-gender="hombre">Hombre</button><button type="button" data-filter-gender="mujer">Mujer</button><button type="button" data-filter-brand="Brooksfield">Brooksfield</button><button type="button" data-filter-brand="Mistral">Mistral</button>
       </nav>
-
-      <div class="header-actions">
-        <a class="header-link" href="guardarropa.html">
-          Ver prendas
-        </a>
-
-        <a class="cart-button" href="carrito.html" aria-label="Carrito">
-  <svg
-    width="19"
-    height="19"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    aria-hidden="true"
-  >
-    <circle cx="9" cy="20" r="1"></circle>
-    <circle cx="19" cy="20" r="1"></circle>
-    <path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L21 8H6"></path>
-  </svg>
-
-  <span class="cart-count" id="cartCount">0</span>
-</a>
-      </div>
+      <a class="brand" href="index.html">USINA RHODIA</a>
+      <div class="header-actions"><button class="icon-btn" id="openSearch" type="button" aria-label="Buscar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7.5"/><path d="m20 20-3.4-3.4"/></svg></button><a class="bag-btn" href="carrito.html"><span>Carrito</span><span class="bag-count" id="cartCount">0</span></a></div>
     </div>
-
-    <nav
-      class="mobile-menu"
-      id="mobileMenu"
-      aria-label="Menú móvil"
-      hidden
-    >
-      <a href="#colecciones">Colecciones</a>
-      <a href="guardarropa.html">Ver todas las prendas</a>
-      <a href="#newsletter">Novedades</a>
-      <a href="#nosotros">Nosotros</a>
-      <a href="carrito.html">Carrito</a>
-    </nav>
+    <div class="category-bar"><div class="shell category-scroll" id="categoryNav">
+      <button type="button" data-filter-category="remeras">Remeras</button><button type="button" data-filter-category="polos">Polos</button><button type="button" data-filter-category="camisas">Camisas</button><button type="button" data-filter-category="jeans">Jeans</button><button type="button" data-filter-category="pantalones">Pantalones</button><button type="button" data-filter-category="bermudas">Bermudas</button><button type="button" data-filter-category="buzos">Buzos</button><button type="button" data-filter-category="sweaters">Sweaters</button><button type="button" data-filter-category="abrigos">Camperas</button><button type="button" data-filter-category="accesorios">Accesorios</button>
+    </div></div>
   </header>
 
+  <nav class="mobile-menu" id="mobileMenu" aria-label="Menú móvil"><button type="button" data-nav="new">Novedades</button><button type="button" data-filter-gender="hombre">Hombre</button><button type="button" data-filter-gender="mujer">Mujer</button><button type="button" data-filter-brand="Brooksfield">Brooksfield</button><button type="button" data-filter-brand="Mistral">Mistral</button><a href="envios.html">Envíos</a><a href="cambios.html">Cambios</a></nav>
+
+  <div class="search-layer" id="searchLayer" aria-hidden="true"><div class="search-shell"><div class="search-top"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7.5"/><path d="m20 20-3.4-3.4"/></svg><input id="globalSearch" type="search" autocomplete="off" placeholder="¿Qué estás buscando?" aria-label="Buscar productos"><button class="search-close" id="closeSearch" type="button" aria-label="Cerrar">×</button></div><p class="search-note">Buscá por prenda o marca. Ej.: jean slim, Mistral.</p><div class="search-results" id="searchResults"></div></div></div>
+
   <main>
-    <section class="hero">
-      <div class="hero__media">
-        <img
-          src="img/hero-principal-brooksfield.png"
-          alt="Colección de invierno de Usina Rhodia"
-        >
-        <div class="hero__veil"></div>
-      </div>
-
-      <div class="shell hero__content">
-        <p class="eyebrow reveal">Invierno 2026</p>
-
-        <h1 class="reveal">
-          USINA RHODIA.<br>
-          Vestí tu estilo.
-        </h1>
-
-        <p class="hero__lead reveal">
-          Brooksfield y Mistral, seleccionados para acompañarte todos los días.
-        </p>
-
-        <div class="hero__actions reveal">
-          <a class="button button--light" href="#colecciones">
-            Descubrir colecciones
-          </a>
-
-          <a class="text-link" href="guardarropa.html">
-            Ver todas las prendas
-            <span>→</span>
-          </a>
-        </div>
-      </div>
-
-      <div class="hero__meta">
-        <span>Brooksfield</span>
-        <span>Mistral</span>
-        <span>Usina Rhodia</span>
-      </div>
-    </section>
-
-
-    <section class="section" id="colecciones">
-      <div class="shell">
-        <header class="section-heading">
-          <div>
-            <p class="eyebrow">Colección Invierno 2026</p>
-            <h2>Elegí tu estilo.</h2>
+    <section class="shop-start">
+      <div class="shell shop-panel">
+        <div class="shop-copy"><p class="kicker">Nueva temporada · Verano 2027</p><h1>Explorá la colección.</h1><p>Empezá por el tipo de prenda y encontrá fácilmente los talles y colores disponibles.</p>
+          <div class="category-quick-grid" aria-label="Comprar por categoría">
+            <button class="category-quick" type="button" data-filter-category="remeras"><span>Remeras</span><b>→</b></button>
+            <button class="category-quick" type="button" data-filter-category="polos"><span>Polos</span><b>→</b></button>
+            <button class="category-quick" type="button" data-filter-category="camisas"><span>Camisas</span><b>→</b></button>
+            <button class="category-quick" type="button" data-filter-category="jeans"><span>Jeans</span><b>→</b></button>
+            <button class="category-quick" type="button" data-filter-category="pantalones"><span>Pantalones</span><b>→</b></button>
+            <button class="category-quick" type="button" data-filter-category="buzos"><span>Buzos</span><b>→</b></button>
           </div>
-
-          <p>
-            Brooksfield Hombre, Brooksfield Mujer y Mistral.
-          </p>
-        </header>
-
-        <div class="collections__grid">
-          <a
-            class="collection collection--large"
-            href="guardarropa.html?brand=Brooksfield&gender=hombre"
-          >
-            <img
-              src="img/hero_brooksfield_hombre.png"
-              alt="Colección Brooksfield Hombre"
-              loading="lazy"
-            >
-
-            <div class="collection__shade"></div>
-
-            <div class="collection__copy">
-              <span>Elegancia cotidiana</span>
-              <h3>Brooksfield Hombre</h3>
-              <p>
-                Sastrería relajada, tejidos premium y prendas para todos los días.
-              </p>
-              <strong>Explorar colección →</strong>
-            </div>
-          </a>
-
-          <a
-            class="collection"
-            href="guardarropa.html?brand=Brooksfield&gender=mujer"
-          >
-            <img
-              src="img/hero_brooksfield_mujer.png"
-              alt="Colección Brooksfield Mujer"
-              loading="lazy"
-            >
-
-            <div class="collection__shade"></div>
-
-            <div class="collection__copy">
-              <span>Sofisticación natural</span>
-              <h3>Brooksfield Mujer</h3>
-              <strong>Explorar colección →</strong>
-            </div>
-          </a>
-
-          <a
-            class="collection"
-            href="guardarropa.html?brand=Mistral"
-          >
-            <img
-              src="img/hero_mistral.png"
-              alt="Colección Mistral"
-              loading="lazy"
-            >
-
-            <div class="collection__shade"></div>
-
-            <div class="collection__copy">
-              <span>Comodidad con identidad</span>
-              <h3>Mistral</h3>
-              <strong>Explorar colección →</strong>
-            </div>
-          </a>
+          <div class="quick-shop-label">También podés explorar por</div>
+          <div class="quick-shop"><button type="button" data-filter-gender="hombre">Hombre</button><button type="button" data-filter-gender="mujer">Mujer</button><button type="button" data-filter-brand="Brooksfield">Brooksfield</button><button type="button" data-filter-brand="Mistral">Mistral</button></div>
         </div>
+        <div class="shop-media"><img id="shopHeroImage" src="img/hero-principal-brooksfield.png" alt="Nueva temporada Usina Rhodia"><span class="shop-media-label">Brooksfield · Mistral</span></div>
       </div>
     </section>
 
+    <section class="promise"><div class="shell promise-grid"><div class="promise-item"><strong>Stock real</strong><span>por talle y color</span></div><div class="promise-item"><strong>Andreani</strong><span>envíos a todo el país</span></div><div class="promise-item"><strong>Cambios</strong><span>atención directa</span></div></div></section>
 
+    <section class="section" id="novedades"><div class="shell"><div class="section-head"><div><p class="kicker">Lo nuevo</p><h2>Nueva temporada</h2></div><a class="section-link" href="#catalogo" data-nav="catalog">Ver todo</a></div><div class="new-tabs" id="newTabs"><button type="button" class="active" data-new-tab="all">Selección</button><button type="button" data-new-tab="hombre">Hombre</button><button type="button" data-new-tab="mujer">Mujer</button></div><div class="new-grid" id="newGrid"><div class="empty-state">Cargando nueva temporada…</div></div></div></section>
 
-    <section class="newsletter section" id="newsletter">
-      <div class="shell newsletter__box">
-        <div>
-          <p class="eyebrow">Novedades Usina</p>
-          <h2>Enterate primero.</h2>
-          <p>
-            Nuevos ingresos, colecciones y beneficios de Usina Rhodia.
-          </p>
-        </div>
-
-        <form class="newsletter__form" id="newsletterForm">
-          <input
-            id="newsletterEmail"
-            type="email"
-            placeholder="Tu correo electrónico"
-            autocomplete="email"
-            required
-          >
-          <button type="submit">Suscribirme</button>
-        </form>
+    <section class="catalog" id="catalogo"><div class="shell">
+      <div class="catalog-top"><div class="catalog-title"><p class="kicker">Catálogo</p><h2 id="catalogHeading">Todos los productos</h2><div class="result-count" id="resultCount">Cargando catálogo…</div></div>
+        <label class="catalog-search" aria-label="Buscar en el catálogo"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7.5"/><path d="m20 20-3.4-3.4"/></svg><input id="catalogSearchInput" type="search" autocomplete="off" placeholder="Buscar producto o marca…"></label>
+        <div class="catalog-actions"><button class="filter-toggle" id="openFilters" type="button">Filtrar</button><select class="sort-select" id="sortSelect" aria-label="Ordenar productos"><option value="recommended">Recomendados</option><option value="newest">Más nuevos</option><option value="price-asc">Menor precio</option><option value="price-desc">Mayor precio</option><option value="name">Nombre A–Z</option></select></div>
       </div>
-    </section>
-
-    <section class="section" id="nosotros">
-      <div class="shell trust__grid">
-        <div class="trust__title">
-          <p class="eyebrow">Usina Rhodia</p>
-          <h2>Comprá con confianza.</h2>
-        </div>
-
-        <div class="trust__items">
-          <article>
-            <span>01</span>
-            <h3>Envíos a todo el país</h3>
-            <p>Despachamos tus compras mediante Andreani.</p>
-          </article>
-
-          <article>
-            <span>02</span>
-            <h3>Pago seguro</h3>
-            <p>Operaciones protegidas a través de Mercado Pago.</p>
-          </article>
-
-          <article>
-            <span>03</span>
-            <h3>Stock real</h3>
-            <p>Disponibilidad informada por color y talle.</p>
-          </article>
-
-        </div>
-      </div>
-    </section>
-
+      <div class="applied" id="appliedFilters"></div>
+      <div class="catalog-layout"><aside class="filters" id="desktopFilters">
+        <div class="filter-flow-intro"><strong>Encontrá tu prenda</strong><span>Elegí en orden: tipo de prenda, talle y color. Tocá una opción activa para quitarla.</span></div>
+        <div class="stage-filter" id="desktopCategoryStage"><div class="stage-head"><div class="stage-title"><span class="stage-number">1</span>Tipo de prenda</div><span class="stage-status" id="desktopCategoryStatus">Elegí una</span></div><div class="stage-options" id="desktopCategories"></div></div>
+        <div class="stage-filter is-disabled" id="desktopSizeStage"><div class="stage-head"><div class="stage-title"><span class="stage-number">2</span>Talle</div><span class="stage-status" id="desktopSizeStatus">Después</span></div><div class="stage-options" id="desktopSizes"></div><p class="stage-hint">Primero elegí un tipo de prenda.</p></div>
+        <div class="stage-filter is-disabled" id="desktopColorStage"><div class="stage-head"><div class="stage-title"><span class="stage-number">3</span>Color</div><span class="stage-status" id="desktopColorStatus">Después</span></div><div class="stage-options" id="desktopColors"></div><p class="stage-hint">Elegí un talle para ver los colores disponibles.</p></div>
+        <div class="filter-group"><div class="refine-title">Opcional · Refinar por</div><h3>Género</h3><div class="filter-list"><label class="check"><input type="radio" name="desktopGender" value="" checked> Todos</label><label class="check"><input type="radio" name="desktopGender" value="hombre"> Hombre</label><label class="check"><input type="radio" name="desktopGender" value="mujer"> Mujer</label></div><h3 style="margin-top:16px">Marca</h3><div class="filter-list"><label class="check"><input type="radio" name="desktopBrand" value="" checked> Todas</label><label class="check"><input type="radio" name="desktopBrand" value="Brooksfield"> Brooksfield</label><label class="check"><input type="radio" name="desktopBrand" value="Mistral"> Mistral</label></div></div>
+        <div class="filter-group"><h3>Precio</h3><div class="price-row"><input id="desktopMin" type="number" min="0" step="1000" placeholder="Desde"><input id="desktopMax" type="number" min="0" step="1000" placeholder="Hasta"></div></div>
+        <button class="filter-clear" id="desktopClear" type="button">Limpiar filtros</button>
+      </aside><div><div class="product-grid" id="productGrid"><div class="empty-state">Cargando catálogo…</div></div><div class="load-more-wrap"><button class="load-more" id="loadMore" type="button" hidden>Ver más productos</button></div></div></div>
+    </div></section>
   </main>
 
-  <footer class="site-footer">
-    <div class="shell footer__grid">
-      <div class="footer__brand">
-        <a class="brand" href="index.html">USINA RHODIA</a>
-        <p>
-          Brooksfield y Mistral, seleccionados por Usina Rhodia.
-        </p>
-      </div>
+  <div class="drawer-overlay" id="drawerOverlay"></div><aside class="mobile-drawer" id="mobileDrawer" aria-hidden="true"><div class="drawer-head"><strong>Encontrá tu prenda</strong><button class="drawer-close" id="closeFilters" type="button">×</button></div><div class="drawer-body">
+    <div class="filter-flow-intro"><strong>Filtrá en 3 pasos</strong><span>Las opciones cambian según lo que vayas eligiendo.</span></div>
+    <div class="stage-filter" id="mobileCategoryStage"><div class="stage-head"><div class="stage-title"><span class="stage-number">1</span>Tipo de prenda</div><span class="stage-status" id="mobileCategoryStatus">Elegí una</span></div><div class="stage-options" id="mobileCategories"></div></div>
+    <div class="stage-filter is-disabled" id="mobileSizeStage"><div class="stage-head"><div class="stage-title"><span class="stage-number">2</span>Talle</div><span class="stage-status" id="mobileSizeStatus">Después</span></div><div class="stage-options" id="mobileSizes"></div><p class="stage-hint">Primero elegí un tipo de prenda.</p></div>
+    <div class="stage-filter is-disabled" id="mobileColorStage"><div class="stage-head"><div class="stage-title"><span class="stage-number">3</span>Color</div><span class="stage-status" id="mobileColorStatus">Después</span></div><div class="stage-options" id="mobileColors"></div><p class="stage-hint">Elegí un talle para ver los colores disponibles.</p></div>
+    <div class="filter-group"><div class="refine-title">Opcional · Refinar por</div><h3>Género</h3><div class="filter-list"><label class="check"><input type="radio" name="mobileGender" value="" checked> Todos</label><label class="check"><input type="radio" name="mobileGender" value="hombre"> Hombre</label><label class="check"><input type="radio" name="mobileGender" value="mujer"> Mujer</label></div><h3 style="margin-top:16px">Marca</h3><div class="filter-list"><label class="check"><input type="radio" name="mobileBrand" value="" checked> Todas</label><label class="check"><input type="radio" name="mobileBrand" value="Brooksfield"> Brooksfield</label><label class="check"><input type="radio" name="mobileBrand" value="Mistral"> Mistral</label></div></div>
+    <div class="filter-group"><h3>Precio</h3><div class="price-row"><input id="mobileMin" type="number" min="0" step="1000" placeholder="Desde"><input id="mobileMax" type="number" min="0" step="1000" placeholder="Hasta"></div></div>
+  </div><div class="drawer-actions"><button class="clear" id="mobileClear" type="button">Limpiar</button><button class="apply" id="mobileApply" type="button">Ver productos</button></div></aside>
 
-      <div>
-        <h2>Comprar</h2>
-        <a href="guardarropa.html">Guardarropa</a>
-        <a href="guardarropa.html?gender=hombre">Hombre</a>
-        <a href="guardarropa.html?gender=mujer">Mujer</a>
-        <a href="guardarropa.html?brand=Mistral">Mistral</a>
-      </div>
+  <div class="mobile-shopbar" id="mobileShopbar" aria-label="Herramientas del catálogo"><button id="mobileStickyFilter" type="button">Filtrar <span class="filter-count" id="mobileFilterCount"></span></button><select id="mobileStickySort" aria-label="Ordenar productos"><option value="recommended">Recomendados</option><option value="newest">Más nuevos</option><option value="price-asc">Menor precio</option><option value="price-desc">Mayor precio</option><option value="name">Nombre A–Z</option></select></div>
+  <div class="quick-toast" id="quickToast" role="status" aria-live="polite"></div>
 
-      <div>
-        <h2>Ayuda</h2>
-        <a href="envios.html">Envíos</a>
-        <a href="cambios.html">Cambios y devoluciones</a>
-        <a href="pagos.html">Formas de pago</a>
-        <a href="preguntas-frecuentes.html">Preguntas frecuentes</a>
-      </div>
+  <footer class="footer"><div class="shell footer-grid"><div><a class="footer-brand" href="index.html">USINA RHODIA</a><p class="footer-copy">Brooksfield y Mistral. Indumentaria seleccionada, stock real y atención directa.</p></div><div class="footer-col"><h3>Comprar</h3><a href="#catalogo" data-filter-gender-link="hombre">Hombre</a><a href="#catalogo" data-filter-gender-link="mujer">Mujer</a><a href="#catalogo" data-filter-brand-link="Brooksfield">Brooksfield</a><a href="#catalogo" data-filter-brand-link="Mistral">Mistral</a></div><div class="footer-col"><h3>Ayuda</h3><a href="envios.html">Envíos</a><a href="cambios.html">Cambios y devoluciones</a><a href="pagos.html">Formas de pago</a><a href="preguntas-frecuentes.html">Preguntas frecuentes</a></div><div class="footer-col"><h3>Usina Rhodia</h3><a href="nosotros.html">Nosotros</a><a href="contacto.html">Contacto</a><a href="privacidad.html">Privacidad</a><a href="terminos.html">Términos</a></div></div><div class="shell footer-bottom"><span>© <span id="year"></span> Usina Rhodia</span><span>Brooksfield · Mistral</span></div></footer>
 
-      <div>
-        <h2>Usina Rhodia</h2>
-        <a href="nosotros.html">Nosotros</a>
-        <a href="contacto.html">Contacto</a>
-        <a href="privacidad.html">Privacidad</a>
-        <a href="terminos.html">Términos y condiciones</a>
-      </div>
-    </div>
-
-    <div class="shell footer__bottom">
-      <span>© <span id="currentYear"></span> Usina Rhodia</span>
-      <span>Brooksfield · Mistral</span>
-    </div>
-  </footer>
-
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script>
     (() => {
       "use strict";
 
-      const menuButton = document.getElementById("menuButton");
-      const mobileMenu = document.getElementById("mobileMenu");
-      const siteHeader = document.getElementById("siteHeader");
-      const cartCount = document.getElementById("cartCount");
-      const announcementText = document.getElementById("announcementText");
-      const newsletterForm = document.getElementById("newsletterForm");
-      const currentYear = document.getElementById("currentYear");
+      const SUPABASE_URL = "https://vegbamfkmcyvgvnjmxgs.supabase.co";
+      const SUPABASE_KEY = "sb_publishable_BFRP4PzzRhvUw3OF0NZtpw_gXjejWn9";
+      const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      const $ = id => document.getElementById(id);
 
-      const announcements = [
-        "Envíos a todo el país con Andreani",
-        "Compra segura con Mercado Pago",
-        "Stock real por color y talle"
-      ];
+      const categoryLabels = {
+        remeras:"Remeras", polos:"Polos", camisas:"Camisas", jeans:"Jeans",
+        pantalones:"Pantalones", bermudas:"Bermudas", buzos:"Buzos",
+        sweaters:"Sweaters", camperas:"Camperas", abrigos:"Camperas",
+        accesorios:"Accesorios", "flash-sale":"Flash Sale"
+      };
 
-      let announcementIndex = 0;
+      const categoryPriority = {
+        camisas:1, polos:2, remeras:3, jeans:4, pantalones:5, bermudas:6,
+        sweaters:7, buzos:8, camperas:9, abrigos:10, "flash-sale":11, accesorios:99
+      };
 
-      function toggleMenu(forceOpen) {
-        if (!menuButton || !mobileMenu) return;
+      const state = {
+        gender:"", brand:"", category:"", size:"", color:"",
+        minPrice:"", maxPrice:"", sort:"recommended", search:""
+      };
 
-        const currentOpen =
-          menuButton.getAttribute("aria-expanded") === "true";
+      let products = [];
+      let imagesByProduct = new Map();
+      let stockByProduct = new Map();
+      let visibleCount = 24;
+      let newTab = "all";
 
-        const shouldOpen =
-          typeof forceOpen === "boolean"
-            ? forceOpen
-            : !currentOpen;
-
-        menuButton.setAttribute(
-          "aria-expanded",
-          String(shouldOpen)
-        );
-
-        mobileMenu.hidden = !shouldOpen;
-        document.body.classList.toggle("menu-open", shouldOpen);
+      function esc(value){
+        return String(value ?? "").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
       }
 
-      function updateHeader() {
-        if (!siteHeader) return;
-
-        siteHeader.classList.toggle(
-          "is-scrolled",
-          window.scrollY > 24
-        );
+      function money(value){
+        return new Intl.NumberFormat("es-AR",{style:"currency",currency:"ARS",maximumFractionDigits:0}).format(Number(value||0));
       }
 
-      function updateCartCount() {
-        if (!cartCount) return;
+      function normalize(text){
+        return String(text||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
+      }
 
-        try {
-          const cart =
-            JSON.parse(localStorage.getItem("carrito")) || [];
+      function displaySize(raw){
+        const x=String(raw||"").trim().toUpperCase();
+        const map={"0XS":"XS","00S":"S","00M":"M","00L":"L","0XL":"XL","000":"XS","001":"S","002":"M","003":"L","004":"XL","00U":"ÚNICO"};
+        if(map[x]) return map[x];
+        if(/^0\d{2}$/.test(x)) return String(Number(x));
+        return x;
+      }
 
-          const total = cart.reduce(
-            (sum, item) =>
-              sum + Number(item.cantidad || 0),
-            0
-          );
+      function stockRows(productId){ return stockByProduct.get(productId) || []; }
+      function positiveStockRows(productId){ return stockRows(productId).filter(row => Number(row.stock||0) > 0); }
+      function stockTotal(productId){ return stockRows(productId).reduce((sum,row)=>sum+Math.max(0,Number(row.stock||0)),0); }
+      function sizeSortValue(size){
+        const order={"ÚNICO":0,"XS":10,"S":20,"M":30,"L":40,"XL":50,"XXL":60,"XXXL":70,"XXXXL":80};
+        if(order[size]!==undefined) return order[size];
+        const n=Number(size); return Number.isFinite(n)?100+n:999;
+      }
+      function availableSizes(productId){ return [...new Set(positiveStockRows(productId).map(row=>displaySize(row.bas_size || row.size)).filter(Boolean))].sort((a,b)=>sizeSortValue(a)-sizeSortValue(b)); }
+      function availableColors(productId){ return [...new Set(positiveStockRows(productId).map(row=>String(row.color_name||row.color||"").trim()).filter(Boolean))]; }
+      function variantsForSize(productId,size){
+        const rows=positiveStockRows(productId).filter(row=>displaySize(row.bas_size || row.size)===size);
+        const map=new Map();
+        rows.forEach(row=>{
+          const code=String(row.color||"").trim();
+          const name=String(row.color_name||"").trim();
+          const key=`${code}|||${name}`;
+          const current=map.get(key)||{code,name,stock:0};
+          current.stock+=Number(row.stock||0); map.set(key,current);
+        });
+        return [...map.values()].filter(v=>v.stock>0);
+      }
 
-          cartCount.textContent = String(total);
-        } catch (error) {
-          console.error("No se pudo leer el carrito:", error);
-          cartCount.textContent = "0";
+      function productRank(p){
+        const accessoryPenalty = normalize(p.category)==="accesorios" ? 100000 : 0;
+        const seasonBoost = normalize(p.season)==="verano-2027" ? 0 : 10000;
+        const order = Number.isFinite(Number(p.display_order)) ? Number(p.display_order) : 9999;
+        const cat = categoryPriority[normalize(p.category)] ?? 50;
+        const stockPenalty = stockTotal(p.id)>0 ? 0 : 5000;
+        return accessoryPenalty + seasonBoost + stockPenalty + cat*100 + order;
+      }
+
+      function sortedRecommended(list){
+        return [...list].sort((a,b)=>productRank(a)-productRank(b) || String(a.name||"").localeCompare(String(b.name||""),"es"));
+      }
+
+      function cardHtml(p, lazy=true){
+        const imgs=imagesByProduct.get(p.id)||[];
+        const main=imgs[0]?.image_url || "img/producto-1.jpg";
+        const alt=imgs[1]?.image_url || main;
+        const price=Number(p.price||0), old=Number(p.old_price||0), discount=Number(p.discount||0);
+        const total=stockTotal(p.id);
+        const sizes=availableSizes(p.id);
+        const colors=availableColors(p.id);
+        const sizeButtons=sizes.map(size=>`<button class="quick-size" type="button" data-quick-size data-product-id="${p.id}" data-size="${esc(size)}" aria-label="Agregar talle ${esc(size)}">${esc(size)}</button>`).join("");
+        return `<article class="product-card" data-product-card="${p.id}">
+          <a class="product-link" href="producto.html?id=${encodeURIComponent(p.id)}">
+            <div class="product-media">
+              <img class="main" src="${esc(main)}" alt="${esc(p.name)}" ${lazy?'loading="lazy"':''}>
+              <img class="alt" src="${esc(alt)}" alt="" ${lazy?'loading="lazy"':''}>
+              ${discount>0?`<span class="product-flag sale">-${Math.round(discount)}%</span>`:(normalize(p.season)==="verano-2027"?'<span class="product-flag">Nuevo</span>':'')}
+              ${total<=0?'<span class="soldout">Sin stock</span>':''}
+            </div>
+            <div class="product-info">
+              <div class="product-brand">${esc(p.brand)}</div>
+              <div class="product-name">${esc(p.name)}</div>
+              <div class="product-price"><span>${money(price)}</span>${old>price?`<span class="product-old">${money(old)}</span>`:""}</div>
+              <div class="product-sub">${colors.length?`${colors.length} ${colors.length===1?'color':'colores'}`:''}${colors.length&&sizes.length?' · ':''}${sizes.length?`${sizes.length} ${sizes.length===1?'talle':'talles'}`:''}</div>
+            </div>
+          </a>
+          ${total>0&&sizes.length?`<div class="quick-buy"><div class="quick-buy-head"><span>Compra rápida · elegí talle</span><span>1 unidad</span></div><div class="quick-sizes">${sizeButtons}</div><div class="quick-colors" data-quick-colors="${p.id}" hidden></div></div>`:""}
+        </article>`;
+      }
+
+      let toastTimer=null;
+      function showQuickToast(message){
+        const toast=$("quickToast");
+        if(!toast) return;
+        toast.textContent=message; toast.classList.add("show");
+        clearTimeout(toastTimer); toastTimer=setTimeout(()=>toast.classList.remove("show"),2300);
+      }
+
+      function getCart(){
+        try{const cart=JSON.parse(localStorage.getItem("carrito"));return Array.isArray(cart)?cart:[];}catch{return [];}
+      }
+
+      function saveCart(cart){
+        localStorage.setItem("carrito",JSON.stringify(cart));
+        localStorage.setItem("cart_date",new Date().toDateString());
+      }
+
+      function quickAdd(productId,size,variant){
+        const p=products.find(item=>Number(item.id)===Number(productId));
+        if(!p || !variant || variant.stock<=0) return;
+        const colorCart=variant.name ? `${variant.name}${variant.code?` (${variant.code})`:""}` : variant.code;
+        const cart=getCart();
+        const existing=cart.find(item=>Number(item.product_id)===Number(p.id) && String(item.talle)===String(size) && String(item.color||"")===String(colorCart||""));
+        const current=existing?Number(existing.cantidad||0):0;
+        if(current+1>variant.stock){ showQuickToast(`No hay más stock disponible en talle ${size}.`); return; }
+        const main=(imagesByProduct.get(p.id)||[])[0]?.image_url || "img/producto-1.jpg";
+        if(existing) existing.cantidad=current+1;
+        else cart.push({product_id:p.id,marca:p.brand,nombre:p.name,precio:Number(p.price||0),talle:size,color:colorCart,cantidad:1,imagen:main});
+        saveCart(cart); updateCart(); showQuickToast(`${p.name} · talle ${size} agregado al carrito.`);
+      }
+
+      function chooseQuickSize(button){
+        const productId=Number(button.dataset.productId);
+        const size=button.dataset.size;
+        const card=button.closest(".product-card");
+        if(!card) return;
+        card.querySelectorAll(".quick-size").forEach(el=>el.classList.toggle("active",el===button));
+        const variants=variantsForSize(productId,size);
+        const holder=card.querySelector(`[data-quick-colors="${productId}"]`);
+        if(!holder || !variants.length) return;
+        if(variants.length===1){ holder.hidden=true; quickAdd(productId,size,variants[0]); return; }
+        holder.innerHTML=`<span class="quick-colors-label">Elegí color para talle ${esc(size)}</span><div class="quick-color-list">${variants.map((v,i)=>`<button class="quick-color" type="button" data-quick-color data-product-id="${productId}" data-size="${esc(size)}" data-variant-index="${i}">${esc(v.name||v.code||"Único")}</button>`).join("")}</div>`;
+        holder.dataset.variants=JSON.stringify(variants); holder.hidden=false;
+      }
+
+      function chooseQuickColor(button){
+        const productId=Number(button.dataset.productId);
+        const size=button.dataset.size;
+        const holder=button.closest("[data-quick-colors]");
+        if(!holder) return;
+        let variants=[]; try{variants=JSON.parse(holder.dataset.variants||"[]");}catch{}
+        const variant=variants[Number(button.dataset.variantIndex)];
+        if(!variant) return;
+        quickAdd(productId,size,variant); holder.hidden=true;
+      }
+
+      function updateCart(){
+        try{
+          const cart=JSON.parse(localStorage.getItem("carrito"))||[];
+          $("cartCount").textContent=String(cart.reduce((s,i)=>s+Number(i.cantidad||0),0));
+        }catch{$("cartCount").textContent="0";}
+      }
+
+      function isFeaturedNow(p){
+        if(p.featured!==true) return false;
+        const now=Date.now();
+        if(p.featured_from && new Date(p.featured_from).getTime()>now) return false;
+        if(p.featured_until && new Date(p.featured_until).getTime()<now) return false;
+        return true;
+      }
+
+      function updateShopHero(){
+        const candidates=sortedRecommended(products.filter(p=>normalize(p.season)==="verano-2027" && normalize(p.category)!=="accesorios" && stockTotal(p.id)>0));
+        const featured=candidates.filter(isFeaturedNow).sort((a,b)=>(Number(a.featured_order)||999)-(Number(b.featured_order)||999));
+        const chosen=featured[0]||candidates[0];
+        const img=chosen?(imagesByProduct.get(chosen.id)||[])[0]?.image_url:null;
+        if(img && $("shopHeroImage")) $("shopHeroImage").src=img;
+      }
+
+      function renderNew(){
+        let base=products.filter(p=>normalize(p.season)==="verano-2027" && normalize(p.category)!=="accesorios" && stockTotal(p.id)>0);
+        if(newTab!=="all") base=base.filter(p=>normalize(p.gender)===newTab);
+        const featured=base.filter(isFeaturedNow).sort((a,b)=>(Number(a.featured_order)||999)-(Number(b.featured_order)||999) || productRank(a)-productRank(b));
+        const fallback=sortedRecommended(base.filter(p=>!featured.some(f=>f.id===p.id)));
+        const list=[...featured,...fallback].slice(0,8);
+        $("newGrid").innerHTML=list.length?list.map((p,i)=>cardHtml(p,i>3)).join(""):'<div class="empty-state">No encontramos prendas para mostrar.</div>';
+      }
+
+      function filteredProducts(){
+        const q=normalize(state.search);
+        let list=products.filter(p=>{
+          if(state.gender && normalize(p.gender)!==normalize(state.gender)) return false;
+          if(state.brand && normalize(p.brand)!==normalize(state.brand)) return false;
+          if(state.category && normalize(p.category)!==normalize(state.category)) return false;
+          if(state.size && !availableSizes(p.id).includes(state.size)) return false;
+          if(state.color && !availableColors(p.id).some(c=>normalize(c)===normalize(state.color))) return false;
+          const price=Number(p.price||0);
+          if(state.minPrice && price<Number(state.minPrice)) return false;
+          if(state.maxPrice && price>Number(state.maxPrice)) return false;
+          if(q){
+            const hay=[p.name,p.brand,p.category,p.gender,p.description].map(normalize).join(" ");
+            if(!hay.includes(q)) return false;
+          }
+          return true;
+        });
+
+        if(state.sort==="price-asc") list.sort((a,b)=>Number(a.price||0)-Number(b.price||0));
+        else if(state.sort==="price-desc") list.sort((a,b)=>Number(b.price||0)-Number(a.price||0));
+        else if(state.sort==="newest") list.sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));
+        else if(state.sort==="name") list.sort((a,b)=>String(a.name||"").localeCompare(String(b.name||""),"es"));
+        else list=sortedRecommended(list);
+        return list;
+      }
+
+      function catalogTitle(){
+        if(state.search) return `Resultados para “${state.search}”`;
+        if(state.category) return categoryLabels[state.category] || state.category;
+        if(state.brand) return state.brand;
+        if(state.gender) return state.gender.charAt(0).toUpperCase()+state.gender.slice(1);
+        return "Todos los productos";
+      }
+
+      function renderApplied(){
+        const labels={gender:"Género",brand:"Marca",category:"Categoría",size:"Talle",color:"Color",minPrice:"Desde",maxPrice:"Hasta",search:"Búsqueda"};
+        const parts=[];
+        for(const key of ["search","gender","brand","category","size","color","minPrice","maxPrice"]){
+          if(!state[key]) continue;
+          let val=state[key];
+          if(key==="category") val=categoryLabels[val]||val;
+          if(key==="gender") val=val.charAt(0).toUpperCase()+val.slice(1);
+          if(key==="minPrice"||key==="maxPrice") val=money(val);
+          parts.push(`<span class="applied-chip">${labels[key]}: ${esc(val)} <button type="button" data-remove-filter="${key}">×</button></span>`);
+        }
+        $("appliedFilters").innerHTML=parts.join("");
+        $("appliedFilters").querySelectorAll("[data-remove-filter]").forEach(btn=>btn.onclick=()=>{const key=btn.dataset.removeFilter;state[key]="";if(key==="category"){state.size="";state.color="";}if(key==="size")state.color="";syncFilterControls();visibleCount=24;renderCatalog();});
+      }
+
+      function renderCatalog(){
+        const list=filteredProducts();
+        $("catalogHeading").textContent=catalogTitle();
+        $("resultCount").textContent=`${list.length} ${list.length===1?'producto':'productos'}`;
+        renderApplied();
+        const activeCount=[state.gender,state.brand,state.category,state.size,state.color,state.minPrice,state.maxPrice].filter(Boolean).length;
+        if($("mobileFilterCount")) $("mobileFilterCount").textContent=activeCount?String(activeCount):"";
+        if($("mobileApply")) $("mobileApply").textContent=`Ver ${list.length} ${list.length===1?'producto':'productos'}`;
+        const shown=list.slice(0,visibleCount);
+        $("productGrid").innerHTML=shown.length?shown.map(p=>cardHtml(p,true)).join(""):'<div class="empty-state">No encontramos productos con esos filtros.<br>Probá quitar algún filtro o hacer otra búsqueda.</div>';
+        $("loadMore").hidden=shown.length>=list.length;
+      }
+
+      function productsForStage({includeCategory=true,includeSize=true,includeColor=true}={}){
+        return products.filter(p=>{
+          if(stockTotal(p.id)<=0) return false;
+          if(state.gender && normalize(p.gender)!==normalize(state.gender)) return false;
+          if(state.brand && normalize(p.brand)!==normalize(state.brand)) return false;
+          if(includeCategory && state.category && normalize(p.category)!==normalize(state.category)) return false;
+          if(includeSize && state.size && !availableSizes(p.id).includes(state.size)) return false;
+          if(includeColor && state.color && !availableColors(p.id).some(c=>normalize(c)===normalize(state.color))) return false;
+          return true;
+        });
+      }
+
+      function stageCategories(){
+        const counts=new Map();
+        productsForStage({includeCategory:false,includeSize:false,includeColor:false}).forEach(p=>{
+          const c=normalize(p.category);
+          if(!c) return;
+          counts.set(c,(counts.get(c)||0)+1);
+        });
+        return [...counts.entries()].sort((a,b)=>(categoryPriority[a[0]]??50)-(categoryPriority[b[0]]??50) || a[0].localeCompare(b[0],"es"));
+      }
+
+      function stageSizes(){
+        if(!state.category) return [];
+        const counts=new Map();
+        productsForStage({includeSize:false,includeColor:false}).forEach(p=>{
+          availableSizes(p.id).forEach(size=>counts.set(size,(counts.get(size)||0)+1));
+        });
+        return [...counts.entries()].sort((a,b)=>sizeSortValue(a[0])-sizeSortValue(b[0]));
+      }
+
+      function stageColors(){
+        if(!state.category || !state.size) return [];
+        const counts=new Map();
+        productsForStage({includeColor:false}).forEach(p=>{
+          positiveStockRows(p.id).forEach(row=>{
+            if(displaySize(row.bas_size||row.size)!==state.size) return;
+            const color=String(row.color_name||row.color||"").trim();
+            if(!color) return;
+            counts.set(color,(counts.get(color)||0)+1);
+          });
+        });
+        return [...counts.entries()].sort((a,b)=>a[0].localeCompare(b[0],"es"));
+      }
+
+      function sanitizeStageState(){
+        if(state.category){
+          const categories=stageCategories().map(([c])=>c);
+          if(!categories.includes(state.category)){state.category="";state.size="";state.color="";}
+        }
+        if(state.size){
+          const sizes=stageSizes().map(([size])=>size);
+          if(!sizes.includes(state.size)){state.size="";state.color="";}
+        }
+        if(state.color){
+          const colors=stageColors().map(([color])=>normalize(color));
+          if(!colors.includes(normalize(state.color))) state.color="";
         }
       }
 
-      function rotateAnnouncement() {
-        if (!announcementText) return;
-
-        announcementIndex =
-          (announcementIndex + 1) % announcements.length;
-
-        announcementText.style.opacity = "0";
-
-        window.setTimeout(() => {
-          announcementText.textContent =
-            announcements[announcementIndex];
-
-          announcementText.style.opacity = "1";
-        }, 180);
+      function stageButton(key,value,label,count){
+        const active=normalize(state[key])===normalize(value);
+        return `<button class="stage-option${active?' active':''}" type="button" data-stage-key="${key}" data-stage-value="${esc(value)}">${esc(label)}<small>${count}</small></button>`;
       }
 
-      function handleNewsletter(event) {
-        event.preventDefault();
+      function renderStageSet(prefix){
+        const categories=stageCategories();
+        const sizes=stageSizes();
+        const colors=stageColors();
+        const catEl=$(prefix+"Categories"), sizeEl=$(prefix+"Sizes"), colorEl=$(prefix+"Colors");
+        if(catEl) catEl.innerHTML=categories.map(([c,n])=>stageButton("category",c,categoryLabels[c]||c,n)).join("");
+        if(sizeEl) sizeEl.innerHTML=state.category?sizes.map(([size,n])=>stageButton("size",size,size,n)).join(""):"";
+        if(colorEl) colorEl.innerHTML=(state.category&&state.size)?colors.map(([color,n])=>stageButton("color",color,color,n)).join(""):"";
+        const sizeStage=$(prefix+"SizeStage"), colorStage=$(prefix+"ColorStage");
+        if(sizeStage) sizeStage.classList.toggle("is-disabled",!state.category);
+        if(colorStage) colorStage.classList.toggle("is-disabled",!state.category||!state.size);
+        const catStatus=$(prefix+"CategoryStatus"), sizeStatus=$(prefix+"SizeStatus"), colorStatus=$(prefix+"ColorStatus");
+        if(catStatus) catStatus.textContent=state.category?(categoryLabels[state.category]||state.category):"Elegí una";
+        if(sizeStatus) sizeStatus.textContent=state.size||(!state.category?"Después":"Elegí uno");
+        if(colorStatus) colorStatus.textContent=state.color||(!state.size?"Después":"Elegí uno");
+      }
 
-        const emailInput =
-          document.getElementById("newsletterEmail");
+      function renderStageFilters(){
+        sanitizeStageState();
+        renderStageSet("desktop");
+        renderStageSet("mobile");
+      }
 
-        if (!emailInput || !emailInput.checkValidity()) {
-          emailInput?.reportValidity();
+      function toggleStageFilter(key,value){
+        if(key==="category"){
+          state.category=state.category===value?"":value;
+          state.size="";
+          state.color="";
+        }else if(key==="size"){
+          if(!state.category) return;
+          state.size=state.size===value?"":value;
+          state.color="";
+        }else if(key==="color"){
+          if(!state.category || !state.size) return;
+          state.color=normalize(state.color)===normalize(value)?"":value;
+        }
+        visibleCount=24;
+        syncFilterControls();
+        renderCatalog();
+      }
+
+      function buildFilters(){ renderStageFilters(); }
+
+      function radioValue(name){ return document.querySelector(`input[name="${name}"]:checked`)?.value || ""; }
+
+      function setRadio(name,value){
+        const input=[...document.querySelectorAll(`input[name="${name}"]`)].find(el=>el.value===value) || document.querySelector(`input[name="${name}"][value=""]`);
+        if(input) input.checked=true;
+      }
+
+
+      function syncFilterControls(){
+        setRadio("desktopGender",state.gender); setRadio("mobileGender",state.gender);
+        setRadio("desktopBrand",state.brand); setRadio("mobileBrand",state.brand);
+        $("desktopMin").value=state.minPrice; $("mobileMin").value=state.minPrice;
+        $("desktopMax").value=state.maxPrice; $("mobileMax").value=state.maxPrice;
+        $("sortSelect").value=state.sort;
+        if($("mobileStickySort")) $("mobileStickySort").value=state.sort;
+        renderStageFilters();
+      }
+
+      function clearFilters(){
+        state.gender=state.brand=state.category=state.size=state.color=state.minPrice=state.maxPrice=state.search="";
+        if($("catalogSearchInput")) $("catalogSearchInput").value="";
+        visibleCount=24; syncFilterControls(); renderCatalog();
+      }
+
+      function applyMainFilter(key,value){
+        state.search="";
+        if($("catalogSearchInput")) $("catalogSearchInput").value="";
+        if(key==="gender") state.gender=state.gender===value?"":value;
+        if(key==="brand") state.brand=state.brand===value?"":value;
+        if(key==="category"){
+          state.category=state.category===value?"":value;
+          state.size="";
+          state.color="";
+        }
+        sanitizeStageState();
+        visibleCount=24;
+        syncFilterControls();
+        renderCatalog();
+        closeMobileMenu();
+        $("catalogo").scrollIntoView({behavior:"smooth",block:"start"});
+      }
+
+      function openSearch(){
+        $("searchLayer").classList.add("open");
+        $("searchLayer").setAttribute("aria-hidden","false");
+        document.body.classList.add("lock");
+        setTimeout(()=>$("globalSearch").focus(),50);
+        renderSearchResults("");
+      }
+
+      function closeSearch(){
+        $("searchLayer").classList.remove("open");
+        $("searchLayer").setAttribute("aria-hidden","true");
+        document.body.classList.remove("lock");
+      }
+
+      function renderSearchResults(query){
+        const q=normalize(query);
+        if(!q){
+          const suggested=sortedRecommended(products.filter(p=>normalize(p.category)!=="accesorios" && stockTotal(p.id)>0)).slice(0,6);
+          $("searchResults").innerHTML=suggested.map(searchCardHtml).join("");
+          return;
+        }
+        const list=products.filter(p=>[p.name,p.brand,p.category].map(normalize).join(" ").includes(q)).slice(0,9);
+        $("searchResults").innerHTML=list.length?list.map(searchCardHtml).join(""):'<div class="search-empty">No encontramos coincidencias. Probá con otra palabra.</div>';
+      }
+
+      function searchCardHtml(p){
+        const img=(imagesByProduct.get(p.id)||[])[0]?.image_url || "img/producto-1.jpg";
+        return `<a class="search-card" href="producto.html?id=${encodeURIComponent(p.id)}"><img src="${esc(img)}" alt="${esc(p.name)}"><div><strong>${esc(p.name)}</strong><span>${esc(p.brand)} · ${money(p.price)}</span></div></a>`;
+      }
+
+      function commitSearch(){
+        const value=$("globalSearch").value.trim();
+        if(!value) return;
+        state.search=value;
+        if($("catalogSearchInput")) $("catalogSearchInput").value=value;
+        visibleCount=24;
+        closeSearch();
+        renderCatalog();
+        $("catalogo").scrollIntoView({behavior:"smooth",block:"start"});
+      }
+
+      function openMobileDrawer(){
+        syncFilterControls();
+        $("mobileDrawer").classList.add("open"); $("drawerOverlay").classList.add("open");
+        $("mobileDrawer").setAttribute("aria-hidden","false"); document.body.classList.add("lock");
+      }
+      function closeMobileDrawer(){
+        $("mobileDrawer").classList.remove("open"); $("drawerOverlay").classList.remove("open");
+        $("mobileDrawer").setAttribute("aria-hidden","true"); document.body.classList.remove("lock");
+      }
+      function applyMobileFilters(){
+        state.gender=radioValue("mobileGender");
+        state.brand=radioValue("mobileBrand");
+        state.minPrice=$("mobileMin").value.trim();
+        state.maxPrice=$("mobileMax").value.trim();
+        sanitizeStageState();
+        visibleCount=24;
+        syncFilterControls();
+        renderCatalog();
+        closeMobileDrawer();
+      }
+
+      function openMobileMenu(){
+        $("mobileMenu").classList.toggle("open"); document.body.classList.toggle("lock",$("mobileMenu").classList.contains("open"));
+      }
+      function closeMobileMenu(){ $("mobileMenu").classList.remove("open"); document.body.classList.remove("lock"); }
+
+      function bindEvents(){
+        $("openSearch").onclick=openSearch; $("closeSearch").onclick=closeSearch;
+        $("globalSearch").addEventListener("input",e=>renderSearchResults(e.target.value));
+        $("catalogSearchInput").addEventListener("input",e=>{state.search=e.target.value.trim(); visibleCount=24; renderCatalog();});
+        $("globalSearch").addEventListener("keydown",e=>{if(e.key==="Enter") commitSearch(); if(e.key==="Escape") closeSearch();});
+        $("searchLayer").addEventListener("click",e=>{if(e.target===$("searchLayer")) closeSearch();});
+
+        document.querySelectorAll("[data-filter-gender]").forEach(el=>el.onclick=()=>applyMainFilter("gender",el.dataset.filterGender));
+        document.querySelectorAll("[data-filter-brand]").forEach(el=>el.onclick=()=>applyMainFilter("brand",el.dataset.filterBrand));
+        document.querySelectorAll("[data-filter-category]").forEach(el=>el.onclick=()=>applyMainFilter("category",el.dataset.filterCategory));
+        document.querySelectorAll("[data-filter-gender-link]").forEach(el=>el.onclick=e=>{e.preventDefault();applyMainFilter("gender",el.dataset.filterGenderLink);});
+        document.querySelectorAll("[data-filter-brand-link]").forEach(el=>el.onclick=e=>{e.preventDefault();applyMainFilter("brand",el.dataset.filterBrandLink);});
+        document.querySelectorAll("[data-filter-category-link]").forEach(el=>el.onclick=e=>{e.preventDefault();applyMainFilter("category",el.dataset.filterCategoryLink);});
+        document.querySelectorAll('[data-nav="new"]').forEach(el=>el.onclick=()=>{closeMobileMenu();$("novedades").scrollIntoView({behavior:"smooth"});});
+
+        $("newTabs").querySelectorAll("button").forEach(btn=>btn.onclick=()=>{newTab=btn.dataset.newTab;$("newTabs").querySelectorAll("button").forEach(b=>b.classList.toggle("active",b===btn));renderNew();});
+
+        document.addEventListener("click",e=>{
+          const stageBtn=e.target.closest("[data-stage-key]");
+          if(stageBtn){e.preventDefault();toggleStageFilter(stageBtn.dataset.stageKey,stageBtn.dataset.stageValue);}
+        });
+
+        document.querySelectorAll('input[name="desktopGender"]').forEach(input=>input.onchange=()=>{state.gender=input.value;sanitizeStageState();visibleCount=24;syncFilterControls();renderCatalog();});
+        document.querySelectorAll('input[name="desktopBrand"]').forEach(input=>input.onchange=()=>{state.brand=input.value;sanitizeStageState();visibleCount=24;syncFilterControls();renderCatalog();});
+        document.querySelectorAll('input[name="mobileGender"]').forEach(input=>input.onchange=()=>{state.gender=input.value;sanitizeStageState();visibleCount=24;syncFilterControls();renderCatalog();});
+        document.querySelectorAll('input[name="mobileBrand"]').forEach(input=>input.onchange=()=>{state.brand=input.value;sanitizeStageState();visibleCount=24;syncFilterControls();renderCatalog();});
+        $("desktopMin").addEventListener("change",()=>{state.minPrice=$("desktopMin").value.trim();visibleCount=24;syncFilterControls();renderCatalog();});
+        $("desktopMax").addEventListener("change",()=>{state.maxPrice=$("desktopMax").value.trim();visibleCount=24;syncFilterControls();renderCatalog();});
+        $("mobileMin").addEventListener("change",()=>{state.minPrice=$("mobileMin").value.trim();visibleCount=24;syncFilterControls();renderCatalog();});
+        $("mobileMax").addEventListener("change",()=>{state.maxPrice=$("mobileMax").value.trim();visibleCount=24;syncFilterControls();renderCatalog();});
+        $("desktopClear").onclick=clearFilters;
+
+        $("sortSelect").onchange=()=>{state.sort=$("sortSelect").value;if($("mobileStickySort"))$("mobileStickySort").value=state.sort;visibleCount=24;renderCatalog();};
+        $("loadMore").onclick=()=>{visibleCount+=24;renderCatalog();};
+
+        document.addEventListener("click",e=>{
+          const sizeBtn=e.target.closest("[data-quick-size]");
+          if(sizeBtn){e.preventDefault();e.stopPropagation();chooseQuickSize(sizeBtn);return;}
+          const colorBtn=e.target.closest("[data-quick-color]");
+          if(colorBtn){e.preventDefault();e.stopPropagation();chooseQuickColor(colorBtn);}
+        });
+
+        $("openFilters").onclick=openMobileDrawer; $("closeFilters").onclick=closeMobileDrawer; $("drawerOverlay").onclick=closeMobileDrawer;
+        if($("mobileStickyFilter")) $("mobileStickyFilter").onclick=openMobileDrawer;
+        if($("mobileStickySort")) $("mobileStickySort").onchange=()=>{state.sort=$("mobileStickySort").value;$("sortSelect").value=state.sort;visibleCount=24;renderCatalog();};
+        $("mobileApply").onclick=applyMobileFilters; $("mobileClear").onclick=()=>{clearFilters();syncFilterControls();};
+
+        $("mobileMenuBtn").onclick=openMobileMenu;
+        document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeSearch();closeMobileDrawer();closeMobileMenu();}});
+        window.addEventListener("storage",updateCart);
+      }
+
+      function setupMobileShopbar(){
+        const bar=$("mobileShopbar"); const catalog=$("catalogo");
+        if(!bar || !catalog) return;
+        const update=()=>{
+          const rect=catalog.getBoundingClientRect();
+          const active=window.innerWidth<=840 && rect.top<window.innerHeight*0.8 && rect.bottom>90;
+          bar.classList.toggle("active",active);
+        };
+        window.addEventListener("scroll",update,{passive:true});
+        window.addEventListener("resize",update,{passive:true});
+        update();
+      }
+
+      async function loadData(){
+        const {data,error}=await sb.from("products")
+          .select("id,name,brand,price,old_price,discount,gender,category,description,season,display_order,created_at,featured,featured_order,featured_from,featured_until")
+          .eq("active",true).eq("catalog_visible",true);
+
+        if(error){
+          console.error(error);
+          $("newGrid").innerHTML='<div class="empty-state">No pudimos cargar la nueva temporada.</div>';
+          $("productGrid").innerHTML='<div class="empty-state">No pudimos cargar el catálogo. Actualizá la página para intentar nuevamente.</div>';
+          $("resultCount").textContent="Error al cargar";
           return;
         }
 
-        const button =
-          newsletterForm.querySelector("button");
+        products=data||[];
+        const ids=products.map(p=>p.id);
+        if(ids.length){
+          const [{data:imgs,error:imgErr},{data:stocks,error:stockErr}]=await Promise.all([
+            sb.from("product_images").select("product_id,image_url,position").in("product_id",ids).order("position",{ascending:true}),
+            sb.from("product_stock").select("product_id,size,stock,color,color_name,bas_size").in("product_id",ids)
+          ]);
+          if(imgErr) console.error(imgErr);
+          if(stockErr) console.error(stockErr);
+          (imgs||[]).forEach(item=>{const arr=imagesByProduct.get(item.product_id)||[];arr.push(item);imagesByProduct.set(item.product_id,arr);});
+          (stocks||[]).forEach(item=>{const arr=stockByProduct.get(item.product_id)||[];arr.push(item);stockByProduct.set(item.product_id,arr);});
+        }
 
-        button.textContent = "¡Gracias!";
-        button.disabled = true;
-        emailInput.disabled = true;
+        buildFilters(); syncFilterControls(); updateShopHero(); renderNew(); renderCatalog();
       }
 
-      menuButton?.addEventListener(
-        "click",
-        () => toggleMenu()
-      );
-
-      mobileMenu?.querySelectorAll("a").forEach(link => {
-        link.addEventListener(
-          "click",
-          () => toggleMenu(false)
-        );
-      });
-
-      window.addEventListener(
-        "scroll",
-        updateHeader,
-        { passive: true }
-      );
-
-      window.addEventListener(
-        "storage",
-        updateCartCount
-      );
-
-      newsletterForm?.addEventListener(
-        "submit",
-        handleNewsletter
-      );
-
-      if (currentYear) {
-        currentYear.textContent =
-          String(new Date().getFullYear());
-      }
-
-      updateHeader();
-      updateCartCount();
-
-
-      window.setInterval(
-        rotateAnnouncement,
-        4200
-      );
+      $("year").textContent=String(new Date().getFullYear());
+      updateCart(); bindEvents(); setupMobileShopbar(); loadData();
     })();
   </script>
 </body>
