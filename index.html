@@ -707,6 +707,30 @@
         update();
       }
 
+      async function fetchAllProductStock(ids){
+        const pageSize=1000;
+        const all=[];
+        let from=0;
+
+        while(true){
+          const {data,error}=await sb
+            .from("product_stock")
+            .select("id,product_id,size,stock,color,color_name,bas_size")
+            .in("product_id",ids)
+            .gt("stock",0)
+            .order("id",{ascending:true})
+            .range(from,from+pageSize-1);
+
+          if(error) throw error;
+          const rows=data||[];
+          all.push(...rows);
+          if(rows.length<pageSize) break;
+          from+=pageSize;
+        }
+
+        return all;
+      }
+
       async function loadData(){
         const {data,error}=await sb.from("products")
           .select("id,name,brand,price,old_price,discount,gender,category,description,season,display_order,created_at,featured,featured_order,featured_from,featured_until")
@@ -723,14 +747,18 @@
         products=data||[];
         const ids=products.map(p=>p.id);
         if(ids.length){
-          const [{data:imgs,error:imgErr},{data:stocks,error:stockErr}]=await Promise.all([
-            sb.from("product_images").select("product_id,image_url,position").in("product_id",ids).order("position",{ascending:true}),
-            sb.from("product_stock").select("product_id,size,stock,color,color_name,bas_size").in("product_id",ids)
-          ]);
-          if(imgErr) console.error(imgErr);
-          if(stockErr) console.error(stockErr);
-          (imgs||[]).forEach(item=>{const arr=imagesByProduct.get(item.product_id)||[];arr.push(item);imagesByProduct.set(item.product_id,arr);});
-          (stocks||[]).forEach(item=>{const arr=stockByProduct.get(item.product_id)||[];arr.push(item);stockByProduct.set(item.product_id,arr);});
+          try{
+            const [{data:imgs,error:imgErr},stocks]=await Promise.all([
+              sb.from("product_images").select("product_id,image_url,position").in("product_id",ids).order("position",{ascending:true}),
+              fetchAllProductStock(ids)
+            ]);
+            if(imgErr) console.error(imgErr);
+            (imgs||[]).forEach(item=>{const arr=imagesByProduct.get(item.product_id)||[];arr.push(item);imagesByProduct.set(item.product_id,arr);});
+            (stocks||[]).forEach(item=>{const arr=stockByProduct.get(item.product_id)||[];arr.push(item);stockByProduct.set(item.product_id,arr);});
+            console.info(`[Usina] Stock cargado completo: ${stocks.length} variantes con stock.`);
+          }catch(stockErr){
+            console.error("Error cargando stock completo",stockErr);
+          }
         }
 
         buildFilters(); syncFilterControls(); updateShopHero(); renderNew(); renderCatalog();
