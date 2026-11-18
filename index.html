@@ -203,6 +203,11 @@
         return String(text||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
       }
 
+      function canonicalCategory(value){
+        const c=normalize(value);
+        return c==="camperas" ? "abrigos" : c;
+      }
+
       function displaySize(raw){
         const x=String(raw||"").trim().toUpperCase();
         const map={"0XS":"XS","00S":"S","00M":"M","00L":"L","0XL":"XL","000":"XS","001":"S","002":"M","003":"L","004":"XL","00U":"ÚNICO"};
@@ -219,10 +224,10 @@
         if(order[size]!==undefined) return order[size];
         const n=Number(size); return Number.isFinite(n)?100+n:999;
       }
-      function availableSizes(productId){ return [...new Set(positiveStockRows(productId).map(row=>displaySize(row.bas_size || row.size)).filter(Boolean))].sort((a,b)=>sizeSortValue(a)-sizeSortValue(b)); }
+      function availableSizes(productId){ return [...new Set(positiveStockRows(productId).map(row=>displaySize(row.size || row.bas_size)).filter(Boolean))].sort((a,b)=>sizeSortValue(a)-sizeSortValue(b)); }
       function availableColors(productId){ return [...new Set(positiveStockRows(productId).map(row=>String(row.color_name||row.color||"").trim()).filter(Boolean))]; }
       function variantsForSize(productId,size){
-        const rows=positiveStockRows(productId).filter(row=>displaySize(row.bas_size || row.size)===size);
+        const rows=positiveStockRows(productId).filter(row=>displaySize(row.size || row.bas_size)===size);
         const map=new Map();
         rows.forEach(row=>{
           const code=String(row.color||"").trim();
@@ -234,11 +239,23 @@
         return [...map.values()].filter(v=>v.stock>0);
       }
 
+      function hasExactVariant(productId,size,color){
+        const wantedSize=String(size||"").trim();
+        const wantedColor=normalize(color);
+        return positiveStockRows(productId).some(row=>{
+          const rowSize=displaySize(row.size || row.bas_size);
+          const rowColor=normalize(row.color_name || row.color || "");
+          if(wantedSize && rowSize!==wantedSize) return false;
+          if(wantedColor && rowColor!==wantedColor) return false;
+          return true;
+        });
+      }
+
       function productRank(p){
-        const accessoryPenalty = normalize(p.category)==="accesorios" ? 100000 : 0;
+        const accessoryPenalty = canonicalCategory(p.category)==="accesorios" ? 100000 : 0;
         const seasonBoost = normalize(p.season)==="verano-2027" ? 0 : 10000;
         const order = Number.isFinite(Number(p.display_order)) ? Number(p.display_order) : 9999;
-        const cat = categoryPriority[normalize(p.category)] ?? 50;
+        const cat = categoryPriority[canonicalCategory(p.category)] ?? 50;
         const stockPenalty = stockTotal(p.id)>0 ? 0 : 5000;
         return accessoryPenalty + seasonBoost + stockPenalty + cat*100 + order;
       }
@@ -268,10 +285,10 @@
               <div class="product-brand">${esc(p.brand)}</div>
               <div class="product-name">${esc(p.name)}</div>
               <div class="product-price"><span>${money(price)}</span>${old>price?`<span class="product-old">${money(old)}</span>`:""}</div>
-              <div class="product-sub">${colors.length?`${colors.length} ${colors.length===1?'color':'colores'}`:''}${colors.length&&sizes.length?' · ':''}${sizes.length?`${sizes.length} ${sizes.length===1?'talle':'talles'}`:''}</div>
+              <div class="product-sub">${colors.length?`${colors.length} ${colors.length===1?'color':'colores'}`:''}${colors.length&&sizes.length?' · ':''}${sizes.length?`hasta ${sizes.length} ${sizes.length===1?'talle':'talles'}`:''}</div>
             </div>
           </a>
-          ${total>0&&sizes.length?`<div class="quick-buy"><div class="quick-buy-head"><span>Compra rápida · elegí talle</span><span>1 unidad</span></div><div class="quick-sizes">${sizeButtons}</div><div class="quick-colors" data-quick-colors="${p.id}" hidden></div></div>`:""}
+          ${total>0&&sizes.length?`<div class="quick-buy"><div class="quick-buy-head"><span>Compra rápida · talle y color con stock</span><span>1 unidad</span></div><div class="quick-sizes">${sizeButtons}</div><div class="quick-colors" data-quick-colors="${p.id}" hidden></div></div>`:""}
         </article>`;
       }
 
@@ -347,7 +364,7 @@
       }
 
       function updateShopHero(){
-        const candidates=sortedRecommended(products.filter(p=>normalize(p.season)==="verano-2027" && normalize(p.category)!=="accesorios" && stockTotal(p.id)>0));
+        const candidates=sortedRecommended(products.filter(p=>normalize(p.season)==="verano-2027" && canonicalCategory(p.category)!=="accesorios" && stockTotal(p.id)>0));
         const featured=candidates.filter(isFeaturedNow).sort((a,b)=>(Number(a.featured_order)||999)-(Number(b.featured_order)||999));
         const chosen=featured[0]||candidates[0];
         const img=chosen?(imagesByProduct.get(chosen.id)||[])[0]?.image_url:null;
@@ -355,7 +372,7 @@
       }
 
       function renderNew(){
-        let base=products.filter(p=>normalize(p.season)==="verano-2027" && normalize(p.category)!=="accesorios" && stockTotal(p.id)>0);
+        let base=products.filter(p=>normalize(p.season)==="verano-2027" && canonicalCategory(p.category)!=="accesorios" && stockTotal(p.id)>0);
         if(newTab!=="all") base=base.filter(p=>normalize(p.gender)===newTab);
         const featured=base.filter(isFeaturedNow).sort((a,b)=>(Number(a.featured_order)||999)-(Number(b.featured_order)||999) || productRank(a)-productRank(b));
         const fallback=sortedRecommended(base.filter(p=>!featured.some(f=>f.id===p.id)));
@@ -368,9 +385,8 @@
         let list=products.filter(p=>{
           if(state.gender && normalize(p.gender)!==normalize(state.gender)) return false;
           if(state.brand && normalize(p.brand)!==normalize(state.brand)) return false;
-          if(state.category && normalize(p.category)!==normalize(state.category)) return false;
-          if(state.size && !availableSizes(p.id).includes(state.size)) return false;
-          if(state.color && !availableColors(p.id).some(c=>normalize(c)===normalize(state.color))) return false;
+          if(state.category && canonicalCategory(p.category)!==canonicalCategory(state.category)) return false;
+          if((state.size || state.color) && !hasExactVariant(p.id,state.size,state.color)) return false;
           const price=Number(p.price||0);
           if(state.minPrice && price<Number(state.minPrice)) return false;
           if(state.maxPrice && price>Number(state.maxPrice)) return false;
@@ -430,9 +446,10 @@
           if(stockTotal(p.id)<=0) return false;
           if(state.gender && normalize(p.gender)!==normalize(state.gender)) return false;
           if(state.brand && normalize(p.brand)!==normalize(state.brand)) return false;
-          if(includeCategory && state.category && normalize(p.category)!==normalize(state.category)) return false;
-          if(includeSize && state.size && !availableSizes(p.id).includes(state.size)) return false;
-          if(includeColor && state.color && !availableColors(p.id).some(c=>normalize(c)===normalize(state.color))) return false;
+          if(includeCategory && state.category && canonicalCategory(p.category)!==canonicalCategory(state.category)) return false;
+          const sizeFilter=includeSize ? state.size : "";
+          const colorFilter=includeColor ? state.color : "";
+          if((sizeFilter || colorFilter) && !hasExactVariant(p.id,sizeFilter,colorFilter)) return false;
           return true;
         });
       }
@@ -440,7 +457,7 @@
       function stageCategories(){
         const counts=new Map();
         productsForStage({includeCategory:false,includeSize:false,includeColor:false}).forEach(p=>{
-          const c=normalize(p.category);
+          const c=canonicalCategory(p.category);
           if(!c) return;
           counts.set(c,(counts.get(c)||0)+1);
         });
@@ -461,7 +478,7 @@
         const counts=new Map();
         productsForStage({includeColor:false}).forEach(p=>{
           positiveStockRows(p.id).forEach(row=>{
-            if(displaySize(row.bas_size||row.size)!==state.size) return;
+            if(displaySize(row.size||row.bas_size)!==state.size) return;
             const color=String(row.color_name||row.color||"").trim();
             if(!color) return;
             counts.set(color,(counts.get(color)||0)+1);
@@ -592,7 +609,7 @@
       function renderSearchResults(query){
         const q=normalize(query);
         if(!q){
-          const suggested=sortedRecommended(products.filter(p=>normalize(p.category)!=="accesorios" && stockTotal(p.id)>0)).slice(0,6);
+          const suggested=sortedRecommended(products.filter(p=>canonicalCategory(p.category)!=="accesorios" && stockTotal(p.id)>0)).slice(0,6);
           $("searchResults").innerHTML=suggested.map(searchCardHtml).join("");
           return;
         }
