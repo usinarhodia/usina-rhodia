@@ -226,6 +226,15 @@
       }
       function availableSizes(productId){ return [...new Set(positiveStockRows(productId).map(row=>displaySize(row.size || row.bas_size)).filter(Boolean))].sort((a,b)=>sizeSortValue(a)-sizeSortValue(b)); }
       function availableColors(productId){ return [...new Set(positiveStockRows(productId).map(row=>String(row.color_name||row.color||"").trim()).filter(Boolean))]; }
+      function availableVariantCount(productId){
+        const keys=new Set();
+        positiveStockRows(productId).forEach(row=>{
+          const size=displaySize(row.size || row.bas_size);
+          const color=String(row.color||row.color_name||"ÚNICO").trim();
+          if(size) keys.add(`${size}|||${color}`);
+        });
+        return keys.size;
+      }
       function variantsForSize(productId,size){
         const rows=positiveStockRows(productId).filter(row=>displaySize(row.size || row.bas_size)===size);
         const map=new Map();
@@ -272,7 +281,8 @@
         const total=stockTotal(p.id);
         const sizes=availableSizes(p.id);
         const colors=availableColors(p.id);
-        const sizeButtons=sizes.map(size=>`<button class="quick-size" type="button" data-quick-size data-product-id="${p.id}" data-size="${esc(size)}" aria-label="Agregar talle ${esc(size)}">${esc(size)}</button>`).join("");
+        const variantCount=availableVariantCount(p.id);
+        const sizeButtons=sizes.map(size=>`<button class="quick-size" type="button" data-quick-size data-product-id="${p.id}" data-size="${esc(size)}" aria-label="Elegir talle ${esc(size)}">${esc(size)}</button>`).join("");
         return `<article class="product-card" data-product-card="${p.id}">
           <a class="product-link" href="producto.html?id=${encodeURIComponent(p.id)}">
             <div class="product-media">
@@ -285,10 +295,10 @@
               <div class="product-brand">${esc(p.brand)}</div>
               <div class="product-name">${esc(p.name)}</div>
               <div class="product-price"><span>${money(price)}</span>${old>price?`<span class="product-old">${money(old)}</span>`:""}</div>
-              <div class="product-sub">${colors.length?`${colors.length} ${colors.length===1?'color':'colores'}`:''}${colors.length&&sizes.length?' · ':''}${sizes.length?`hasta ${sizes.length} ${sizes.length===1?'talle':'talles'}`:''}</div>
+              <div class="product-sub">${variantCount?`${variantCount} ${variantCount===1?'combinación':'combinaciones'} con stock`:''}</div>
             </div>
           </a>
-          ${total>0&&sizes.length?`<div class="quick-buy"><div class="quick-buy-head"><span>Compra rápida · talle y color con stock</span><span>1 unidad</span></div><div class="quick-sizes">${sizeButtons}</div><div class="quick-colors" data-quick-colors="${p.id}" hidden></div></div>`:""}
+          ${total>0&&sizes.length?`<div class="quick-buy"><div class="quick-buy-head"><span>Elegí talle · después color disponible</span><span>Stock real</span></div><div class="quick-sizes">${sizeButtons}</div><div class="quick-colors" data-quick-colors="${p.id}" hidden></div></div>`:""}
         </article>`;
       }
 
